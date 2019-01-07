@@ -2,10 +2,10 @@
 
 namespace NaughtyAttributes
 {
-    [AttributeUsage(AttributeTargets.Field, AllowMultiple = false, Inherited = true)]
+    [AttributeUsage(AttributeTargets.All, AllowMultiple = false, Inherited = true)]
     public class FoldoutGroupAttribute : GroupAttribute
     {
-        public FoldoutGroupAttribute(string name = "")
+        public FoldoutGroupAttribute(string name = "", bool open = true)
             : base(name)
         {
         }
