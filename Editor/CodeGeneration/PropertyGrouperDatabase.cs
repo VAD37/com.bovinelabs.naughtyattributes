@@ -13,7 +13,7 @@ namespace NaughtyAttributes.Editor
         {
             groupersByAttributeType = new Dictionary<Type, PropertyGrouper>();
             groupersByAttributeType[typeof(BoxGroupAttribute)] = new BoxGroupPropertyGrouper();
-
+            groupersByAttributeType[typeof(FoldoutGroupAttribute)] = new FoldoutGroupPropertyGrouper();
         }
 
         public static PropertyGrouper GetGrouperForAttribute(Type attributeType)
