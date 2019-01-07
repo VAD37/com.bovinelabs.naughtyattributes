@@ -1,12 +1,8 @@
 {
-    "name": "NaughtAttribues.Editor",
-    "references": [
-        "NaughtAttribues"
-    ],
+    "name": "BovineLabs.NaughtAttribues",
+    "references": [],
     "optionalUnityReferences": [],
-    "includePlatforms": [
-        "Editor"
-    ],
+    "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
     "overrideReferences": false,
