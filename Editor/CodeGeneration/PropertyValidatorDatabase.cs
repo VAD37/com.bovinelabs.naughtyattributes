@@ -13,9 +13,9 @@ namespace NaughtyAttributes.Editor
         {
             validatorsByAttributeType = new Dictionary<Type, PropertyValidator>();
             validatorsByAttributeType[typeof(MaxValueAttribute)] = new MaxValuePropertyValidator();
-validatorsByAttributeType[typeof(MinValueAttribute)] = new MinValuePropertyValidator();
-validatorsByAttributeType[typeof(RequiredAttribute)] = new RequiredPropertyValidator();
-validatorsByAttributeType[typeof(ValidateInputAttribute)] = new ValidateInputPropertyValidator();
+            validatorsByAttributeType[typeof(MinValueAttribute)] = new MinValuePropertyValidator();
+            validatorsByAttributeType[typeof(RequiredAttribute)] = new RequiredPropertyValidator();
+            validatorsByAttributeType[typeof(ValidateInputAttribute)] = new ValidateInputPropertyValidator();
 
         }
 
