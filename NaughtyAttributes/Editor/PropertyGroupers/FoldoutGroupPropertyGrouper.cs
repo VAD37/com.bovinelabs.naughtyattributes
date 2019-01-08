@@ -7,18 +7,21 @@ namespace NaughtyAttributes.Editor
     [PropertyGrouper(typeof(FoldoutGroupAttribute))]
     public class FoldoutGroupPropertyGrouper : PropertyGrouper
     {
-        public override void BeginGroup(string label)
+        public override void BeginGroup(GroupAttribute attribute)
         {
             EditorGUILayout.BeginVertical(GUI.skin.box);
 
-            if (!string.IsNullOrEmpty(label))
+            if (attribute.ShowName && !string.IsNullOrEmpty(attribute.Name))
             {
-                EditorGUILayout.LabelField(label, EditorStyles.boldLabel);
+                EditorGUILayout.LabelField(attribute.Name, EditorStyles.boldLabel);
             }
+
+            EditorGUI.indentLevel += 1;
         }
 
         public override void EndGroup()
         {
+            EditorGUI.indentLevel -= 1;
             EditorGUILayout.EndVertical();
         }
     }

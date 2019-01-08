@@ -6,13 +6,13 @@ namespace NaughtyAttributes.Editor
     [PropertyGrouper(typeof(BoxGroupAttribute))]
     public class BoxGroupPropertyGrouper : PropertyGrouper
     {
-        public override void BeginGroup(string label)
+        public override void BeginGroup(GroupAttribute attribute)
         {
             EditorGUILayout.BeginVertical(GUI.skin.box);
 
-            if (!string.IsNullOrEmpty(label))
+            if (attribute.ShowName && !string.IsNullOrEmpty(attribute.Name))
             {
-                EditorGUILayout.LabelField(label, EditorStyles.boldLabel);
+                EditorGUILayout.LabelField(attribute.Name, EditorStyles.boldLabel);
             }
         }
 

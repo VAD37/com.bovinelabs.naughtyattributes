@@ -112,7 +112,9 @@ namespace NaughtyAttributes.Editor
                     if (this.groupedFields.Contains(field))
                     {
                         // Draw grouped fields
-                        string groupName = (field.GetCustomAttributes(typeof(GroupAttribute), true)[0] as GroupAttribute).Name;
+                        var attribute = (GroupAttribute)field.GetCustomAttributes(typeof(GroupAttribute), true)[0];
+
+                        string groupName = attribute.Name;
                         if (!drawnGroups.Contains(groupName))
                         {
                             drawnGroups.Add(groupName);
@@ -120,7 +122,7 @@ namespace NaughtyAttributes.Editor
                             PropertyGrouper grouper = this.GetPropertyGrouperForField(field);
                             if (grouper != null)
                             {
-                                grouper.BeginGroup(groupName);
+                                grouper.BeginGroup(attribute);
 
                                 this.ValidateAndDrawFields(this.groupedFieldsByGroupName[groupName]);
 

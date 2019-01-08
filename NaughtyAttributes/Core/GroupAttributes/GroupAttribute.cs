@@ -6,9 +6,12 @@ namespace NaughtyAttributes
     {
         public string Name { get; private set; }
 
-        public GroupAttribute(string name)
+        public bool ShowName { get; private set; }
+
+        public GroupAttribute(string name, bool showName = true)
         {
             this.Name = name;
+            this.ShowName = showName;
         }
     }
 }
