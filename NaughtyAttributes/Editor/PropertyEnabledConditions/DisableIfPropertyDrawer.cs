@@ -5,9 +5,10 @@ using UnityEngine;
 namespace NaughtyAttributes.Editor
 {
     [PropertyDrawer(typeof(DisableIfAttribute))]
-    public class DisableIfPropertyDrawer : PropertyDrawer
+    public class DisableIfPropertyDrawer : PropertyEnabledCondition
     {
-        public override void DrawProperty(SerializedProperty property)
+        /// <inheritdoc />
+        public override bool IsPropertyEnabled(SerializedProperty property)
         {
             bool drawDisabled = false;
             bool validCondition = false;
@@ -34,14 +35,13 @@ namespace NaughtyAttributes.Editor
 
             if (validCondition)
             {
-                GUI.enabled = !drawDisabled;
-                EditorDrawUtility.DrawPropertyField(property);
-                GUI.enabled = true;
+                return !drawDisabled;
             }
             else
             {
                 string warning = disableIfAttribute.GetType().Name + " needs a valid boolean condition field or method name to work";
                 EditorDrawUtility.DrawHelpBox(warning, MessageType.Warning, logToConsole: true, context: target);
+                return true;
             }
         }
     }

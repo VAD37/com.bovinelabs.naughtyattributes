@@ -13,9 +13,9 @@ namespace NaughtyAttributes.Editor
         {
             drawConditionsByAttributeType = new Dictionary<Type, PropertyDrawCondition>();
             drawConditionsByAttributeType[typeof(HideIfAttribute)] = new HideIfPropertyDrawCondition();
-            drawConditionsByAttributeType[typeof(ShowIfAttribute)] = new ShowIfPropertyDrawCondition();
-            drawConditionsByAttributeType[typeof(HideInEditorModeAttribute)] = new HideInEditorModePropertyDrawCondition();
-            drawConditionsByAttributeType[typeof(HideInPlayModeAttribute)] = new HideInPlayModePropertyDrawCondition();
+drawConditionsByAttributeType[typeof(HideInEditorModeAttribute)] = new HideInEditorModePropertyDrawCondition();
+drawConditionsByAttributeType[typeof(HideInPlayModeAttribute)] = new HideInPlayModePropertyDrawCondition();
+drawConditionsByAttributeType[typeof(ShowIfAttribute)] = new ShowIfPropertyDrawCondition();
 
         }
 

@@ -225,8 +225,16 @@ namespace NaughtyAttributes.Editor
                 return;
             }
 
+            PropertyEnabledCondition enabledCondition = this.GetPropertyEnabledConditionForField(field);
+            bool isPropertyEnabled = true;
+            if (enabledCondition != null)
+            {
+                isPropertyEnabled = enabledCondition.IsPropertyEnabled(this.serializedPropertiesByFieldName[field.Name]);
+            }
+
             // Draw the field
             EditorGUI.BeginChangeCheck();
+            GUI.enabled = isPropertyEnabled;
             PropertyDrawer drawer = this.GetPropertyDrawerForField(field);
             if (drawer != null)
             {
@@ -236,6 +244,7 @@ namespace NaughtyAttributes.Editor
             {
                 EditorDrawUtility.DrawPropertyField(this.serializedPropertiesByFieldName[field.Name]);
             }
+            GUI.enabled = true;
 
             if (EditorGUI.EndChangeCheck())
             {
@@ -309,6 +318,20 @@ namespace NaughtyAttributes.Editor
             if (drawConditionAttributes.Length > 0)
             {
                 PropertyDrawCondition drawCondition = PropertyDrawConditionDatabase.GetDrawConditionForAttribute(drawConditionAttributes[0].GetType());
+                return drawCondition;
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        private PropertyEnabledCondition GetPropertyEnabledConditionForField(FieldInfo field)
+        {
+            EnabledConditionAttribute[] drawConditionAttributes = (EnabledConditionAttribute[])field.GetCustomAttributes(typeof(EnabledConditionAttribute), true);
+            if (drawConditionAttributes.Length > 0)
+            {
+                PropertyEnabledCondition drawCondition = PropertyEnabledConditionDatabase.GetEnabledConditionForAttribute(drawConditionAttributes[0].GetType());
                 return drawCondition;
             }
             else

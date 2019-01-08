@@ -3,7 +3,7 @@ using System;
 namespace NaughtyAttributes
 {
     [AttributeUsage(AttributeTargets.Field, AllowMultiple = false, Inherited = true)]
-    public class EnableIfAttribute : DrawerAttribute
+    public class EnableIfAttribute : EnabledConditionAttribute
     {
         public string ConditionName { get; private set; }
 

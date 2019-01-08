@@ -3,7 +3,7 @@
 namespace NaughtyAttributes
 {
     [AttributeUsage(AttributeTargets.Field | AttributeTargets.Method, AllowMultiple = false, Inherited = true)]
-    public class DisableInPlayModeAttribute : DrawerAttribute
+    public class DisableInPlayModeAttribute : EnabledConditionAttribute
     {
 
     }
