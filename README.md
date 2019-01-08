@@ -1,5 +1,5 @@
-# A Fork of NaughtyAttributes
-A fork of NaughtyAttributes that is converted to Unity Package format and provides new attributes as well as separating out Enable Attributes so they can be used separately to Drawer Attributes.
+# A NaughtyAttributes Fork
+A NaughtyAttributes fork that is converted to Unity Package format and provides new attributes as well as separating out Enable Attributes so they can be used separately to Drawer Attributes.
 
 ### Original Readme
 
