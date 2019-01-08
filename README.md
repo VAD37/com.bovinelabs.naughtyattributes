@@ -1,3 +1,8 @@
+# A Fork of NaughtyAttributes
+A fork of NaughtyAttributes that is converted to Unity Package format and provides new attributes as well as separating out Enable Attributes so they can be used separately to Drawer Attributes.
+
+### Original Readme
+
 # NaughtyAttributes
 NaughtyAttributes is an extension for the Unity Inspector.
 
