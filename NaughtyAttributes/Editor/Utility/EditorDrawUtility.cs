@@ -4,6 +4,8 @@ using System;
 
 namespace NaughtyAttributes.Editor
 {
+    using Object = UnityEngine.Object;
+
     public static class EditorDrawUtility
     {
         public static void DrawHeader(string header)
@@ -106,9 +108,9 @@ namespace NaughtyAttributes.Editor
             {
                 EditorGUILayout.RectField(label, (Rect)value);
             }
-            else if (typeof(UnityEngine.Object).IsAssignableFrom(valueType))
+            else if (value is Object o)
             {
-                EditorGUILayout.ObjectField(label, (UnityEngine.Object)value, valueType, true);
+                EditorGUILayout.ObjectField(label, o, valueType, true);
             }
             else
             {
