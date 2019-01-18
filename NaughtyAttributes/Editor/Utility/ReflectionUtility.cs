@@ -59,11 +59,35 @@ namespace NaughtyAttributes.Editor
 
         public static IEnumerable<MethodInfo> GetAllMethods(object target, Func<MethodInfo, bool> predicate)
         {
-            IEnumerable<MethodInfo> methodInfos = target.GetType()
+            /*IEnumerable<MethodInfo> methodInfos = target.GetType()
                 .GetMethods(BindingFlags.Instance | BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.Public)
                 .Where(predicate);
 
-            return methodInfos;
+            return methodInfos;*/
+
+            var list = new List<MethodInfo>();
+            GetAllMethods(target.GetType(), list, predicate);
+            return list;
+        }
+
+        private static void GetAllMethods(Type t, ICollection<MethodInfo> methods, Func<MethodInfo, bool> predicate)
+        {
+            var flags = BindingFlags.Instance | BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.Public;
+
+            foreach (var method in t.GetMethods(flags).Where(predicate))
+            {
+                // Ignore inherited methods.
+                if (method.DeclaringType == t)
+                {
+                    methods.Add(method);
+                }
+            }
+
+            var baseType = t.BaseType;
+            if (baseType != null)
+            {
+                GetAllMethods(baseType, methods, predicate);
+            }
         }
 
         public static FieldInfo GetField(object target, string fieldName)

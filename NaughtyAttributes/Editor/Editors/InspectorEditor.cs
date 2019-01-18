@@ -81,6 +81,11 @@ namespace NaughtyAttributes.Editor
             // Cache methods with DrawerAttribute
             this.methods = ReflectionUtility.GetAllMethods(
                 this.target, m => m.GetCustomAttributes(typeof(DrawerAttribute), true).Length > 0);
+
+            foreach (var method in this.methods)
+            {
+                this.serializedPropertiesByFieldName[method.Name] = this.serializedObject.FindProperty(method.Name);
+            }
         }
 
         private void OnDisable()
@@ -169,12 +174,23 @@ namespace NaughtyAttributes.Editor
             // Draw methods
             foreach (var method in this.methods)
             {
+                PropertyEnabledCondition enabledCondition = this.GetPropertyEnabledConditionForMember(method);
+                bool isPropertyEnabled = true;
+                if (enabledCondition != null)
+                {
+                    isPropertyEnabled = enabledCondition.IsPropertyEnabled(this.serializedPropertiesByFieldName[method.Name]);
+                }
+
+                GUI.enabled = isPropertyEnabled;
+
                 DrawerAttribute drawerAttribute = (DrawerAttribute)method.GetCustomAttributes(typeof(DrawerAttribute), true)[0];
                 MethodDrawer methodDrawer = MethodDrawerDatabase.GetDrawerForAttribute(drawerAttribute.GetType());
                 if (methodDrawer != null)
                 {
                     methodDrawer.DrawMethod(this.target, method);
                 }
+
+                GUI.enabled = true;
             }
         }
 
@@ -227,7 +243,7 @@ namespace NaughtyAttributes.Editor
                 return;
             }
 
-            PropertyEnabledCondition enabledCondition = this.GetPropertyEnabledConditionForField(field);
+            PropertyEnabledCondition enabledCondition = this.GetPropertyEnabledConditionForMember(field);
             bool isPropertyEnabled = true;
             if (enabledCondition != null)
             {
@@ -329,9 +345,9 @@ namespace NaughtyAttributes.Editor
             }
         }
 
-        private PropertyEnabledCondition GetPropertyEnabledConditionForField(FieldInfo field)
+        private PropertyEnabledCondition GetPropertyEnabledConditionForMember(MemberInfo memberInfo)
         {
-            EnabledConditionAttribute[] drawConditionAttributes = (EnabledConditionAttribute[])field.GetCustomAttributes(typeof(EnabledConditionAttribute), true);
+            EnabledConditionAttribute[] drawConditionAttributes = (EnabledConditionAttribute[])memberInfo.GetCustomAttributes(typeof(EnabledConditionAttribute), true);
             if (drawConditionAttributes.Length > 0)
             {
                 PropertyEnabledCondition drawCondition = PropertyEnabledConditionDatabase.GetEnabledConditionForAttribute(drawConditionAttributes[0].GetType());

@@ -55,7 +55,7 @@ namespace NaughtyAttributes.Editor
 
         public static bool DrawLayoutField(object value, string label)
         {
-            GUI.enabled = false;
+            //GUI.enabled = false;
 
             bool isDrawn = true;
             Type valueType = value.GetType();
@@ -117,7 +117,7 @@ namespace NaughtyAttributes.Editor
                 isDrawn = false;
             }
 
-            GUI.enabled = true;
+            //GUI.enabled = true;
 
             return isDrawn;
         }
