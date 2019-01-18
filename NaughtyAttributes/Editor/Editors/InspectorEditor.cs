@@ -246,6 +246,7 @@ namespace NaughtyAttributes.Editor
             {
                 EditorDrawUtility.DrawPropertyField(this.serializedPropertiesByFieldName[field.Name]);
             }
+
             GUI.enabled = true;
 
             if (EditorGUI.EndChangeCheck())
