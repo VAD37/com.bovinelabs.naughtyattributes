@@ -31,6 +31,9 @@ namespace NaughtyAttributes.Editor
             // Cache serialized fields
             this.fields = ReflectionUtility.GetAllFields(this.target, f => this.serializedObject.FindProperty(f.Name) != null);
 
+            // Cache serialized properties by field name
+            this.serializedPropertiesByFieldName = new Dictionary<string, SerializedProperty>();
+
             // If there are no NaughtyAttributes use default inspector
             if (this.fields.All(f => f.GetCustomAttributes(typeof(NaughtyAttribute), true).Length == 0))
             {
@@ -62,8 +65,6 @@ namespace NaughtyAttributes.Editor
                     }
                 }
 
-                // Cache serialized properties by field name
-                this.serializedPropertiesByFieldName = new Dictionary<string, SerializedProperty>();
                 foreach (var field in this.fields)
                 {
                     this.serializedPropertiesByFieldName[field.Name] = this.serializedObject.FindProperty(field.Name);
