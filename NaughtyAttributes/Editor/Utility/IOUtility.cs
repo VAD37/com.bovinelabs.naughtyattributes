@@ -12,25 +12,21 @@ namespace NaughtyAttributes.Editor
 
         public static void WriteToFile(string filePath, string content)
         {
-            using (FileStream fileStream = new FileStream(filePath, FileMode.Create, FileAccess.Write))
-            {
-                using (StreamWriter streamWriter = new StreamWriter(fileStream, System.Text.Encoding.ASCII))
-                {
-                    streamWriter.WriteLine(content);
-                }
-            }
+            var fileStream = new FileStream(filePath, FileMode.Create, FileAccess.Write);
+            var streamWriter = new StreamWriter(fileStream, System.Text.Encoding.ASCII);
+            streamWriter.WriteLine(content);
+            fileStream.Dispose();
+            streamWriter.Dispose();
         }
 
         public static string ReadFromFile(string filePath)
         {
-            using (FileStream fileStream = new FileStream(filePath, FileMode.Open, FileAccess.Read))
-            {
-                using (StreamReader streamReader = new StreamReader(fileStream, System.Text.Encoding.ASCII))
-                {
-                    string content = streamReader.ReadToEnd();
-                    return content;
-                }
-            }
+            var fileStream = new FileStream(filePath, FileMode.Open, FileAccess.Read);
+            var streamReader = new StreamReader(fileStream, System.Text.Encoding.ASCII);
+            var content = streamReader.ReadToEnd();
+            fileStream.Dispose();
+            streamReader.Dispose();
+            return content;
         }
 
         public static bool FileExists(string filePath)
