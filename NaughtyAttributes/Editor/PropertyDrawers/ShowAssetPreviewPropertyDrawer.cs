@@ -24,12 +24,6 @@ namespace BovineLabs.NaughtyAttributes.Editor
                         int height = Mathf.Clamp(attribute.Height, 0, previewTexture.height);
                         GUILayout.Label(previewTexture, GUILayout.MaxWidth(width), GUILayout.MaxHeight(height));
                     }
-                    /*else
-                    {
-                        //string warning = wrapper.Name + " doesn't have an asset preview";
-                        //EditorDrawUtility.DrawHelpBox(warning, MessageType.Warning, true, wrapper.Target);
-                        GUILayout.Label("", GUILayout.MaxWidth(attribute.Width), GUILayout.MaxHeight(attribute.Height));
-                    }*/
                 }
             }
             else

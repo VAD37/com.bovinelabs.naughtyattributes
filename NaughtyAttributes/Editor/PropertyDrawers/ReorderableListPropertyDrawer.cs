@@ -1,6 +1,5 @@
 namespace BovineLabs.NaughtyAttributes.Editor
 {
-    using System;
     using System.Collections.Generic;
     using BovineLabs.NaughtyAttributes;
     using UnityEditor;
@@ -16,40 +15,55 @@ namespace BovineLabs.NaughtyAttributes.Editor
         {
             EditorDrawUtility.DrawHeader(wrapper);
 
-            throw new NotImplementedException();
-
-            /*if (property.isArray)
+            if (wrapper is SerializedFieldAttributeWrapper serializedWrapper)
             {
-                if (!this.reorderableListsByPropertyName.ContainsKey(property.name))
+                var property = serializedWrapper.SerializedProperty;
+
+                if (property.isArray)
                 {
-                    ReorderableList reorderableList = new ReorderableList(property.serializedObject, property, true, true, true, true)
+                    if (!this.reorderableListsByPropertyName.ContainsKey(wrapper.Name))
                     {
-                        drawHeaderCallback = (Rect rect) =>
-                        {
-                            EditorGUI.LabelField(rect, string.Format("{0}: {1}", property.displayName, property.arraySize), EditorStyles.label);
-                        },
+                        ReorderableList reorderableList = new ReorderableList(property.serializedObject, property, true, true, true, true)
+                            {
+                                drawHeaderCallback = (rect) =>
+                                {
+                                    EditorGUI.LabelField(rect,
+                                        string.Format("{0}: {1}", wrapper.DisplayName, property.arraySize),
+                                        EditorStyles.label);
+                                },
 
-                        drawElementCallback = (Rect rect, int index, bool isActive, bool isFocused) =>
-                        {
-                            var element = property.GetArrayElementAtIndex(index);
-                            rect.y += 2f;
+                                drawElementCallback = (rect, index, isActive, isFocused) =>
+                                {
+                                    var element = property.GetArrayElementAtIndex(index);
+                                    rect.y += 2f;
 
-                            EditorGUI.PropertyField(new Rect(rect.x, rect.y, rect.width, EditorGUIUtility.singleLineHeight), element);
-                        }
-                    };
+                                    EditorGUI.PropertyField(
+                                        new Rect(rect.x, rect.y, rect.width, EditorGUIUtility.singleLineHeight),
+                                        element);
+                                }
+                            };
 
-                    this.reorderableListsByPropertyName[property.name] = reorderableList;
+                        this.reorderableListsByPropertyName[property.name] = reorderableList;
+                    }
+
+                    this.reorderableListsByPropertyName[property.name].DoLayoutList();
                 }
+                else
+                {
+                    string warning = typeof(ReorderableListAttribute).Name + " can be used only on arrays or lists";
+                    EditorDrawUtility.DrawHelpBox(warning, MessageType.Warning,  true, wrapper.Target);
 
-                this.reorderableListsByPropertyName[property.name].DoLayoutList();
+                    wrapper.DrawPropertyField();
+                }
             }
             else
             {
-                string warning = typeof(ReorderableListAttribute).Name + " can be used only on arrays or lists";
-                EditorDrawUtility.DrawHelpBox(warning, MessageType.Warning, logToConsole: true, context: PropertyUtility.GetTargetObject(property));
+                string warning = typeof(ReorderableListAttribute).Name + " can be used only on serialized fields.";
+                EditorDrawUtility.DrawHelpBox(warning, MessageType.Warning,  true, wrapper.Target);
 
-                EditorDrawUtility.DrawPropertyField(property);
-            }*/
+                wrapper.DrawPropertyField();
+            }
+
         }
 
         public override void ClearCache()
