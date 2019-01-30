@@ -11,50 +11,54 @@ namespace BovineLabs.NaughtyAttributes.Editor
 
     public abstract class FieldAttributeWrapper : MemberInfoWrapper
     {
-        private readonly FieldInfo fieldInfo;
+        protected FieldInfo FieldInfo { get; }
 
         public FieldAttributeWrapper(Object target, FieldInfo fieldInfo)
             : base(target, fieldInfo)
         {
-            this.fieldInfo = fieldInfo;
+            this.FieldInfo = fieldInfo;
         }
 
         /// <inheritdoc />
-        public override Type Type => this.fieldInfo.FieldType;
+        public override Type Type => this.FieldInfo.FieldType;
 
         /// <inheritdoc />
         public override object GetValue()
         {
-            return this.fieldInfo.GetValue(this.Target);
+            return this.FieldInfo.GetValue(this.Target);
         }
 
         /// <inheritdoc />
         public override void SetValue(object value)
         {
-            this.fieldInfo.SetValue(this.Target, value);
+            this.FieldInfo.SetValue(this.Target, value);
         }
     }
 
     public class SerializedFieldAttributeWrapper : FieldAttributeWrapper
     {
-        private SerializedProperty serializedProperty;
-
-        public SerializedFieldAttributeWrapper(SerializedProperty serializedProperty, Object target, FieldInfo fieldInfo)
+        public SerializedFieldAttributeWrapper(SerializedProperty serializedProperty, Object target,
+            FieldInfo fieldInfo)
             : base(target, fieldInfo)
         {
-            this.serializedProperty = serializedProperty;
+            this.SerializedProperty = serializedProperty;
         }
+
+        public SerializedProperty SerializedProperty { get; }
+
+        /// <inheritdoc />
+        public override string DisplayName => this.SerializedProperty.displayName;
 
         /// <inheritdoc />
         public override void ApplyModifications()
         {
-            serializedProperty.serializedObject.ApplyModifiedProperties(); 
+            this.SerializedProperty.serializedObject.ApplyModifiedProperties();
         }
 
         /// <inheritdoc />
-        protected override void DrawPropertyField()
+        public override void DrawPropertyField()
         {
-            EditorDrawUtility.DrawPropertyField(this.serializedProperty);
+            EditorDrawUtility.DrawPropertyField(this.SerializedProperty);
         }
     }
 
@@ -71,7 +75,7 @@ namespace BovineLabs.NaughtyAttributes.Editor
         }
 
         /// <inheritdoc />
-        protected override void DrawPropertyField()
+        public override void DrawPropertyField()
         {
             throw new NotImplementedException();
         }

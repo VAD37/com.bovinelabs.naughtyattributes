@@ -70,43 +70,45 @@ namespace BovineLabs.NaughtyAttributes.Editor
                 }
             }
 
+            this.serializedObject.ApplyModifiedProperties();
+
             // Draw fields
-           /* HashSet<string> drawnGroups = new HashSet<string>();
-            foreach (var field in this.fields)
-            {
-                if (this.groupedFields.Contains(field))
-                {
-                    // Draw grouped fields
-                    var attribute = (GroupAttribute)field.GetCustomAttributes(typeof(GroupAttribute), true)[0];
+            /* HashSet<string> drawnGroups = new HashSet<string>();
+             foreach (var field in this.fields)
+             {
+                 if (this.groupedFields.Contains(field))
+                 {
+                     // Draw grouped fields
+                     var attribute = (GroupAttribute)field.GetCustomAttributes(typeof(GroupAttribute), true)[0];
 
-                    string groupName = attribute.Name;
-                    if (!drawnGroups.Contains(groupName))
-                    {
-                        drawnGroups.Add(groupName);
+                     string groupName = attribute.Name;
+                     if (!drawnGroups.Contains(groupName))
+                     {
+                         drawnGroups.Add(groupName);
 
-                        PropertyGrouper grouper = this.GetPropertyGrouperForField(field);
-                        if (grouper != null)
-                        {
-                            grouper.BeginGroup(attribute);
+                         PropertyGrouper grouper = this.GetPropertyGrouperForField(field);
+                         if (grouper != null)
+                         {
+                             grouper.BeginGroup(attribute);
 
-                            this.ValidateAndDrawFields(this.groupedFieldsByGroupName[groupName]);
+                             this.ValidateAndDrawFields(this.groupedFieldsByGroupName[groupName]);
 
-                            grouper.EndGroup();
-                        }
-                        else
-                        {
-                            this.ValidateAndDrawFields(this.groupedFieldsByGroupName[groupName]);
-                        }
-                    }
-                }
-                else
-                {
-                    // Draw non-grouped field
-                    this.ValidateAndDrawField(field);
-                }
-            }
+                             grouper.EndGroup();
+                         }
+                         else
+                         {
+                             this.ValidateAndDrawFields(this.groupedFieldsByGroupName[groupName]);
+                         }
+                     }
+                 }
+                 else
+                 {
+                     // Draw non-grouped field
+                     this.ValidateAndDrawField(field);
+                 }
+             }
 
-            this.serializedObject.ApplyModifiedProperties();*/
+             this.serializedObject.ApplyModifiedProperties();*/
 
             /*if (this.useDefaultInspector)
             {

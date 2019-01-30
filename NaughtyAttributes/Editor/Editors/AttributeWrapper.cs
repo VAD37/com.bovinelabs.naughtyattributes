@@ -32,6 +32,8 @@ namespace BovineLabs.NaughtyAttributes.Editor
 
         public abstract string Name { get; }
 
+        public abstract string DisplayName { get; }
+
         public void ValidateAndDrawField()
         {
             this.ValidateField();
@@ -109,38 +111,39 @@ namespace BovineLabs.NaughtyAttributes.Editor
             // Draw the field
             EditorGUI.BeginChangeCheck();
             GUI.enabled = isPropertyEnabled;
-            /*PropertyDrawer drawer = this.GetPropertyDrawerForField(field);
-            if (drawer != null)
-            {
-                drawer.DrawProperty(this.serializedPropertiesByFieldName[field.Name]);
-            }
-            else
-            {
-                EditorDrawUtility.DrawPropertyField(this.serializedPropertiesByFieldName[field.Name]);
-            }*/
 
-            this.DrawPropertyField();
-            //EditorDrawUtility.DrawPropertyField(this.serializedPropertiesByFieldName[field.Name]);
+            bool customDrawer = false;
+            var drawerAttributes = this.GetCustomAttributes<DrawerAttribute>().ToArray();
+            if (drawerAttributes.Length > 0)
+            {
+                var attribute = drawerAttributes[0];
+                var drawer = PropertyDrawerDatabase.GetDrawerForAttribute(attribute.GetType());
+                if (drawer != null)
+                {
+                    drawer.DrawProperty(this, attribute);
+                    customDrawer = true;
+                }
+            }
+            
+            if (!customDrawer)
+            {
+                this.DrawPropertyField();
+            }
 
             GUI.enabled = true;
 
             if (EditorGUI.EndChangeCheck())
             {
-                /*OnValueChangedAttribute[] onValueChangedAttributes =
-                    (OnValueChangedAttribute[])field.GetCustomAttributes(typeof(OnValueChangedAttribute), true);
+                var onValueChangedAttributes = this.GetCustomAttributes<OnValueChangedAttribute>();
                 foreach (var onValueChangedAttribute in onValueChangedAttributes)
                 {
-                    PropertyMeta meta = PropertyMetaDatabase.GetMetaForAttribute(onValueChangedAttribute.GetType());
-                    if (meta != null)
-                    {
-                        meta.ApplyPropertyMeta(this.serializedPropertiesByFieldName[field.Name],
-                            onValueChangedAttribute);
-                    }
-                }*/
+                    var meta = PropertyMetaDatabase.GetMetaForAttribute(onValueChangedAttribute.GetType());
+                    meta?.Run(this, onValueChangedAttribute);
+                }
             }
         }
 
-        protected abstract void DrawPropertyField();
+        public abstract void DrawPropertyField();
 
     }
 
@@ -156,7 +159,8 @@ namespace BovineLabs.NaughtyAttributes.Editor
 
         /// <inheritdoc />
         public sealed override string Name => this.memberInfo.Name;
-
+        public override string DisplayName => this.Name;
+        
         /// <inheritdoc />
         public sealed override IEnumerable<T> GetCustomAttributes<T>()
         {

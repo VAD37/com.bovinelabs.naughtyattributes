@@ -1,37 +1,35 @@
 namespace BovineLabs.NaughtyAttributes.Editor
 {
-    using System;
     using BovineLabs.NaughtyAttributes;
     using UnityEditor;
     using UnityEngine;
 
     [PropertyDrawer(typeof(ProgressBarAttribute))]
-    public class ProgressBarPropertyDrawer : PropertyDrawer
+    public class ProgressBarPropertyDrawer : PropertyDrawer<ProgressBarAttribute>
     {
-        public override void DrawProperty(SerializedProperty property)
+        protected override void DrawProperty(AttributeWrapper wrapper, ProgressBarAttribute attribute)
         {
-            EditorDrawUtility.DrawHeader(property);
+            EditorDrawUtility.DrawHeader(wrapper);
 
-            if (property.propertyType != SerializedPropertyType.Float && property.propertyType != SerializedPropertyType.Integer)
+            if (wrapper.Type != typeof(float) && wrapper.Type == typeof(int))
             {
-                EditorGUILayout.HelpBox("Field " + property.name + " is not a number", MessageType.Warning);
+                EditorGUILayout.HelpBox("Field " + wrapper.Name + " is not a number", MessageType.Warning);
                 return;
             }
 
-            var value = property.propertyType == SerializedPropertyType.Integer ? property.intValue : property.floatValue;
-            var valueFormatted = property.propertyType == SerializedPropertyType.Integer ? value.ToString() : String.Format("{0:0.00}", value);
+            var value = (float)wrapper.GetValue();// property.propertyType == SerializedPropertyType.Integer ? property.intValue : property.floatValue;
+            var valueFormatted = wrapper.Type == typeof(int) ? value.ToString() : $"{value:0.00}";
 
-            ProgressBarAttribute progressBarAttribute = PropertyUtility.GetAttribute<ProgressBarAttribute>(property);
             var position = EditorGUILayout.GetControlRect();
-            var maxValue = progressBarAttribute.MaxValue;
+            var maxValue = attribute.MaxValue;
             float lineHight = EditorGUIUtility.singleLineHeight;
             float padding = EditorGUIUtility.standardVerticalSpacing;
             var barPosition = new Rect(position.position.x, position.position.y, position.size.x, lineHight);
 
             var fillPercentage = value / maxValue;
-            var barLabel = (!string.IsNullOrEmpty(progressBarAttribute.Name) ? "[" + progressBarAttribute.Name + "] " : "") + valueFormatted + "/" + maxValue;
+            var barLabel = (!string.IsNullOrEmpty(attribute.Name) ? "[" + attribute.Name + "] " : "") + valueFormatted + "/" + maxValue;
 
-            var color = this.GetColor(progressBarAttribute.Color);
+            var color = this.GetColor(attribute.Color);
             var color2 = Color.white;
             this.DrawBar(barPosition, Mathf.Clamp01(fillPercentage), barLabel, color, color2);
         }

@@ -5,31 +5,30 @@ namespace BovineLabs.NaughtyAttributes.Editor
     using UnityEngine;
 
     [PropertyDrawer(typeof(ResizableTextAreaAttribute))]
-    public class ResizableTextAreaPropertyDrawer : PropertyDrawer
+    public class ResizableTextAreaPropertyDrawer : PropertyDrawer<ResizableTextAreaAttribute>
     {
-        public override void DrawProperty(SerializedProperty property)
+        protected override void DrawProperty(AttributeWrapper wrapper, ResizableTextAreaAttribute attribute)
         {
-            EditorDrawUtility.DrawHeader(property);
+            EditorDrawUtility.DrawHeader(wrapper);
 
-            if (property.propertyType == SerializedPropertyType.String)
+            if (wrapper.Type == typeof(string))
             {
-                EditorGUILayout.LabelField(property.displayName);
+                EditorGUILayout.LabelField(wrapper.DisplayName);
 
                 EditorGUI.BeginChangeCheck();
 
-                string textAreaValue = EditorGUILayout.TextArea(property.stringValue, GUILayout.MinHeight(EditorGUIUtility.singleLineHeight * 3f));
+                string textAreaValue = EditorGUILayout.TextArea((string)wrapper.GetValue(), GUILayout.MinHeight(EditorGUIUtility.singleLineHeight * 3f));
 
                 if (EditorGUI.EndChangeCheck())
                 {
-                    property.stringValue = textAreaValue;
+                    wrapper.SetValue(textAreaValue);
                 }
             }
             else
             {
-                string warning = PropertyUtility.GetAttribute<ResizableTextAreaAttribute>(property).GetType().Name + " can only be used on string fields";
-                EditorDrawUtility.DrawHelpBox(warning, MessageType.Warning, logToConsole: true, context: PropertyUtility.GetTargetObject(property));
-
-                EditorDrawUtility.DrawPropertyField(property);
+                string warning = attribute.GetType().Name + " can only be used on string fields";
+                EditorDrawUtility.DrawHelpBox(warning, MessageType.Warning, true, wrapper.Target);
+                wrapper.DrawPropertyField();
             }
         }
     }

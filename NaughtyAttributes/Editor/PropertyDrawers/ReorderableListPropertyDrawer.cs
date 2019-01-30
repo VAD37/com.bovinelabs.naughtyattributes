@@ -1,5 +1,6 @@
 namespace BovineLabs.NaughtyAttributes.Editor
 {
+    using System;
     using System.Collections.Generic;
     using BovineLabs.NaughtyAttributes;
     using UnityEditor;
@@ -7,15 +8,17 @@ namespace BovineLabs.NaughtyAttributes.Editor
     using UnityEngine;
 
     [PropertyDrawer(typeof(ReorderableListAttribute))]
-    public class ReorderableListPropertyDrawer : PropertyDrawer
+    public class ReorderableListPropertyDrawer : PropertyDrawer<ReorderableListAttribute>
     {
         private Dictionary<string, ReorderableList> reorderableListsByPropertyName = new Dictionary<string, ReorderableList>();
 
-        public override void DrawProperty(SerializedProperty property)
+        protected override void DrawProperty(AttributeWrapper wrapper, ReorderableListAttribute attribute)
         {
-            EditorDrawUtility.DrawHeader(property);
+            EditorDrawUtility.DrawHeader(wrapper);
 
-            if (property.isArray)
+            throw new NotImplementedException();
+
+            /*if (property.isArray)
             {
                 if (!this.reorderableListsByPropertyName.ContainsKey(property.name))
                 {
@@ -46,7 +49,7 @@ namespace BovineLabs.NaughtyAttributes.Editor
                 EditorDrawUtility.DrawHelpBox(warning, MessageType.Warning, logToConsole: true, context: PropertyUtility.GetTargetObject(property));
 
                 EditorDrawUtility.DrawPropertyField(property);
-            }
+            }*/
         }
 
         public override void ClearCache()

@@ -5,15 +5,13 @@ namespace BovineLabs.NaughtyAttributes.Editor
     using UnityEngine;
 
     [PropertyDrawer(typeof(MinMaxSliderAttribute))]
-    public class MinMaxSliderPropertyDrawer : PropertyDrawer
+    public class MinMaxSliderPropertyDrawer : PropertyDrawer<MinMaxSliderAttribute>
     {
-        public override void DrawProperty(SerializedProperty property)
+        protected override void DrawProperty(AttributeWrapper wrapper, MinMaxSliderAttribute attribute)
         {
-            EditorDrawUtility.DrawHeader(property);
+            EditorDrawUtility.DrawHeader(wrapper);
 
-            MinMaxSliderAttribute minMaxSliderAttribute = PropertyUtility.GetAttribute<MinMaxSliderAttribute>(property);
-
-            if (property.propertyType == SerializedPropertyType.Vector2)
+            if (wrapper.Type == typeof(Vector2))
             {
                 Rect controlRect = EditorGUILayout.GetControlRect();
                 float labelWidth = EditorGUIUtility.labelWidth;
@@ -46,31 +44,30 @@ namespace BovineLabs.NaughtyAttributes.Editor
                     controlRect.height);
 
                 // Draw the label
-                EditorGUI.LabelField(labelRect, property.displayName);
+                EditorGUI.LabelField(labelRect, wrapper.DisplayName);
 
                 // Draw the slider
                 EditorGUI.BeginChangeCheck();
 
-                Vector2 sliderValue = property.vector2Value;
-                EditorGUI.MinMaxSlider(sliderRect, ref sliderValue.x, ref sliderValue.y, minMaxSliderAttribute.MinValue, minMaxSliderAttribute.MaxValue);
+                Vector2 sliderValue = (Vector2)wrapper.GetValue();
+                EditorGUI.MinMaxSlider(sliderRect, ref sliderValue.x, ref sliderValue.y, attribute.MinValue, attribute.MaxValue);
 
                 sliderValue.x = EditorGUI.FloatField(minFloatFieldRect, sliderValue.x);
-                sliderValue.x = Mathf.Clamp(sliderValue.x, minMaxSliderAttribute.MinValue, Mathf.Min(minMaxSliderAttribute.MaxValue, sliderValue.y));
+                sliderValue.x = Mathf.Clamp(sliderValue.x, attribute.MinValue, Mathf.Min(attribute.MaxValue, sliderValue.y));
 
                 sliderValue.y = EditorGUI.FloatField(maxFloatFieldRect, sliderValue.y);
-                sliderValue.y = Mathf.Clamp(sliderValue.y, Mathf.Max(minMaxSliderAttribute.MinValue, sliderValue.x), minMaxSliderAttribute.MaxValue);
+                sliderValue.y = Mathf.Clamp(sliderValue.y, Mathf.Max(attribute.MinValue, sliderValue.x), attribute.MaxValue);
 
                 if (EditorGUI.EndChangeCheck())
                 {
-                    property.vector2Value = sliderValue;
+                    wrapper.SetValue(sliderValue);
                 }
             }
             else
             {
-                string warning = minMaxSliderAttribute.GetType().Name + " can be used only on Vector2 fields";
-                EditorDrawUtility.DrawHelpBox(warning, MessageType.Warning, logToConsole: true, context: PropertyUtility.GetTargetObject(property));
-
-                EditorDrawUtility.DrawPropertyField(property);
+                string warning = attribute.GetType().Name + " can be used only on Vector2 fields";
+                EditorDrawUtility.DrawHelpBox(warning, MessageType.Warning, true, wrapper.Target);
+                wrapper.DrawPropertyField();
             }
         }
     }

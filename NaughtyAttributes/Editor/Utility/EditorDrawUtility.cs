@@ -1,6 +1,7 @@
 namespace BovineLabs.NaughtyAttributes.Editor
 {
     using System;
+    using System.Linq;
     using UnityEditor;
     using UnityEngine;
     using Object = UnityEngine.Object;
@@ -13,9 +14,9 @@ namespace BovineLabs.NaughtyAttributes.Editor
             EditorGUILayout.LabelField(header, EditorStyles.boldLabel);
         }
 
-        public static bool DrawHeader(SerializedProperty property)
+        public static bool DrawHeader(AttributeWrapper wrapper)
         {
-            HeaderAttribute headerAttr = PropertyUtility.GetAttribute<HeaderAttribute>(property);
+            HeaderAttribute headerAttr = wrapper.GetCustomAttributes<HeaderAttribute>().FirstOrDefault();
             if (headerAttr != null)
             {
                 DrawHeader(headerAttr.header);

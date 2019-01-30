@@ -5,36 +5,37 @@ namespace BovineLabs.NaughtyAttributes.Editor
     using UnityEngine;
 
     [PropertyDrawer(typeof(ShowAssetPreviewAttribute))]
-    public class ShowAssetPreviewPropertyDrawer : PropertyDrawer
+    public class ShowAssetPreviewPropertyDrawer : PropertyDrawer<ShowAssetPreviewAttribute>
     {
-        public override void DrawProperty(SerializedProperty property)
+        protected override void DrawProperty(AttributeWrapper wrapper, ShowAssetPreviewAttribute attribute)
         {
-            EditorDrawUtility.DrawPropertyField(property);
+            wrapper.DrawPropertyField();
 
-            if (property.propertyType == SerializedPropertyType.ObjectReference)
+            if (typeof(Object).IsAssignableFrom(wrapper.Type))
             {
-                if (property.objectReferenceValue != null)
+                var value = (Object)wrapper.GetValue();
+
+                if (value != null)
                 {
-                    Texture2D previewTexture = AssetPreview.GetAssetPreview(property.objectReferenceValue);
+                    Texture2D previewTexture = AssetPreview.GetAssetPreview(value);
                     if (previewTexture != null)
                     {
-                        ShowAssetPreviewAttribute showAssetPreviewAttribute = PropertyUtility.GetAttribute<ShowAssetPreviewAttribute>(property);
-                        int width = Mathf.Clamp(showAssetPreviewAttribute.Width, 0, previewTexture.width);
-                        int height = Mathf.Clamp(showAssetPreviewAttribute.Height, 0, previewTexture.height);
-
+                        int width = Mathf.Clamp(attribute.Width, 0, previewTexture.width);
+                        int height = Mathf.Clamp(attribute.Height, 0, previewTexture.height);
                         GUILayout.Label(previewTexture, GUILayout.MaxWidth(width), GUILayout.MaxHeight(height));
                     }
-                    else
+                    /*else
                     {
-                        string warning = property.name + " doesn't have an asset preview";
-                        EditorDrawUtility.DrawHelpBox(warning, MessageType.Warning, logToConsole: true, context: PropertyUtility.GetTargetObject(property));
-                    }
+                        //string warning = wrapper.Name + " doesn't have an asset preview";
+                        //EditorDrawUtility.DrawHelpBox(warning, MessageType.Warning, true, wrapper.Target);
+                        GUILayout.Label("", GUILayout.MaxWidth(attribute.Width), GUILayout.MaxHeight(attribute.Height));
+                    }*/
                 }
             }
             else
             {
-                string warning = property.name + " doesn't have an asset preview";
-                EditorDrawUtility.DrawHelpBox(warning, MessageType.Warning, logToConsole: true, context: PropertyUtility.GetTargetObject(property));
+                string warning = wrapper.Name + " doesn't have an asset preview";
+                EditorDrawUtility.DrawHelpBox(warning, MessageType.Warning, true, wrapper.Target);
             }
         }
     }

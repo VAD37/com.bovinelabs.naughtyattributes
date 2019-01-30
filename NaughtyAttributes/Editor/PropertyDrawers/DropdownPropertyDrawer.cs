@@ -9,28 +9,27 @@ namespace BovineLabs.NaughtyAttributes.Editor
     using UnityEngine;
 
     [PropertyDrawer(typeof(DropdownAttribute))]
-    public class DropdownPropertyDrawer : PropertyDrawer
+    public class DropdownPropertyDrawer : PropertyDrawer<DropdownAttribute>
     {
-        public override void DrawProperty(SerializedProperty property)
+        /// <inheritdoc />
+        protected override void DrawProperty(AttributeWrapper wrapper, DropdownAttribute attribute)
         {
-            EditorDrawUtility.DrawHeader(property);
+            EditorDrawUtility.DrawHeader(wrapper);
 
-            DropdownAttribute dropdownAttribute = PropertyUtility.GetAttribute<DropdownAttribute>(property);
-            UnityEngine.Object target = PropertyUtility.GetTargetObject(property);
+            var target = wrapper.Target;
 
-            FieldInfo fieldInfo = ReflectionUtility.GetField(target, property.name);
-            FieldInfo valuesFieldInfo = ReflectionUtility.GetField(target, dropdownAttribute.ValuesFieldName);
+            //FieldInfo fieldInfo = ReflectionUtility.GetField(target, attribute.name);
+            FieldInfo valuesFieldInfo = ReflectionUtility.GetField(target, attribute.ValuesFieldName);
 
             if (valuesFieldInfo == null)
             {
-                this.DrawWarningBox(string.Format("{0} cannot find a values field with name \"{1}\"", dropdownAttribute.GetType().Name, dropdownAttribute.ValuesFieldName));
-                EditorGUILayout.PropertyField(property, true);
+                this.DrawWarningBox($"{attribute.GetType().Name} cannot find a values field with name \"{attribute.ValuesFieldName}\"");
+                wrapper.DrawPropertyField();
             }
-            else if (valuesFieldInfo.GetValue(target) is IList &&
-                     fieldInfo.FieldType == this.GetElementType(valuesFieldInfo))
+            else if (valuesFieldInfo.GetValue(target) is IList && wrapper.Type == this.GetElementType(valuesFieldInfo))
             {
                 // Selected value
-                object selectedValue = fieldInfo.GetValue(target);
+                object selectedValue = wrapper.GetValue();
 
                 // Values and display options
                 IList valuesList = (IList)valuesFieldInfo.GetValue(target);
@@ -52,12 +51,12 @@ namespace BovineLabs.NaughtyAttributes.Editor
                 }
 
                 // Draw the dropdown
-                this.DrawDropdown(target, fieldInfo, property.displayName, selectedValueIndex, values, displayOptions);
+                this.DrawDropdown(target, wrapper, selectedValueIndex, values, displayOptions);
             }
             else if (valuesFieldInfo.GetValue(target) is IDropdownList)
             {
                 // Current value
-                object selectedValue = fieldInfo.GetValue(target);
+                object selectedValue = wrapper.GetValue();
 
                 // Current value index, values and display options
                 IDropdownList dropdown = (IDropdownList)valuesFieldInfo.GetValue(target);
@@ -82,18 +81,20 @@ namespace BovineLabs.NaughtyAttributes.Editor
                     displayOptions.Add(current.Key);
                 }
 
+                dropdownEnumerator.Dispose();
+
                 if (selectedValueIndex < 0)
                 {
                     selectedValueIndex = 0;
                 }
 
                 // Draw the dropdown
-                this.DrawDropdown(target, fieldInfo, property.displayName, selectedValueIndex, values.ToArray(), displayOptions.ToArray());
+                this.DrawDropdown(target, wrapper, selectedValueIndex, values.ToArray(), displayOptions.ToArray());
             }
             else
             {
                 this.DrawWarningBox(typeof(DropdownAttribute).Name + " works only when the type of the field is equal to the element type of the array");
-                EditorGUILayout.PropertyField(property, true);
+                wrapper.DrawPropertyField();
             }
         }
 
@@ -103,22 +104,20 @@ namespace BovineLabs.NaughtyAttributes.Editor
             {
                 return listFieldInfo.FieldType.GetGenericArguments()[0];
             }
-            else
-            {
-                return listFieldInfo.FieldType.GetElementType();
-            }
+
+            return listFieldInfo.FieldType.GetElementType();
         }
 
-        private void DrawDropdown(UnityEngine.Object target, FieldInfo fieldInfo, string label, int selectedValueIndex, object[] values, string[] displayOptions)
+        private void DrawDropdown(UnityEngine.Object target, AttributeWrapper wrapper, int selectedValueIndex, object[] values, string[] displayOptions)
         {
             EditorGUI.BeginChangeCheck();
 
-            int newIndex = EditorGUILayout.Popup(label, selectedValueIndex, displayOptions);
+            int newIndex = EditorGUILayout.Popup(wrapper.DisplayName, selectedValueIndex, displayOptions);
 
             if (EditorGUI.EndChangeCheck())
             {
                 Undo.RecordObject(target, "Dropdown");
-                fieldInfo.SetValue(target, values[newIndex]);
+                wrapper.SetValue(values[newIndex]);
             }
         }
 

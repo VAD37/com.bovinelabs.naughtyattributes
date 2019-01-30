@@ -4,28 +4,28 @@ namespace BovineLabs.NaughtyAttributes.Editor
     using UnityEditor;
 
     [PropertyDrawer(typeof(SliderAttribute))]
-    public class SliderPropertyDrawer : PropertyDrawer
+    public class SliderPropertyDrawer : PropertyDrawer<SliderAttribute>
     {
-        public override void DrawProperty(SerializedProperty property)
+        /// <inheritdoc />
+        protected override void DrawProperty(AttributeWrapper wrapper, SliderAttribute attribute)
         {
-            EditorDrawUtility.DrawHeader(property);
+            EditorDrawUtility.DrawHeader(wrapper);
 
-            SliderAttribute sliderAttribute = PropertyUtility.GetAttribute<SliderAttribute>(property);
-
-            if (property.propertyType == SerializedPropertyType.Integer)
+            if (wrapper.Type == typeof(int))
             {
-                EditorGUILayout.IntSlider(property, (int)sliderAttribute.MinValue, (int)sliderAttribute.MaxValue);
+                wrapper.SetValue(EditorGUILayout.IntSlider((int)wrapper.GetValue(), (int)attribute.MinValue,
+                    (int)attribute.MaxValue));
             }
-            else if (property.propertyType == SerializedPropertyType.Float)
+            else if (wrapper.Type == typeof(float))
             {
-                EditorGUILayout.Slider(property, sliderAttribute.MinValue, sliderAttribute.MaxValue);
+                wrapper.SetValue(EditorGUILayout.Slider((float)wrapper.GetValue(), attribute.MinValue,
+                    attribute.MaxValue));
             }
             else
             {
-                string warning = sliderAttribute.GetType().Name + " can be used only on int or float fields";
-                EditorDrawUtility.DrawHelpBox(warning, MessageType.Warning, logToConsole: true, context: PropertyUtility.GetTargetObject(property));
-
-                EditorDrawUtility.DrawPropertyField(property);
+                string warning = attribute.GetType().Name + " can be used only on int or float fields";
+                EditorDrawUtility.DrawHelpBox(warning, MessageType.Warning, true, wrapper.Target);
+                wrapper.DrawPropertyField();
             }
         }
     }
