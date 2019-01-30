@@ -1,4 +1,4 @@
-// This class is auto generated
+/*// This class is auto generated
 
 namespace BovineLabs.NaughtyAttributes.Editor
 {
@@ -32,3 +32,4 @@ namespace BovineLabs.NaughtyAttributes.Editor
     }
 }
 
+*/

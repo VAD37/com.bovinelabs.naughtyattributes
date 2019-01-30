@@ -77,7 +77,8 @@ namespace BovineLabs.NaughtyAttributes.Editor
         /// <inheritdoc />
         public override void DrawPropertyField()
         {
-            throw new NotImplementedException();
+            var result = EditorDrawUtility.DrawPropertyField(this.GetValue(), this.Type, this.DisplayName);
+            this.SetValue(result);
         }
     }
 }

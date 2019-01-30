@@ -1,9 +1,18 @@
-﻿namespace BovineLabs.NaughtyAttributes.Editor
-{
-    using System.Reflection;
+﻿using UnityEngine.Assertions;
 
-    public abstract class NativePropertyDrawer
+namespace BovineLabs.NaughtyAttributes.Editor
+{
+    public abstract class NativePropertyDrawer<T> : AttributeRunner
+        where T : NaughtyAttribute
     {
-        public abstract void DrawNativeProperty(UnityEngine.Object target, PropertyInfo property);
+        /// <inheritdoc />
+        public override void Run(AttributeWrapper wrapper, NaughtyAttribute attribute)
+        {
+            Assert.IsTrue(attribute is T);
+
+            this.DrawNativeProperty(wrapper, (T)attribute);
+        }
+
+        protected abstract void DrawNativeProperty(AttributeWrapper wrapper, T attribute);
     }
 }

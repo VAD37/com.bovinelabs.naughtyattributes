@@ -53,73 +53,64 @@ namespace BovineLabs.NaughtyAttributes.Editor
             EditorGUILayout.PropertyField(property, includeChildren);
         }
 
-        public static bool DrawLayoutField(object value, string label)
+        public static object DrawPropertyField(object value, Type type, string label)
         {
-            //GUI.enabled = false;
-
-            bool isDrawn = true;
-            Type valueType = value.GetType();
-
-            if (valueType == typeof(bool))
+            if (type == typeof(bool))
             {
-                EditorGUILayout.Toggle(label, (bool)value);
+                return EditorGUILayout.Toggle(label, (bool)value);
             }
-            else if (valueType == typeof(int))
+            if (type == typeof(int))
             {
-                EditorGUILayout.IntField(label, (int)value);
+                return EditorGUILayout.IntField(label, (int)value);
             }
-            else if (valueType == typeof(long))
+            if (type == typeof(long))
             {
-                EditorGUILayout.LongField(label, (long)value);
+                return EditorGUILayout.LongField(label, (long)value);
             }
-            else if (valueType == typeof(float))
+            if (type == typeof(float))
             {
-                EditorGUILayout.FloatField(label, (float)value);
+                return EditorGUILayout.FloatField(label, (float)value);
             }
-            else if (valueType == typeof(double))
+            if (type == typeof(double))
             {
-                EditorGUILayout.DoubleField(label, (double)value);
+                return EditorGUILayout.DoubleField(label, (double)value);
             }
-            else if (valueType == typeof(string))
+            if (type == typeof(string))
             {
-                EditorGUILayout.TextField(label, (string)value);
+                return EditorGUILayout.TextField(label, (string)value);
             }
-            else if (valueType == typeof(Vector2))
+            if (type == typeof(Vector2))
             {
-                EditorGUILayout.Vector2Field(label, (Vector2)value);
+                return EditorGUILayout.Vector2Field(label, (Vector2)value);
             }
-            else if (valueType == typeof(Vector3))
+            if (type == typeof(Vector3))
             {
-                EditorGUILayout.Vector3Field(label, (Vector3)value);
+                return EditorGUILayout.Vector3Field(label, (Vector3)value);
             }
-            else if (valueType == typeof(Vector4))
+            if (type == typeof(Vector4))
             {
-                EditorGUILayout.Vector4Field(label, (Vector4)value);
+                return EditorGUILayout.Vector4Field(label, (Vector4)value);
             }
-            else if (valueType == typeof(Color))
+            if (type == typeof(Color))
             {
-                EditorGUILayout.ColorField(label, (Color)value);
+                return EditorGUILayout.ColorField(label, (Color)value);
             }
-            else if (valueType == typeof(Bounds))
+            if (type == typeof(Bounds))
             {
-                EditorGUILayout.BoundsField(label, (Bounds)value);
+                return EditorGUILayout.BoundsField(label, (Bounds)value);
             }
-            else if (valueType == typeof(Rect))
+            if (type == typeof(Rect))
             {
-                EditorGUILayout.RectField(label, (Rect)value);
+                return EditorGUILayout.RectField(label, (Rect)value);
             }
-            else if (value is Object o)
+            if (value is Object o)
             {
-                EditorGUILayout.ObjectField(label, o, valueType, true);
-            }
-            else
-            {
-                isDrawn = false;
+                return EditorGUILayout.ObjectField(label, o, type, true);
             }
 
-            //GUI.enabled = true;
-
-            return isDrawn;
+            string warning = $"DrawLayoutField doesn't support {type} types";
+            DrawHelpBox(warning, MessageType.Warning, true);
+            return value;
         }
 
         public static object TryDrawLayoutField(object value, string label, out bool success)

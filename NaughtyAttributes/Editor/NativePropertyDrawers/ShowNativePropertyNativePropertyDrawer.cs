@@ -1,25 +1,24 @@
 namespace BovineLabs.NaughtyAttributes.Editor
 {
-    using System.Reflection;
     using BovineLabs.NaughtyAttributes;
     using UnityEditor;
 
     [NativePropertyDrawer(typeof(ShowNativePropertyAttribute))]
-    public class ShowNativePropertyNativePropertyDrawer : NativePropertyDrawer
+    public class ShowNativePropertyNativePropertyDrawer : NativePropertyDrawer<ShowNativePropertyAttribute>
     {
-        public override void DrawNativeProperty(UnityEngine.Object target, PropertyInfo property)
+        /// <inheritdoc />
+        protected override void DrawNativeProperty(AttributeWrapper wrapper, ShowNativePropertyAttribute attribute)
         {
-            object value = property.GetValue(target, null);
+            object value = wrapper.GetValue();
 
             if (value == null)
             {
                 string warning = string.Format("{0} doesn't support {1} types", typeof(ShowNativePropertyNativePropertyDrawer).Name, "Reference");
-                EditorDrawUtility.DrawHelpBox(warning, MessageType.Warning, logToConsole: true, context: target);
+                EditorDrawUtility.DrawHelpBox(warning, MessageType.Warning, true, wrapper.Target);
             }
-            else if (!EditorDrawUtility.DrawLayoutField(value, property.Name))
+            else
             {
-                string warning = string.Format("{0} doesn't support {1} types", typeof(ShowNativePropertyNativePropertyDrawer).Name, property.PropertyType.Name);
-                EditorDrawUtility.DrawHelpBox(warning, MessageType.Warning, logToConsole: true, context: target);
+                wrapper.DrawPropertyField();
             }
         }
     }

@@ -1,13 +1,14 @@
-namespace BovineLabs.NaughtyAttributes.Editor
+/*namespace BovineLabs.NaughtyAttributes.Editor
 {
     using System.Reflection;
     using BovineLabs.NaughtyAttributes;
     using UnityEditor;
 
     [FieldDrawer(typeof(ShowNonSerializedFieldAttribute))]
-    public class ShowNonSerializedFieldFieldDrawer : FieldDrawer
+    public class ShowNonSerializedFieldFieldDrawer : FieldDrawer<ShowNonSerializedFieldAttribute>
     {
-        public override void DrawField(UnityEngine.Object target, FieldInfo field)
+        /// <inheritdoc />
+        protected override void DrawField(AttributeWrapper wrapper, ShowNonSerializedFieldAttribute attribute)
         {
             object value = field.GetValue(target);
 
@@ -30,3 +31,4 @@ namespace BovineLabs.NaughtyAttributes.Editor
         }
     }
 }
+*/
