@@ -1,16 +1,13 @@
 namespace BovineLabs.NaughtyAttributes.Editor
 {
-    using System.Linq;
     using BovineLabs.NaughtyAttributes;
     using UnityEditor;
 
     [PropertyValidator(typeof(RequiredAttribute))]
-    public class RequiredPropertyValidator : PropertyValidator
+    public class RequiredPropertyValidator : PropertyValidator<RequiredAttribute>
     {
-        public override void ValidateProperty(AttributeWrapper wrapper)
+        protected override void ValidateProperty(AttributeWrapper wrapper, RequiredAttribute attribute)
         {
-            RequiredAttribute requiredAttribute = wrapper.GetCustomAttributes<RequiredAttribute>().First();
-
             var value = wrapper.GetValue();
 
             if (value is UnityEngine.Object obj)
@@ -18,9 +15,9 @@ namespace BovineLabs.NaughtyAttributes.Editor
                 if (obj == null)
                 {
                     string errorMessage = wrapper.Name + " is required";
-                    if (!string.IsNullOrEmpty(requiredAttribute.Message))
+                    if (!string.IsNullOrEmpty(attribute.Message))
                     {
-                        errorMessage = requiredAttribute.Message;
+                        errorMessage = attribute.Message;
                     }
 
                     EditorDrawUtility.DrawHelpBox(errorMessage, MessageType.Error, true, wrapper.Target);
@@ -28,7 +25,7 @@ namespace BovineLabs.NaughtyAttributes.Editor
             }
             else
             {
-                string warning = requiredAttribute.GetType().Name + " works only on reference types";
+                string warning = attribute.GetType().Name + " works only on reference types";
                 EditorDrawUtility.DrawHelpBox(warning, MessageType.Warning, true, wrapper.Target);
             }
         }

@@ -1,35 +1,32 @@
 namespace BovineLabs.NaughtyAttributes.Editor
 {
-    using System.Linq;
     using BovineLabs.NaughtyAttributes;
     using UnityEditor;
 
     [PropertyValidator(typeof(MaxValueAttribute))]
-    public class MaxValuePropertyValidator : PropertyValidator
+    public class MaxValuePropertyValidator : PropertyValidator<MaxValueAttribute>
     {
-        public override void ValidateProperty(AttributeWrapper wrapper)
+        protected override void ValidateProperty(AttributeWrapper wrapper, MaxValueAttribute attribute)
         {
-            var maxValueAttribute = wrapper.GetCustomAttributes<MaxValueAttribute>().First();
-
             var value = wrapper.GetValue();
 
             if (value is int intValue)
             {
-                if (intValue > maxValueAttribute.MaxValue)
+                if (intValue > attribute.MaxValue)
                 {
-                    wrapper.SetValue((int)maxValueAttribute.MaxValue);
+                    wrapper.SetValue((int)attribute.MaxValue);
                 }
             }
             else if (value is float floatValue)
             {
-                if (floatValue > maxValueAttribute.MaxValue)
+                if (floatValue > attribute.MaxValue)
                 {
-                    wrapper.SetValue(maxValueAttribute.MaxValue);
+                    wrapper.SetValue(attribute.MaxValue);
                 }
             }
             else
             {
-                string warning = maxValueAttribute.GetType().Name + " can be used only on int or float fields";
+                string warning = attribute.GetType().Name + " can be used only on int or float fields";
                 EditorDrawUtility.DrawHelpBox(warning, MessageType.Warning, true, wrapper.Target);
             }
         }

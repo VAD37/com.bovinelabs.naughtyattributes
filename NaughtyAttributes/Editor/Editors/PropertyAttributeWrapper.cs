@@ -32,5 +32,10 @@ namespace BovineLabs.NaughtyAttributes.Editor
         {
             this.propertyInfo.SetValue(this.Target, value);
         }
+
+        /// <inheritdoc />
+        public override void ApplyModifications()
+        {
+        }
     }
 }

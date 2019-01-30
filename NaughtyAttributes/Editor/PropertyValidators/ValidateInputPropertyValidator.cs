@@ -9,13 +9,11 @@ namespace BovineLabs.NaughtyAttributes.Editor
     using UnityEditor;
 
     [PropertyValidator(typeof(ValidateInputAttribute))]
-    public class ValidateInputPropertyValidator : PropertyValidator
+    public class ValidateInputPropertyValidator : PropertyValidator<ValidateInputAttribute>
     {
-        public override void ValidateProperty(AttributeWrapper wrapper)
+        protected override void ValidateProperty(AttributeWrapper wrapper, ValidateInputAttribute attribute)
         {
-            var validateInputAttribute = wrapper.GetCustomAttributes<ValidateInputAttribute>().First();
-
-            var validationCallback = ReflectionUtility.GetMethod(wrapper.Target, validateInputAttribute.CallbackName);
+            var validationCallback = ReflectionUtility.GetMethod(wrapper.Target, attribute.CallbackName);
 
             if (validationCallback != null &&
                 validationCallback.ReturnType == typeof(bool) &&
@@ -28,14 +26,14 @@ namespace BovineLabs.NaughtyAttributes.Editor
                 {
                     if (!(bool)validationCallback.Invoke(wrapper.Target, new[] { wrapper.GetValue() }))
                     {
-                        if (string.IsNullOrEmpty(validateInputAttribute.Message))
+                        if (string.IsNullOrEmpty(attribute.Message))
                         {
                             EditorDrawUtility.DrawHelpBox(wrapper.Name + " is not valid", MessageType.Error, true,
                                 wrapper.Target);
                         }
                         else
                         {
-                            EditorDrawUtility.DrawHelpBox(validateInputAttribute.Message, MessageType.Error, true,
+                            EditorDrawUtility.DrawHelpBox(attribute.Message, MessageType.Error, true,
                                 wrapper.Target);
                         }
                     }
@@ -48,7 +46,7 @@ namespace BovineLabs.NaughtyAttributes.Editor
             }
             else
             {
-                var warning = validateInputAttribute.GetType().Name +
+                var warning = attribute.GetType().Name +
                               " needs a callback with boolean return type and a single parameter of the same type as the field";
 
                 EditorDrawUtility.DrawHelpBox(warning, MessageType.Warning, true, wrapper.Target);

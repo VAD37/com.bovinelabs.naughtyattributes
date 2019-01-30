@@ -1,37 +1,34 @@
 namespace BovineLabs.NaughtyAttributes.Editor
 {
-    using System.Linq;
     using BovineLabs.NaughtyAttributes;
     using UnityEditor;
 
     [PropertyValidator(typeof(MinValueAttribute))]
-    public class MinValuePropertyValidator : PropertyValidator
+    public class MinValuePropertyValidator : PropertyValidator<MinValueAttribute>
     {
-        public override void ValidateProperty(AttributeWrapper wrapper)
+        protected override void ValidateProperty(AttributeWrapper wrapper, MinValueAttribute attribute)
         {
-            var minValueAttribute = wrapper.GetCustomAttributes<MinValueAttribute>().First();
-
             if (wrapper.Type == typeof(int))
             {
                 var value = (int)wrapper.GetValue();
 
-                if (value < minValueAttribute.MinValue)
+                if (value < attribute.MinValue)
                 {
-                    wrapper.SetValue((int)minValueAttribute.MinValue);
+                    wrapper.SetValue((int)attribute.MinValue);
                 }
             }
             else if (wrapper.Type == typeof(float))
             {
                 var value = (float)wrapper.GetValue();
 
-                if (value < minValueAttribute.MinValue)
+                if (value < attribute.MinValue)
                 {
-                    wrapper.SetValue(minValueAttribute.MinValue);
+                    wrapper.SetValue(attribute.MinValue);
                 }
             }
             else
             {
-                string warning = minValueAttribute.GetType().Name + " can be used only on int or float fields";
+                string warning = attribute.GetType().Name + " can be used only on int or float fields";
                 EditorDrawUtility.DrawHelpBox(warning, MessageType.Warning, true, wrapper.Target);
             }
         }

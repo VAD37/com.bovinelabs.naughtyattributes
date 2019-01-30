@@ -1,5 +1,5 @@
-﻿// <copyright file="AttributeWrapper.cs" company="Timothy Raines">
-//     Copyright (c) Timothy Raines. All rights reserved.
+﻿// <copyright file="FieldAttributeWrapper.cs" company="BovineLabs">
+//     Copyright (c) BovineLabs. All rights reserved.
 // </copyright>
 
 namespace BovineLabs.NaughtyAttributes.Editor
@@ -44,12 +44,23 @@ namespace BovineLabs.NaughtyAttributes.Editor
         {
             this.serializedProperty = serializedProperty;
         }
+
+        /// <inheritdoc />
+        public override void ApplyModifications()
+        {
+            serializedProperty.serializedObject.ApplyModifiedProperties(); 
+        }
     }
 
     public class NonSerializedFieldAttributeWrapper : FieldAttributeWrapper
     {
         public NonSerializedFieldAttributeWrapper(Object target, FieldInfo fieldInfo)
             : base(target, fieldInfo)
+        {
+        }
+
+        /// <inheritdoc />
+        public override void ApplyModifications()
         {
         }
     }

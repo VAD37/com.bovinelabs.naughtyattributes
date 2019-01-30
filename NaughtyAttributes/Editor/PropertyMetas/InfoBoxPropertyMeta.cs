@@ -5,46 +5,46 @@ namespace BovineLabs.NaughtyAttributes.Editor
     using UnityEditor;
 
     [PropertyMeta(typeof(InfoBoxAttribute))]
-    public class InfoBoxPropertyMeta : PropertyMeta
+    public class InfoBoxPropertyMeta : PropertyMeta<InfoBoxAttribute>
     {
-        public override void ApplyPropertyMeta(SerializedProperty property, MetaAttribute metaAttribute)
+        /// <inheritdoc />
+        protected override void ApplyPropertyMeta(AttributeWrapper wrapper, InfoBoxAttribute attribute)
         {
-            InfoBoxAttribute infoBoxAttribute = (InfoBoxAttribute)metaAttribute;
-            UnityEngine.Object target = PropertyUtility.GetTargetObject(property);
+            var target = wrapper.Target;
 
-            if (!string.IsNullOrEmpty(infoBoxAttribute.VisibleIf))
+            if (!string.IsNullOrEmpty(attribute.VisibleIf))
             {
-                FieldInfo conditionField = ReflectionUtility.GetField(target, infoBoxAttribute.VisibleIf);
+                FieldInfo conditionField = ReflectionUtility.GetField(target, attribute.VisibleIf);
                 if (conditionField != null &&
                     conditionField.FieldType == typeof(bool))
                 {
                     if ((bool)conditionField.GetValue(target))
                     {
-                        this.DrawInfoBox(infoBoxAttribute.Text, infoBoxAttribute.Type);
+                        this.DrawInfoBox(attribute.Text, attribute.Type);
                     }
 
                     return;
                 }
 
-                MethodInfo conditionMethod = ReflectionUtility.GetMethod(target, infoBoxAttribute.VisibleIf);
+                MethodInfo conditionMethod = ReflectionUtility.GetMethod(target, attribute.VisibleIf);
                 if (conditionMethod != null &&
                     conditionMethod.ReturnType == typeof(bool) &&
                     conditionMethod.GetParameters().Length == 0)
                 {
                     if ((bool)conditionMethod.Invoke(target, null))
                     {
-                        this.DrawInfoBox(infoBoxAttribute.Text, infoBoxAttribute.Type);
+                        this.DrawInfoBox(attribute.Text, attribute.Type);
                     }
 
                     return;
                 }
 
-                string warning = infoBoxAttribute.GetType().Name + " needs a valid boolean condition field or method name to work";
-                EditorDrawUtility.DrawHelpBox(warning, MessageType.Warning, logToConsole: true, context: PropertyUtility.GetTargetObject(property));
+                string warning = attribute.GetType().Name + " needs a valid boolean condition field or method name to work";
+                EditorDrawUtility.DrawHelpBox(warning, MessageType.Warning, true, wrapper.Target);
             }
             else
             {
-                this.DrawInfoBox(infoBoxAttribute.Text, infoBoxAttribute.Type);
+                this.DrawInfoBox(attribute.Text, attribute.Type);
             }
         }
 

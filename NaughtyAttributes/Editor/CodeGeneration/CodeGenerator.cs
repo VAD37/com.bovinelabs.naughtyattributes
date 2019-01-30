@@ -1,4 +1,4 @@
-namespace BovineLabs.NaughtyAttributes.Editor
+/*namespace BovineLabs.NaughtyAttributes.Editor
 {
     using System;
     using System.Collections.Generic;
@@ -99,3 +99,4 @@ namespace BovineLabs.NaughtyAttributes.Editor
         }
     }
 }
+*/

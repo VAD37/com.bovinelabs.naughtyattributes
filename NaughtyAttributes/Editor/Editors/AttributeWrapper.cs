@@ -43,6 +43,8 @@ namespace BovineLabs.NaughtyAttributes.Editor
         public abstract IEnumerable<T> GetCustomAttributes<T>()
             where T : Attribute;
 
+        public abstract void ApplyModifications();
+
         private void ValidateField()
         {
             var validatorAttributes = this.GetCustomAttributes<ValidatorAttribute>().ToArray();
@@ -50,13 +52,24 @@ namespace BovineLabs.NaughtyAttributes.Editor
             foreach (var attribute in validatorAttributes)
             {
                 var validator = PropertyValidatorDatabase.GetValidatorForAttribute(attribute.GetType());
-                validator?.ValidateProperty(this);
+                validator?.Run(this, attribute);
             }
         }
 
         private void ApplyFieldMeta()
         {
+            // Apply custom meta attributes
+            MetaAttribute[] metaAttributes = this.GetCustomAttributes<MetaAttribute>()
+                .Where(attr => attr.GetType() != typeof(OnValueChangedAttribute))
+                .ToArray();
 
+            Array.Sort(metaAttributes, (x, y) => x.Order - y.Order);
+
+            foreach (var attribute in metaAttributes)
+            {
+                var meta = PropertyMetaDatabase.GetMetaForAttribute(attribute.GetType());
+                meta?.Run(this, attribute);
+            }
         }
     }
 
