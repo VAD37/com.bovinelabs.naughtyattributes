@@ -1,9 +1,10 @@
-using UnityEngine;
-using UnityEditor;
-using System;
-
-namespace NaughtyAttributes.Editor
+namespace BovineLabs.NaughtyAttributes.Editor
 {
+    using System;
+    using BovineLabs.NaughtyAttributes;
+    using UnityEditor;
+    using UnityEngine;
+
     [PropertyDrawer(typeof(ProgressBarAttribute))]
     public class ProgressBarPropertyDrawer : PropertyDrawer
     {
@@ -30,9 +31,9 @@ namespace NaughtyAttributes.Editor
             var fillPercentage = value / maxValue;
             var barLabel = (!string.IsNullOrEmpty(progressBarAttribute.Name) ? "[" + progressBarAttribute.Name + "] " : "") + valueFormatted + "/" + maxValue;
 
-            var color = GetColor(progressBarAttribute.Color);
+            var color = this.GetColor(progressBarAttribute.Color);
             var color2 = Color.white;
-            DrawBar(barPosition, Mathf.Clamp01(fillPercentage), barLabel, color, color2);
+            this.DrawBar(barPosition, Mathf.Clamp01(fillPercentage), barLabel, color, color2);
         }
 
         private void DrawBar(Rect position, float fillPercent, string label, Color barColor, Color labelColor)

@@ -1,8 +1,9 @@
-using System.Reflection;
-using UnityEditor;
-
-namespace NaughtyAttributes.Editor
+namespace BovineLabs.NaughtyAttributes.Editor
 {
+    using System.Reflection;
+    using BovineLabs.NaughtyAttributes;
+    using UnityEditor;
+
     [PropertyMeta(typeof(InfoBoxAttribute))]
     public class InfoBoxPropertyMeta : PropertyMeta
     {

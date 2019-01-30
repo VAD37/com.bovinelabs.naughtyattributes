@@ -1,7 +1,7 @@
-﻿using UnityEditor;
-
-namespace NaughtyAttributes.Editor
+﻿namespace BovineLabs.NaughtyAttributes.Editor
 {
+    using UnityEditor;
+
     public abstract class PropertyDrawer
     {
         public abstract void DrawProperty(SerializedProperty property);

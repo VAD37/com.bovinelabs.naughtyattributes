@@ -1,4 +1,4 @@
-﻿namespace NaughtyAttributes
+﻿namespace BovineLabs.NaughtyAttributes
 {
     public class DrawConditionAttribute : NaughtyAttribute
     {

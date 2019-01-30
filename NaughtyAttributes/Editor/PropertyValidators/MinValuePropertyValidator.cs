@@ -1,32 +1,38 @@
-using UnityEditor;
-
-namespace NaughtyAttributes.Editor
+namespace BovineLabs.NaughtyAttributes.Editor
 {
+    using System.Linq;
+    using BovineLabs.NaughtyAttributes;
+    using UnityEditor;
+
     [PropertyValidator(typeof(MinValueAttribute))]
     public class MinValuePropertyValidator : PropertyValidator
     {
-        public override void ValidateProperty(SerializedProperty property)
+        public override void ValidateProperty(AttributeWrapper wrapper)
         {
-            MinValueAttribute minValueAttribute = PropertyUtility.GetAttribute<MinValueAttribute>(property);
+            var minValueAttribute = wrapper.GetCustomAttributes<MinValueAttribute>().First();
 
-            if (property.propertyType == SerializedPropertyType.Integer)
+            if (wrapper.Type == typeof(int))
             {
-                if (property.intValue < minValueAttribute.MinValue)
+                var value = (int)wrapper.GetValue();
+
+                if (value < minValueAttribute.MinValue)
                 {
-                    property.intValue = (int)minValueAttribute.MinValue;
+                    wrapper.SetValue((int)minValueAttribute.MinValue);
                 }
             }
-            else if (property.propertyType == SerializedPropertyType.Float)
+            else if (wrapper.Type == typeof(float))
             {
-                if (property.floatValue < minValueAttribute.MinValue)
+                var value = (float)wrapper.GetValue();
+
+                if (value < minValueAttribute.MinValue)
                 {
-                    property.floatValue = minValueAttribute.MinValue;
+                    wrapper.SetValue(minValueAttribute.MinValue);
                 }
             }
             else
             {
                 string warning = minValueAttribute.GetType().Name + " can be used only on int or float fields";
-                EditorDrawUtility.DrawHelpBox(warning, MessageType.Warning, logToConsole: true, context: PropertyUtility.GetTargetObject(property));
+                EditorDrawUtility.DrawHelpBox(warning, MessageType.Warning, true, wrapper.Target);
             }
         }
     }

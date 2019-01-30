@@ -1,4 +1,4 @@
-namespace NaughtyAttributes.Editor
+namespace BovineLabs.NaughtyAttributes.Editor
 {
     using System;
     using System.Collections.Generic;
@@ -7,12 +7,53 @@ namespace NaughtyAttributes.Editor
 
     public static class ReflectionUtility
     {
+        public static IEnumerable<FieldInfo> GetAllFields(object target)
+        {
+            var types = new List<Type> { target.GetType() };
+
+            while (types.Last().BaseType != null)
+            {
+                types.Add(types.Last().BaseType);
+            }
+
+            for (var i = types.Count - 1; i >= 0; i--)
+            {
+                var fieldInfos = types[i]
+                    .GetFields(BindingFlags.Instance | BindingFlags.Static | BindingFlags.NonPublic |
+                               BindingFlags.Public | BindingFlags.DeclaredOnly);
+
+                foreach (var fieldInfo in fieldInfos)
+                {
+                    yield return fieldInfo;
+                }
+            }
+        }
+
+        public static IEnumerable<PropertyInfo> GetAllProperties(object target)
+        {
+            var types = new List<Type> { target.GetType(), };
+
+            while (types.Last().BaseType != null)
+            {
+                types.Add(types.Last().BaseType);
+            }
+
+            for (var i = types.Count - 1; i >= 0; i--)
+            {
+                IEnumerable<PropertyInfo> propertyInfos = types[i]
+                    .GetProperties(BindingFlags.Instance | BindingFlags.Static | BindingFlags.NonPublic |
+                                   BindingFlags.Public | BindingFlags.DeclaredOnly);
+
+                foreach (var propertyInfo in propertyInfos)
+                {
+                    yield return propertyInfo;
+                }
+            }
+        }
+        
         public static IEnumerable<FieldInfo> GetAllFields(object target, Func<FieldInfo, bool> predicate)
         {
-            List<Type> types = new List<Type>()
-            {
-                target.GetType()
-            };
+            var types = new List<Type> { target.GetType() };
 
             while (types.Last().BaseType != null)
             {
@@ -21,9 +62,9 @@ namespace NaughtyAttributes.Editor
 
             for (int i = types.Count - 1; i >= 0; i--)
             {
-                IEnumerable<FieldInfo> fieldInfos = types[i]
-                    .GetFields(BindingFlags.Instance | BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.DeclaredOnly)
-                    .Where(predicate);
+                var fieldInfos = types[i]
+                    .GetFields(BindingFlags.Instance | BindingFlags.Static | BindingFlags.NonPublic |
+                               BindingFlags.Public | BindingFlags.DeclaredOnly).Where(predicate);
 
                 foreach (var fieldInfo in fieldInfos)
                 {
@@ -59,12 +100,6 @@ namespace NaughtyAttributes.Editor
 
         public static IEnumerable<MethodInfo> GetAllMethods(object target, Func<MethodInfo, bool> predicate)
         {
-            /*IEnumerable<MethodInfo> methodInfos = target.GetType()
-                .GetMethods(BindingFlags.Instance | BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.Public)
-                .Where(predicate);
-
-            return methodInfos;*/
-
             var list = new List<MethodInfo>();
             GetAllMethods(target.GetType(), list, predicate);
             return list;

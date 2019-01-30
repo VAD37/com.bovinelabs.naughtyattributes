@@ -1,7 +1,7 @@
-﻿using System;
-
-namespace NaughtyAttributes.Editor
+﻿namespace BovineLabs.NaughtyAttributes.Editor
 {
+    using System;
+
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = true)]
     public abstract class BaseAttribute : Attribute, IAttribute
     {

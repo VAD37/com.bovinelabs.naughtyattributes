@@ -1,32 +1,123 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using UnityEditor;
-using UnityEngine;
-
-namespace NaughtyAttributes.Editor
+namespace BovineLabs.NaughtyAttributes.Editor
 {
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Reflection;
+    using BovineLabs.NaughtyAttributes;
+    using UnityEditor;
+    using UnityEngine;
+
     [CanEditMultipleObjects]
     [CustomEditor(typeof(UnityEngine.Object), true)]
     public class InspectorEditor : UnityEditor.Editor
     {
         private SerializedProperty script;
 
-        private FieldInfo[] fields;
+        /*private FieldInfo[] fields;
         private HashSet<FieldInfo> groupedFields;
         private Dictionary<string, List<FieldInfo>> groupedFieldsByGroupName;
         private FieldInfo[] nonSerializedFields;
         private PropertyInfo[] nativeProperties;
         private MethodInfo[] methods;
 
-        private Dictionary<string, SerializedProperty> serializedPropertiesByFieldName;
+        private Dictionary<string, SerializedProperty> serializedPropertiesByFieldName;*/
 
         private bool useDefaultInspector;
+        private readonly List<AttributeWrapper> members = new List<AttributeWrapper>();
+        private readonly HashSet<AttributeWrapper> group = new HashSet<AttributeWrapper>();
+        private readonly Dictionary<string, List<AttributeWrapper>> groupedByName = new Dictionary<string, List<AttributeWrapper>>();
 
         public override void OnInspectorGUI()
         {
             if (this.useDefaultInspector)
+            {
+                this.DrawDefaultInspector();
+                return;
+            }
+
+            this.serializedObject.Update();
+
+            if (this.script != null)
+            {
+                GUI.enabled = false;
+                EditorGUILayout.PropertyField(this.script);
+                GUI.enabled = true;
+            }
+
+            var drawnGroups = new HashSet<string>();
+            foreach (var member in this.members)
+            {
+                if (this.group.Contains(member))
+                {
+                    // Draw grouped fields
+                    var attribute = member.GetCustomAttributes<GroupAttribute>().First();
+
+                    string groupName = attribute.Name;
+                    if (!drawnGroups.Contains(groupName))
+                    {
+                        drawnGroups.Add(groupName);
+
+                        PropertyGrouper grouper = GetPropertyGrouperForField(member);
+                        if (grouper != null)
+                        {
+                            grouper.BeginGroup(attribute);
+
+                            this.ValidateAndDrawFields(this.groupedByName[groupName]);
+
+                            grouper.EndGroup();
+                        }
+                        else
+                        {
+                            this.ValidateAndDrawFields(this.groupedByName[groupName]);
+                        }
+                    }
+                }
+                else
+                {
+                    // Draw non-grouped field
+                    //this.ValidateAndDrawField(field);
+                }
+            }
+
+            // Draw fields
+           /* HashSet<string> drawnGroups = new HashSet<string>();
+            foreach (var field in this.fields)
+            {
+                if (this.groupedFields.Contains(field))
+                {
+                    // Draw grouped fields
+                    var attribute = (GroupAttribute)field.GetCustomAttributes(typeof(GroupAttribute), true)[0];
+
+                    string groupName = attribute.Name;
+                    if (!drawnGroups.Contains(groupName))
+                    {
+                        drawnGroups.Add(groupName);
+
+                        PropertyGrouper grouper = this.GetPropertyGrouperForField(field);
+                        if (grouper != null)
+                        {
+                            grouper.BeginGroup(attribute);
+
+                            this.ValidateAndDrawFields(this.groupedFieldsByGroupName[groupName]);
+
+                            grouper.EndGroup();
+                        }
+                        else
+                        {
+                            this.ValidateAndDrawFields(this.groupedFieldsByGroupName[groupName]);
+                        }
+                    }
+                }
+                else
+                {
+                    // Draw non-grouped field
+                    this.ValidateAndDrawField(field);
+                }
+            }
+
+            this.serializedObject.ApplyModifiedProperties();*/
+
+            /*if (this.useDefaultInspector)
             {
                 this.DrawDefaultInspector();
             }
@@ -83,7 +174,8 @@ namespace NaughtyAttributes.Editor
             // Draw non-serialized fields
             foreach (var field in this.nonSerializedFields)
             {
-                DrawerAttribute drawerAttribute = (DrawerAttribute)field.GetCustomAttributes(typeof(DrawerAttribute), true)[0];
+                DrawerAttribute drawerAttribute =
+                    (DrawerAttribute)field.GetCustomAttributes(typeof(DrawerAttribute), true)[0];
                 FieldDrawer drawer = FieldDrawerDatabase.GetDrawerForAttribute(drawerAttribute.GetType());
                 if (drawer != null)
                 {
@@ -122,15 +214,62 @@ namespace NaughtyAttributes.Editor
                 }
 
                 GUI.enabled = true;
-            }
+            }*/
         }
 
         private void OnEnable()
         {
+            this.members.Clear();
+
             this.script = this.serializedObject.FindProperty("m_Script");
+            this.group.Clear();
+            this.groupedByName.Clear();
+
+            var fields = ReflectionUtility.GetAllFields(this.target);
+
+            foreach (var field in fields)
+            {
+                var serializedProperty = this.serializedObject.FindProperty(field.Name);
+
+                if (serializedProperty != null)
+                {
+                    this.members.Add(new SerializedFieldAttributeWrapper(serializedProperty, this.target, field));
+                }
+                else if (field.GetCustomAttribute<ShowNonSerializedFieldAttribute>() != null)
+                {
+                    this.members.Add(new NonSerializedFieldAttributeWrapper(this.target, field));
+                }
+            }
+
+            this.members.AddRange(ReflectionUtility.GetAllProperties(this.target)
+                .Where(p => p.GetCustomAttribute<ShowNonSerializedFieldAttribute>() != null)
+                .Select(p => new PropertyAttributeWrapper(this.target, p)));
+
+            if (this.members.Count == 0)
+            {
+                this.useDefaultInspector = true;
+            }
+            else
+            {
+                this.useDefaultInspector = false;
+
+                this.group.UnionWith(this.members.Where(f => f.GetCustomAttributes<GroupAttribute>().Any()));
+
+                foreach (var element in this.group)
+                {
+                    var groupName = element.GetCustomAttributes<GroupAttribute>().First().Name;
+
+                    if (!this.groupedByName.TryGetValue(groupName, out var list))
+                    {
+                        list = this.groupedByName[groupName] = new List<AttributeWrapper>();
+                    }
+
+                    list.Add(element);
+                }
+            }
 
             // Cache serialized fields
-            this.fields = ReflectionUtility.GetAllFields(this.target, f => this.serializedObject.FindProperty(f.Name) != null).ToArray();
+            /*this.fields = ReflectionUtility.GetAllFields(this.target, f => this.serializedObject.FindProperty(f.Name) != null).ToArray();
 
             // Cache methods with DrawerAttribute
             this.methods = ReflectionUtility.GetAllMethods(
@@ -191,7 +330,7 @@ namespace NaughtyAttributes.Editor
                 {
                     this.serializedPropertiesByFieldName[method.Name] = this.serializedObject.FindProperty(method.Name);
                 }
-            }
+            }*/
         }
 
         private void OnDisable()
@@ -199,31 +338,73 @@ namespace NaughtyAttributes.Editor
             PropertyDrawerDatabase.ClearCache();
         }
 
-        private void ValidateAndDrawFields(IEnumerable<FieldInfo> fields)
+        private static PropertyGrouper GetPropertyGrouperForField(AttributeWrapper wrapper)
         {
-            foreach (var field in fields)
+            var groupAttribute = wrapper.GetCustomAttributes<GroupAttribute>().FirstOrDefault();
+
+            if (groupAttribute == null)
             {
-                this.ValidateAndDrawField(field);
+                return null;
+            }
+
+            return PropertyGrouperDatabase.GetGrouperForAttribute(groupAttribute.GetType());
+        }
+
+        private void ValidateAndDrawFields(IEnumerable<AttributeWrapper> wrappers)
+        {
+            foreach (var wrapper in wrappers)
+            {
+                wrapper.ValidateAndDrawField();
             }
         }
 
-        private void ValidateAndDrawField(FieldInfo field)
+
+        /*private void ValidateAndDrawField(AttributeWrapper wrapper)
         {
-            this.ValidateField(field);
-            this.ApplyFieldMeta(field);
-            this.DrawField(field);
+            ValidateField(wrapper);
+            this.ApplyFieldMeta(wrapper);
+            this.DrawField(wrapper);
         }
 
-        private void ValidateField(FieldInfo field)
+        private static void ValidateField(AttributeWrapper wrapper)
         {
-            ValidatorAttribute[] validatorAttributes = (ValidatorAttribute[])field.GetCustomAttributes(typeof(ValidatorAttribute), true);
+            var validatorAttributes = wrapper.GetCustomAttributes<ValidatorAttribute>().ToArray();
+
+            if (validatorAttributes.Length > 0 && wrapper.SerializedProperty == null)
+            {
+                string warning = wrapper.GetType().Name + " has a property validator but is not a serializable property";
+                EditorDrawUtility.DrawHelpBox(warning, MessageType.Warning, true);
+                return;
+            }
 
             foreach (var attribute in validatorAttributes)
             {
                 PropertyValidator validator = PropertyValidatorDatabase.GetValidatorForAttribute(attribute.GetType());
-                if (validator != null)
+
+                validator?.ValidateProperty(wrapper.SerializedProperty);
+            }
+        }
+
+        private void ApplyFieldMeta(FieldInfo field)
+        {
+            // Apply custom meta attributes
+            MetaAttribute[] metaAttributes = field
+                .GetCustomAttributes(typeof(MetaAttribute), true)
+                .Where(attr => attr.GetType() != typeof(OnValueChangedAttribute))
+                .Select(obj => obj as MetaAttribute)
+                .ToArray();
+
+            Array.Sort(metaAttributes, (x, y) =>
+            {
+                return x.Order - y.Order;
+            });
+
+            foreach (var metaAttribute in metaAttributes)
+            {
+                PropertyMeta meta = PropertyMetaDatabase.GetMetaForAttribute(metaAttribute.GetType());
+                if (meta != null)
                 {
-                    validator.ValidateProperty(this.serializedPropertiesByFieldName[field.Name]);
+                    meta.ApplyPropertyMeta(this.serializedPropertiesByFieldName[field.Name], metaAttribute);
                 }
             }
         }
@@ -284,30 +465,6 @@ namespace NaughtyAttributes.Editor
             }
         }
 
-        private void ApplyFieldMeta(FieldInfo field)
-        {
-            // Apply custom meta attributes
-            MetaAttribute[] metaAttributes = field
-                .GetCustomAttributes(typeof(MetaAttribute), true)
-                .Where(attr => attr.GetType() != typeof(OnValueChangedAttribute))
-                .Select(obj => obj as MetaAttribute)
-                .ToArray();
-
-            Array.Sort(metaAttributes, (x, y) =>
-            {
-                return x.Order - y.Order;
-            });
-
-            foreach (var metaAttribute in metaAttributes)
-            {
-                PropertyMeta meta = PropertyMetaDatabase.GetMetaForAttribute(metaAttribute.GetType());
-                if (meta != null)
-                {
-                    meta.ApplyPropertyMeta(this.serializedPropertiesByFieldName[field.Name], metaAttribute);
-                }
-            }
-        }
-
         private PropertyDrawer GetPropertyDrawerForField(FieldInfo field)
         {
             DrawerAttribute[] drawerAttributes = (DrawerAttribute[])field.GetCustomAttributes(typeof(DrawerAttribute), true);
@@ -320,20 +477,18 @@ namespace NaughtyAttributes.Editor
             {
                 return null;
             }
-        }
+        }*/
 
-        private PropertyGrouper GetPropertyGrouperForField(FieldInfo field)
+        /*private static PropertyGrouper GetPropertyGrouperForField(AttributeWrapper wrapper)
         {
-            GroupAttribute[] groupAttributes = (GroupAttribute[])field.GetCustomAttributes(typeof(GroupAttribute), true);
-            if (groupAttributes.Length > 0)
-            {
-                PropertyGrouper grouper = PropertyGrouperDatabase.GetGrouperForAttribute(groupAttributes[0].GetType());
-                return grouper;
-            }
-            else
+            var groupAttribute = wrapper.GetCustomAttributes<GroupAttribute>().FirstOrDefault();
+
+            if (groupAttribute == null)
             {
                 return null;
             }
+
+            return PropertyGrouperDatabase.GetGrouperForAttribute(groupAttribute.GetType());
         }
 
         private PropertyDrawCondition GetPropertyDrawConditionForField(FieldInfo field)
@@ -362,6 +517,6 @@ namespace NaughtyAttributes.Editor
             {
                 return null;
             }
-        }
+        }*/
     }
 }

@@ -1,8 +1,8 @@
-using UnityEditor;
-using UnityEngine;
-
-namespace NaughtyAttributes.Editor
+namespace BovineLabs.NaughtyAttributes.Editor
 {
+    using BovineLabs.NaughtyAttributes;
+    using UnityEditor;
+
     [PropertyDrawer(typeof(ReadOnlyAttribute))]
     public class ReadOnlyPropertyDrawer : PropertyEnabledCondition
     {

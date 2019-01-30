@@ -1,9 +1,9 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
-
-namespace NaughtyAttributes
+namespace BovineLabs.NaughtyAttributes
 {
+    using System;
+    using System.Collections;
+    using System.Collections.Generic;
+
     [AttributeUsage(AttributeTargets.Field, AllowMultiple = false, Inherited = true)]
     public class DropdownAttribute : DrawerAttribute
     {

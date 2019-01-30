@@ -1,7 +1,7 @@
-using System;
-
-namespace NaughtyAttributes
+namespace BovineLabs.NaughtyAttributes
 {
+    using System;
+
     [AttributeUsage(AttributeTargets.Field, AllowMultiple = false, Inherited = true)]
     public class ProgressBarAttribute : DrawerAttribute
     {
@@ -11,9 +11,9 @@ namespace NaughtyAttributes
 
         public ProgressBarAttribute(string name = "", float maxValue = 100, ProgressBarColor color = ProgressBarColor.Blue)
         {
-            Name = name;
-            MaxValue = maxValue;
-            Color = color;
+            this.Name = name;
+            this.MaxValue = maxValue;
+            this.Color = color;
         }
     }
 

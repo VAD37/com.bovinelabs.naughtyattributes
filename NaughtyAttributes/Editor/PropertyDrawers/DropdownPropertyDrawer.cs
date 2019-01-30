@@ -1,12 +1,13 @@
-using UnityEngine;
-using UnityEditor;
-using System.Reflection;
-using System.Collections;
-using System;
-using System.Collections.Generic;
-
-namespace NaughtyAttributes.Editor
+namespace BovineLabs.NaughtyAttributes.Editor
 {
+    using System;
+    using System.Collections;
+    using System.Collections.Generic;
+    using System.Reflection;
+    using BovineLabs.NaughtyAttributes;
+    using UnityEditor;
+    using UnityEngine;
+
     [PropertyDrawer(typeof(DropdownAttribute))]
     public class DropdownPropertyDrawer : PropertyDrawer
     {

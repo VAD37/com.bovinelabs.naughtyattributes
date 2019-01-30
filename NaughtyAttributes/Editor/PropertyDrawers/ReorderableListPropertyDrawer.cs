@@ -1,10 +1,11 @@
-using UnityEngine;
-using UnityEditor;
-using UnityEditorInternal;
-using System.Collections.Generic;
-
-namespace NaughtyAttributes.Editor
+namespace BovineLabs.NaughtyAttributes.Editor
 {
+    using System.Collections.Generic;
+    using BovineLabs.NaughtyAttributes;
+    using UnityEditor;
+    using UnityEditorInternal;
+    using UnityEngine;
+
     [PropertyDrawer(typeof(ReorderableListAttribute))]
     public class ReorderableListPropertyDrawer : PropertyDrawer
     {

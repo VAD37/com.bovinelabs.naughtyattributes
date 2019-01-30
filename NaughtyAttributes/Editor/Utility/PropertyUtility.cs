@@ -1,9 +1,9 @@
-using UnityEditor;
-using System;
-using System.Reflection;
-
-namespace NaughtyAttributes.Editor
+namespace BovineLabs.NaughtyAttributes.Editor
 {
+    using System;
+    using System.Reflection;
+    using UnityEditor;
+
     public static class PropertyUtility
     {
         public static T GetAttribute<T>(SerializedProperty property) where T : Attribute

@@ -1,9 +1,10 @@
-using System.Reflection;
-using UnityEditor;
-using UnityEngine;
-
-namespace NaughtyAttributes.Editor
+namespace BovineLabs.NaughtyAttributes.Editor
 {
+    using System.Reflection;
+    using BovineLabs.NaughtyAttributes;
+    using UnityEditor;
+    using UnityEngine;
+
     [MethodDrawer(typeof(ButtonAttribute))]
     public class ButtonMethodDrawer : MethodDrawer
     {

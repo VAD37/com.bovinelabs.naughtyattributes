@@ -1,54 +1,57 @@
-using System;
-using System.Reflection;
-using UnityEditor;
+// <copyright file="ValidateInputPropertyValidator.cs" company="BovineLabs">
+//     Copyright (c) BovineLabs. All rights reserved.
+// </copyright>
 
-namespace NaughtyAttributes.Editor
+namespace BovineLabs.NaughtyAttributes.Editor
 {
+    using System;
+    using System.Linq;
+    using UnityEditor;
+
     [PropertyValidator(typeof(ValidateInputAttribute))]
     public class ValidateInputPropertyValidator : PropertyValidator
     {
-        public override void ValidateProperty(SerializedProperty property)
+        public override void ValidateProperty(AttributeWrapper wrapper)
         {
-            ValidateInputAttribute validateInputAttribute = PropertyUtility.GetAttribute<ValidateInputAttribute>(property);
-            UnityEngine.Object target = PropertyUtility.GetTargetObject(property);
+            var validateInputAttribute = wrapper.GetCustomAttributes<ValidateInputAttribute>().First();
 
-            MethodInfo validationCallback = ReflectionUtility.GetMethod(target, validateInputAttribute.CallbackName);
+            var validationCallback = ReflectionUtility.GetMethod(wrapper.Target, validateInputAttribute.CallbackName);
 
             if (validationCallback != null &&
                 validationCallback.ReturnType == typeof(bool) &&
                 validationCallback.GetParameters().Length == 1)
             {
-                FieldInfo fieldInfo = ReflectionUtility.GetField(target, property.name);
-                Type fieldType = fieldInfo.FieldType;
+                Type fieldType = wrapper.Type;
                 Type parameterType = validationCallback.GetParameters()[0].ParameterType;
 
                 if (fieldType == parameterType)
                 {
-                    if (!(bool)validationCallback.Invoke(target, new object[] { fieldInfo.GetValue(target) }))
+                    if (!(bool)validationCallback.Invoke(wrapper.Target, new[] { wrapper.GetValue() }))
                     {
                         if (string.IsNullOrEmpty(validateInputAttribute.Message))
                         {
-                            EditorDrawUtility.DrawHelpBox(property.name + " is not valid", MessageType.Error, logToConsole: true, context: target);
+                            EditorDrawUtility.DrawHelpBox(wrapper.Name + " is not valid", MessageType.Error, true,
+                                wrapper.Target);
                         }
                         else
                         {
-                            EditorDrawUtility.DrawHelpBox(validateInputAttribute.Message, MessageType.Error, logToConsole: true, context: target);
+                            EditorDrawUtility.DrawHelpBox(validateInputAttribute.Message, MessageType.Error, true,
+                                wrapper.Target);
                         }
                     }
                 }
                 else
                 {
-                    string warning = "The field type is not the same as the callback's parameter type";
-                    EditorDrawUtility.DrawHelpBox(warning, MessageType.Warning, logToConsole: true, context: target);
+                    var warning = "The field type is not the same as the callback's parameter type";
+                    EditorDrawUtility.DrawHelpBox(warning, MessageType.Warning, true, wrapper.Target);
                 }
             }
             else
             {
-                string warning =
-                    validateInputAttribute.GetType().Name +
-                    " needs a callback with boolean return type and a single parameter of the same type as the field";
+                var warning = validateInputAttribute.GetType().Name +
+                              " needs a callback with boolean return type and a single parameter of the same type as the field";
 
-                EditorDrawUtility.DrawHelpBox(warning, MessageType.Warning, logToConsole: true, context: target);
+                EditorDrawUtility.DrawHelpBox(warning, MessageType.Warning, true, wrapper.Target);
             }
         }
     }

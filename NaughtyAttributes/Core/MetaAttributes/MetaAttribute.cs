@@ -1,6 +1,4 @@
-using System;
-
-namespace NaughtyAttributes
+namespace BovineLabs.NaughtyAttributes
 {
     public abstract class MetaAttribute : NaughtyAttribute
     {

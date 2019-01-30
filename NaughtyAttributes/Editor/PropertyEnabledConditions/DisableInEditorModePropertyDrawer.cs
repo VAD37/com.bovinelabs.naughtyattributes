@@ -1,7 +1,8 @@
-﻿using UnityEditor;
-
-namespace NaughtyAttributes.Editor
+﻿namespace BovineLabs.NaughtyAttributes.Editor
 {
+    using BovineLabs.NaughtyAttributes;
+    using UnityEditor;
+
     [PropertyDrawer(typeof(DisableInPlayModeAttribute))]
     public class DisableInEditorModePropertyDrawer : PropertyEnabledCondition
     {

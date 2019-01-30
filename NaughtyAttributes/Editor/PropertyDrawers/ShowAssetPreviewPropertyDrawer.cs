@@ -1,8 +1,9 @@
-using UnityEngine;
-using UnityEditor;
-
-namespace NaughtyAttributes.Editor
+namespace BovineLabs.NaughtyAttributes.Editor
 {
+    using BovineLabs.NaughtyAttributes;
+    using UnityEditor;
+    using UnityEngine;
+
     [PropertyDrawer(typeof(ShowAssetPreviewAttribute))]
     public class ShowAssetPreviewPropertyDrawer : PropertyDrawer
     {

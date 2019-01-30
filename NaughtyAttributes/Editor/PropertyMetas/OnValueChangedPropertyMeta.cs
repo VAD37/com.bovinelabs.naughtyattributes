@@ -1,9 +1,10 @@
-using System.Reflection;
-using UnityEditor;
-using UnityEngine;
-
-namespace NaughtyAttributes.Editor
+namespace BovineLabs.NaughtyAttributes.Editor
 {
+    using System.Reflection;
+    using BovineLabs.NaughtyAttributes;
+    using UnityEditor;
+    using UnityEngine;
+
     [PropertyMeta(typeof(OnValueChangedAttribute))]
     public class OnValueChangedPropertyMeta : PropertyMeta
     {

@@ -1,9 +1,9 @@
-using System.Reflection;
-using UnityEditor;
-using UnityEngine;
-
-namespace NaughtyAttributes.Editor
+namespace BovineLabs.NaughtyAttributes.Editor
 {
+    using System.Reflection;
+    using BovineLabs.NaughtyAttributes;
+    using UnityEditor;
+
     [PropertyDrawer(typeof(EnableIfAttribute))]
     public class EnableIfPropertyDrawer : PropertyEnabledCondition
     {

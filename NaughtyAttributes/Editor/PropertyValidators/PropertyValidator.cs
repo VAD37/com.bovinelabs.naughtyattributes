@@ -1,9 +1,7 @@
-﻿using UnityEditor;
-
-namespace NaughtyAttributes.Editor
+﻿namespace BovineLabs.NaughtyAttributes.Editor
 {
     public abstract class PropertyValidator
     {
-        public abstract void ValidateProperty(SerializedProperty property);
+        public abstract void ValidateProperty(AttributeWrapper wrapper);
     }
 }

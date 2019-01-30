@@ -1,8 +1,9 @@
-﻿using UnityEditor;
-using UnityEngine;
-
-namespace NaughtyAttributes.Editor
+﻿namespace BovineLabs.NaughtyAttributes.Editor
 {
+    using BovineLabs.NaughtyAttributes;
+    using UnityEditor;
+    using UnityEngine;
+
     // Stub mimics box group until we write this
     [PropertyGrouper(typeof(FoldoutGroupAttribute))]
     public class FoldoutGroupPropertyGrouper : PropertyGrouper

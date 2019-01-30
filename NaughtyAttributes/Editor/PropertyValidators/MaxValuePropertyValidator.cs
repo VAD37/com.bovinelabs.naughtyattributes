@@ -1,32 +1,36 @@
-using UnityEditor;
-
-namespace NaughtyAttributes.Editor
+namespace BovineLabs.NaughtyAttributes.Editor
 {
+    using System.Linq;
+    using BovineLabs.NaughtyAttributes;
+    using UnityEditor;
+
     [PropertyValidator(typeof(MaxValueAttribute))]
     public class MaxValuePropertyValidator : PropertyValidator
     {
-        public override void ValidateProperty(SerializedProperty property)
+        public override void ValidateProperty(AttributeWrapper wrapper)
         {
-            MaxValueAttribute maxValueAttribute = PropertyUtility.GetAttribute<MaxValueAttribute>(property);
+            var maxValueAttribute = wrapper.GetCustomAttributes<MaxValueAttribute>().First();
 
-            if (property.propertyType == SerializedPropertyType.Integer)
+            var value = wrapper.GetValue();
+
+            if (value is int intValue)
             {
-                if (property.intValue > maxValueAttribute.MaxValue)
+                if (intValue > maxValueAttribute.MaxValue)
                 {
-                    property.intValue = (int)maxValueAttribute.MaxValue;
+                    wrapper.SetValue((int)maxValueAttribute.MaxValue);
                 }
             }
-            else if (property.propertyType == SerializedPropertyType.Float)
+            else if (value is float floatValue)
             {
-                if (property.floatValue > maxValueAttribute.MaxValue)
+                if (floatValue > maxValueAttribute.MaxValue)
                 {
-                    property.floatValue = maxValueAttribute.MaxValue;
+                    wrapper.SetValue(maxValueAttribute.MaxValue);
                 }
             }
             else
             {
                 string warning = maxValueAttribute.GetType().Name + " can be used only on int or float fields";
-                EditorDrawUtility.DrawHelpBox(warning, MessageType.Warning, logToConsole: true, context: PropertyUtility.GetTargetObject(property));
+                EditorDrawUtility.DrawHelpBox(warning, MessageType.Warning, true, wrapper.Target);
             }
         }
     }

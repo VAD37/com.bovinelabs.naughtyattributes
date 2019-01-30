@@ -1,8 +1,9 @@
-using System.Reflection;
-using UnityEditor;
-
-namespace NaughtyAttributes.Editor
+namespace BovineLabs.NaughtyAttributes.Editor
 {
+    using System.Reflection;
+    using BovineLabs.NaughtyAttributes;
+    using UnityEditor;
+
     [FieldDrawer(typeof(ShowNonSerializedFieldAttribute))]
     public class ShowNonSerializedFieldFieldDrawer : FieldDrawer
     {
@@ -12,14 +13,20 @@ namespace NaughtyAttributes.Editor
 
             if (value == null)
             {
-                string warning = string.Format("{0} doesn't support {1} types", typeof(ShowNonSerializedFieldFieldDrawer).Name, "Reference");
-                EditorDrawUtility.DrawHelpBox(warning, MessageType.Warning, logToConsole: true, context: target);
+                var warning = $"{typeof(ShowNonSerializedFieldFieldDrawer).Name} doesn't support Reference types";
+                EditorDrawUtility.DrawHelpBox(warning, MessageType.Warning, true, target);
+                return;
             }
-            else if (!EditorDrawUtility.DrawLayoutField(value, field.Name))
+
+            var result = EditorDrawUtility.TryDrawLayoutField(value, field.Name, out var success);
+
+            if (!success)
             {
-                string warning = string.Format("{0} doesn't support {1} types", typeof(ShowNonSerializedFieldFieldDrawer).Name, field.FieldType.Name);
-                EditorDrawUtility.DrawHelpBox(warning, MessageType.Warning, logToConsole: true, context: target);
+                var warning = $"{typeof(ShowNonSerializedFieldFieldDrawer).Name} doesn't support {field.FieldType.Name} types";
+                EditorDrawUtility.DrawHelpBox(warning, MessageType.Warning, true, target);
             }
+
+            field.SetValue(target, result);
         }
     }
 }

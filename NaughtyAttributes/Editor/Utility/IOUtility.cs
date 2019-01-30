@@ -1,8 +1,8 @@
-﻿using UnityEngine;
-using System.IO;
-
-namespace NaughtyAttributes.Editor
+﻿namespace BovineLabs.NaughtyAttributes.Editor
 {
+    using System.IO;
+    using UnityEngine;
+
     public static class IOUtility
     {
         public static string GetPersistentDataPath()

@@ -1,7 +1,7 @@
-namespace NaughtyAttributes
+namespace BovineLabs.NaughtyAttributes
 {
-    using JetBrains.Annotations;
     using System;
+    using JetBrains.Annotations;
 
     [MeansImplicitUse]
     [AttributeUsage(AttributeTargets.Method)]

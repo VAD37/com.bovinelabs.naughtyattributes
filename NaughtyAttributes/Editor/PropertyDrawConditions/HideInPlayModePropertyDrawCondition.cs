@@ -1,7 +1,8 @@
-﻿using UnityEditor;
-
-namespace NaughtyAttributes.Editor
+﻿namespace BovineLabs.NaughtyAttributes.Editor
 {
+    using BovineLabs.NaughtyAttributes;
+    using UnityEditor;
+
     [PropertyDrawCondition(typeof(HideInPlayModeAttribute))]
     public class HideInPlayModePropertyDrawCondition : PropertyDrawCondition
     {

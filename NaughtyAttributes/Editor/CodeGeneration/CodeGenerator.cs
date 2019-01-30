@@ -1,13 +1,13 @@
-using System;
-using System.Collections.Generic;
-using System.Reflection;
-using System.Text;
-using System.Text.RegularExpressions;
-using UnityEngine;
-using UnityEditor;
-
-namespace NaughtyAttributes.Editor
+namespace BovineLabs.NaughtyAttributes.Editor
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Reflection;
+    using System.Text;
+    using System.Text.RegularExpressions;
+    using UnityEditor;
+    using UnityEngine;
+
     public class CodeGenerator : UnityEditor.Editor
     {
         private static readonly string GENERATED_CODE_TARGET_FOLDER =

@@ -1,7 +1,7 @@
-using System;
-
-namespace NaughtyAttributes
+namespace BovineLabs.NaughtyAttributes
 {
+    using System;
+
     [AttributeUsage(AttributeTargets.Field, AllowMultiple = true, Inherited = true)]
     public class InfoBoxAttribute : MetaAttribute
     {

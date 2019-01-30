@@ -1,10 +1,11 @@
 // This class is auto generated
 
-using System;
-using System.Collections.Generic;
-
-namespace NaughtyAttributes.Editor
+namespace BovineLabs.NaughtyAttributes.Editor
 {
+    using System;
+    using System.Collections.Generic;
+    using BovineLabs.NaughtyAttributes;
+
     public static class FieldDrawerDatabase
     {
         private static Dictionary<Type, FieldDrawer> drawersByAttributeType;
