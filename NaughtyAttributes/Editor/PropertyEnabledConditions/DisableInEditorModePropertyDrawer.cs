@@ -3,11 +3,11 @@
     using BovineLabs.NaughtyAttributes;
     using UnityEditor;
 
-    [PropertyDrawer(typeof(DisableInPlayModeAttribute))]
-    public class DisableInEditorModePropertyDrawer : PropertyEnabledCondition<DisableInPlayModeAttribute>
+    [PropertyDrawer(typeof(DisableInEditorModeAttribute))]
+    public class DisableInEditorModePropertyDrawer : PropertyEnabledCondition<DisableInEditorModeAttribute>
     {
         /// <inheritdoc />
-        protected override bool IsPropertyEnabled(AttributeWrapper wrapper, DisableInPlayModeAttribute attribute)
+        protected override bool IsPropertyEnabled(AttributeWrapper wrapper, DisableInEditorModeAttribute attribute)
         {
             return EditorApplication.isPlaying;
         }
