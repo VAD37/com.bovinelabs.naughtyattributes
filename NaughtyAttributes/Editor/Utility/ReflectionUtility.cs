@@ -1,10 +1,10 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-
 namespace NaughtyAttributes.Editor
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Reflection;
+
     public static class ReflectionUtility
     {
         public static IEnumerable<FieldInfo> GetAllFields(object target, Func<FieldInfo, bool> predicate)
@@ -36,7 +36,7 @@ namespace NaughtyAttributes.Editor
         {
             List<Type> types = new List<Type>()
             {
-                target.GetType()
+                target.GetType(),
             };
 
             while (types.Last().BaseType != null)
@@ -70,6 +70,21 @@ namespace NaughtyAttributes.Editor
             return list;
         }
 
+        public static FieldInfo GetField(object target, string fieldName)
+        {
+            return GetAllFields(target, f => f.Name.Equals(fieldName, StringComparison.InvariantCulture)).FirstOrDefault();
+        }
+
+        public static PropertyInfo GetProperty(object target, string propertyName)
+        {
+            return GetAllProperties(target, p => p.Name.Equals(propertyName, StringComparison.InvariantCulture)).FirstOrDefault();
+        }
+
+        public static MethodInfo GetMethod(object target, string methodName)
+        {
+            return GetAllMethods(target, m => m.Name.Equals(methodName, StringComparison.InvariantCulture)).FirstOrDefault();
+        }
+
         private static void GetAllMethods(Type t, ICollection<MethodInfo> methods, Func<MethodInfo, bool> predicate)
         {
             var flags = BindingFlags.Instance | BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.Public;
@@ -88,21 +103,6 @@ namespace NaughtyAttributes.Editor
             {
                 GetAllMethods(baseType, methods, predicate);
             }
-        }
-
-        public static FieldInfo GetField(object target, string fieldName)
-        {
-            return GetAllFields(target, f => f.Name.Equals(fieldName, StringComparison.InvariantCulture)).FirstOrDefault();
-        }
-
-        public static PropertyInfo GetProperty(object target, string propertyName)
-        {
-            return GetAllProperties(target, p => p.Name.Equals(propertyName, StringComparison.InvariantCulture)).FirstOrDefault();
-        }
-
-        public static MethodInfo GetMethod(object target, string methodName)
-        {
-            return GetAllMethods(target, m => m.Name.Equals(methodName, StringComparison.InvariantCulture)).FirstOrDefault();
         }
     }
 }
