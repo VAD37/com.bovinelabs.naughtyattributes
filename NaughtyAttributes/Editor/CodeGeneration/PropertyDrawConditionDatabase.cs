@@ -8,30 +8,27 @@ namespace BovineLabs.NaughtyAttributes.Editor
 
     public static class PropertyDrawConditionDatabase
     {
-        private static Dictionary<Type, PropertyDrawCondition> drawConditionsByAttributeType;
+        private static readonly Dictionary<Type, PropertyDrawCondition> drawConditionsByAttributeType;
 
         static PropertyDrawConditionDatabase()
         {
-            drawConditionsByAttributeType = new Dictionary<Type, PropertyDrawCondition>();
-            drawConditionsByAttributeType[typeof(HideIfAttribute)] = new HideIfPropertyDrawCondition();
-drawConditionsByAttributeType[typeof(HideInEditorModeAttribute)] = new HideInEditorModePropertyDrawCondition();
-drawConditionsByAttributeType[typeof(HideInPlayModeAttribute)] = new HideInPlayModePropertyDrawCondition();
-drawConditionsByAttributeType[typeof(ShowIfAttribute)] = new ShowIfPropertyDrawCondition();
-
+            drawConditionsByAttributeType = new Dictionary<Type, PropertyDrawCondition>
+            {
+                [typeof(HideIfAttribute)] = new HideIfPropertyDrawCondition(),
+                [typeof(HideInEditorModeAttribute)] = new HideInEditorModePropertyDrawCondition(),
+                [typeof(HideInPlayModeAttribute)] = new HideInPlayModePropertyDrawCondition(),
+                [typeof(ShowIfAttribute)] = new ShowIfPropertyDrawCondition()
+            };
         }
 
         public static PropertyDrawCondition GetDrawConditionForAttribute(Type attributeType)
         {
-            PropertyDrawCondition drawCondition;
-            if (drawConditionsByAttributeType.TryGetValue(attributeType, out drawCondition))
+            if (drawConditionsByAttributeType.TryGetValue(attributeType, out var drawCondition))
             {
                 return drawCondition;
             }
-            else
-            {
-                return null;
-            }
+
+            return null;
         }
     }
 }
-

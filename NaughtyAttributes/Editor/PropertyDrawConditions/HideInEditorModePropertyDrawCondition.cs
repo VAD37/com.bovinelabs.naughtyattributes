@@ -4,9 +4,10 @@
     using UnityEditor;
 
     [PropertyDrawCondition(typeof(HideInEditorModeAttribute))]
-    public class HideInEditorModePropertyDrawCondition : PropertyDrawCondition
+    public class HideInEditorModePropertyDrawCondition : PropertyDrawCondition<HideInEditorModeAttribute>
     {
-        public override bool CanDrawProperty(SerializedProperty property)
+        /// <inheritdoc />
+        protected override bool CanDrawProperty(AttributeWrapper wrapper, HideInEditorModeAttribute attribute)
         {
             return EditorApplication.isPlaying;
         }

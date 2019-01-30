@@ -1,13 +1,12 @@
 namespace BovineLabs.NaughtyAttributes.Editor
 {
     using BovineLabs.NaughtyAttributes;
-    using UnityEditor;
 
     [PropertyDrawer(typeof(ReadOnlyAttribute))]
-    public class ReadOnlyPropertyDrawer : PropertyEnabledCondition
+    public class ReadOnlyPropertyDrawer : PropertyEnabledCondition<ReadOnlyAttribute>
     {
         /// <inheritdoc />
-        public override bool IsPropertyEnabled(SerializedProperty property)
+        protected override bool IsPropertyEnabled(AttributeWrapper wrapper, ReadOnlyAttribute attribute)
         {
             return false;
         }

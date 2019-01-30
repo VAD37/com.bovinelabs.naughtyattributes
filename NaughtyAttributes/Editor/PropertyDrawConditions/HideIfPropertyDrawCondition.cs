@@ -5,21 +5,21 @@ namespace BovineLabs.NaughtyAttributes.Editor
     using UnityEditor;
 
     [PropertyDrawCondition(typeof(HideIfAttribute))]
-    public class HideIfPropertyDrawCondition : PropertyDrawCondition
+    public class HideIfPropertyDrawCondition : PropertyDrawCondition<HideIfAttribute>
     {
-        public override bool CanDrawProperty(SerializedProperty property)
+        /// <inheritdoc />
+        protected override bool CanDrawProperty(AttributeWrapper wrapper, HideIfAttribute attribute)
         {
-            HideIfAttribute hideIfAttribute = PropertyUtility.GetAttribute<HideIfAttribute>(property);
-            UnityEngine.Object target = PropertyUtility.GetTargetObject(property);
+            var target = wrapper.Target;
 
-            FieldInfo conditionField = ReflectionUtility.GetField(target, hideIfAttribute.ConditionName);
+            FieldInfo conditionField = ReflectionUtility.GetField(target, attribute.ConditionName);
             if (conditionField != null &&
                 conditionField.FieldType == typeof(bool))
             {
                 return !(bool)conditionField.GetValue(target);
             }
 
-            MethodInfo conditionMethod = ReflectionUtility.GetMethod(target, hideIfAttribute.ConditionName);
+            MethodInfo conditionMethod = ReflectionUtility.GetMethod(target, attribute.ConditionName);
             if (conditionMethod != null &&
                 conditionMethod.ReturnType == typeof(bool) &&
                 conditionMethod.GetParameters().Length == 0)
@@ -27,8 +27,8 @@ namespace BovineLabs.NaughtyAttributes.Editor
                 return !(bool)conditionMethod.Invoke(target, null);
             }
 
-            string warning = hideIfAttribute.GetType().Name + " needs a valid boolean condition field or method name to work";
-            EditorDrawUtility.DrawHelpBox(warning, MessageType.Warning, logToConsole: true, context: target);
+            string warning = attribute.GetType().Name + " needs a valid boolean condition field or method name to work";
+            EditorDrawUtility.DrawHelpBox(warning, MessageType.Warning, true, target);
 
             return true;
         }

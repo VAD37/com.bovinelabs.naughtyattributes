@@ -37,5 +37,11 @@ namespace BovineLabs.NaughtyAttributes.Editor
         public override void ApplyModifications()
         {
         }
+
+        /// <inheritdoc />
+        protected override void DrawPropertyField()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

@@ -4,10 +4,10 @@
     using UnityEditor;
 
     [PropertyDrawer(typeof(DisableInPlayModeAttribute))]
-    public class DisableInEditorModePropertyDrawer : PropertyEnabledCondition
+    public class DisableInEditorModePropertyDrawer : PropertyEnabledCondition<DisableInPlayModeAttribute>
     {
         /// <inheritdoc />
-        public override bool IsPropertyEnabled(SerializedProperty property)
+        protected override bool IsPropertyEnabled(AttributeWrapper wrapper, DisableInPlayModeAttribute attribute)
         {
             return EditorApplication.isPlaying;
         }

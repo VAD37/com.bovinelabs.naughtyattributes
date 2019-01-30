@@ -50,6 +50,12 @@ namespace BovineLabs.NaughtyAttributes.Editor
         {
             serializedProperty.serializedObject.ApplyModifiedProperties(); 
         }
+
+        /// <inheritdoc />
+        protected override void DrawPropertyField()
+        {
+            EditorDrawUtility.DrawPropertyField(this.serializedProperty);
+        }
     }
 
     public class NonSerializedFieldAttributeWrapper : FieldAttributeWrapper
@@ -62,6 +68,12 @@ namespace BovineLabs.NaughtyAttributes.Editor
         /// <inheritdoc />
         public override void ApplyModifications()
         {
+        }
+
+        /// <inheritdoc />
+        protected override void DrawPropertyField()
+        {
+            throw new NotImplementedException();
         }
     }
 }

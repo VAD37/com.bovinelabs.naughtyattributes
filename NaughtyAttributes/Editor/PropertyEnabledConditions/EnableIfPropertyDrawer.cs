@@ -5,18 +5,17 @@ namespace BovineLabs.NaughtyAttributes.Editor
     using UnityEditor;
 
     [PropertyDrawer(typeof(EnableIfAttribute))]
-    public class EnableIfPropertyDrawer : PropertyEnabledCondition
+    public class EnableIfPropertyDrawer : PropertyEnabledCondition<EnableIfAttribute>
     {
         /// <inheritdoc />
-        public override bool IsPropertyEnabled(SerializedProperty property)
+        protected override bool IsPropertyEnabled(AttributeWrapper wrapper, EnableIfAttribute attribute)
         {
             bool drawEnabled = false;
             bool validCondition = false;
 
-            EnableIfAttribute enableIfAttribute = PropertyUtility.GetAttribute<EnableIfAttribute>(property);
-            UnityEngine.Object target = PropertyUtility.GetTargetObject(property);
+            var target = wrapper.Target;
 
-            FieldInfo conditionField = ReflectionUtility.GetField(target, enableIfAttribute.ConditionName);
+            FieldInfo conditionField = ReflectionUtility.GetField(target, attribute.ConditionName);
             if (conditionField != null &&
                 conditionField.FieldType == typeof(bool))
             {
@@ -24,7 +23,7 @@ namespace BovineLabs.NaughtyAttributes.Editor
                 validCondition = true;
             }
 
-            MethodInfo conditionMethod = ReflectionUtility.GetMethod(target, enableIfAttribute.ConditionName);
+            MethodInfo conditionMethod = ReflectionUtility.GetMethod(target, attribute.ConditionName);
             if (conditionMethod != null &&
                 conditionMethod.ReturnType == typeof(bool) &&
                 conditionMethod.GetParameters().Length == 0)
@@ -39,8 +38,8 @@ namespace BovineLabs.NaughtyAttributes.Editor
             }
             else
             {
-                string warning = enableIfAttribute.GetType().Name + " needs a valid boolean condition field or method name to work";
-                EditorDrawUtility.DrawHelpBox(warning, MessageType.Warning, logToConsole: true, context: target);
+                string warning = attribute.GetType().Name + " needs a valid boolean condition field or method name to work";
+                EditorDrawUtility.DrawHelpBox(warning, MessageType.Warning, true, target);
                 return true;
             }
         }
