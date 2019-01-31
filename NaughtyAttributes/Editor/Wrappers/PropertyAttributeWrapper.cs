@@ -9,40 +9,31 @@ namespace BovineLabs.NaughtyAttributes.Editor
 
     public class PropertyAttributeWrapper : ValueWrapper
     {
-        private readonly PropertyInfo propertyInfo;
+        private PropertyInfo PropertyInfo => (PropertyInfo)this.MemberInfo;
 
         public PropertyAttributeWrapper(object target, PropertyInfo propertyInfo)
             : base(target, propertyInfo)
         {
-            this.propertyInfo = propertyInfo;
         }
 
         /// <inheritdoc />
-        public override Type Type => this.propertyInfo.PropertyType;
+        public override Type Type => this.PropertyInfo.PropertyType;
 
         /// <inheritdoc />
         public override object GetValue()
         {
-            return this.propertyInfo.GetValue(this.Target);
+            return this.PropertyInfo.GetValue(this.Target);
         }
 
         /// <inheritdoc />
         public override void SetValue(object value)
         {
-            this.propertyInfo.SetValue(this.Target, value);
+            this.PropertyInfo.SetValue(this.Target, value);
         }
 
         /// <inheritdoc />
         public override void ApplyModifications()
         {
-        }
-
-        /// <inheritdoc />
-        public override void DrawPropertyField()
-        {
-            var result = this.GetValue();
-
-
         }
     }
 }

@@ -2,6 +2,7 @@ namespace BovineLabs.NaughtyAttributes.Editor
 {
     using System;
     using System.Linq;
+    using System.Reflection;
     using System.Threading;
     using UnityEditor;
     using UnityEngine;
@@ -118,9 +119,9 @@ namespace BovineLabs.NaughtyAttributes.Editor
                 return EditorGUILayout.RectField(label, (Rect)value);
             }
 
-            if (value is Object o)
+            if (typeof(Object).IsAssignableFrom(type))
             {
-                return EditorGUILayout.ObjectField(label, o, type, true);
+                return EditorGUILayout.ObjectField(label, (Object)value, type, true);
             }
 
             // string warning = $"DrawLayoutField doesn't support {type} types";

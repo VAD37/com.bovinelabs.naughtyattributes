@@ -34,9 +34,9 @@ namespace BovineLabs.NaughtyAttributes.Editor
                     this.members.Add(new FieldAttributeWrapper(target, field));
                 }
             }
-        }
 
-        public bool HasElement => this.members.Count > 0;
+            this.MethodsPropertiesAndGrouping(target);
+        }
 
         public Drawer(object target)
         {
@@ -57,6 +57,8 @@ namespace BovineLabs.NaughtyAttributes.Editor
             
             this.MethodsPropertiesAndGrouping(target);
         }
+
+        public bool HasElement => this.members.Count > 0;
 
         private void MethodsPropertiesAndGrouping(object target)
         {

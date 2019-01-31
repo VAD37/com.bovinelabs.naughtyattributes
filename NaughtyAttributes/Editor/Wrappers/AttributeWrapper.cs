@@ -72,15 +72,32 @@ namespace BovineLabs.NaughtyAttributes.Editor
 
     public abstract class ValueWrapper : AttributeWrapper
     {
-        private readonly MemberInfo memberInfo;
+        protected MemberInfo MemberInfo { get; }
+
+        private readonly Drawer drawer;
+        private bool foldout;
 
         protected ValueWrapper(object target, MemberInfo memberInfo)
             : base(target)
         {
-            this.memberInfo = memberInfo;
+            this.MemberInfo = memberInfo;
+
+            if (EditorDrawUtility.IsDrawable(this.Type))
+            {
+                var info = this.Type.GetTypeInfo();
+
+                if (info.IsArray)
+                {
+                    // TODO
+                }
+                else
+                {
+                    this.drawer = new Drawer(this.GetValue());
+                }
+            }
         }
 
-        public string Name => this.memberInfo.Name;
+        public string Name => this.MemberInfo.Name;
         public string DisplayName => this.Name;
 
         public abstract Type Type { get; }
@@ -164,12 +181,33 @@ namespace BovineLabs.NaughtyAttributes.Editor
         }
 
         public abstract void ApplyModifications();
-        public abstract void DrawPropertyField();
+        
+        public void DrawPropertyField()
+        {
+            if (this.drawer != null)
+            {
+                if (!this.drawer.HasElement)
+                {
+                    return;
+                }
+
+                this.foldout = EditorGUILayout.Foldout(this.foldout, this.DisplayName);
+
+                if (this.foldout)
+                {
+                    this.drawer.OnInspectorGUI();
+                }
+            }
+            else
+            {
+                this.SetValue(EditorDrawUtility.DrawPropertyField(this.GetValue(), this.Type, this.DisplayName));
+            }
+        }
 
         /// <inheritdoc />
         public sealed override IEnumerable<T> GetCustomAttributes<T>()
         {
-            return this.memberInfo.GetCustomAttributes<T>(true);
+            return this.MemberInfo.GetCustomAttributes<T>(true);
         }
     }
 }
