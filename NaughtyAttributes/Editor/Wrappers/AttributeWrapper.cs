@@ -37,6 +37,42 @@ namespace BovineLabs.NaughtyAttributes.Editor
         public abstract IEnumerable<T> GetCustomAttributes<T>()
             where T : Attribute;
 
+        protected bool CanDraw()
+        {
+            // Check if the field has draw conditions
+            var drawConditionAttributes = this.GetCustomAttributes<DrawConditionAttribute>().ToArray();
+            if (drawConditionAttributes.Length > 0)
+            {
+                var attribute = drawConditionAttributes[0];
+                var drawCondition = PropertyDrawConditionDatabase.GetDrawConditionForAttribute(attribute.GetType());
+                if (!drawCondition.CanDrawProperty(this, attribute))
+                {
+                    return false;
+                }
+            }
+
+            // Check if the field has HideInInspectorAttribute
+            HideInInspector[] hideInInspectorAttributes = (HideInInspector[])this.GetCustomAttributes<HideInInspector>();
+            if (hideInInspectorAttributes.Length > 0)
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        protected bool IsEnabled()
+        {
+            var enabledConditionAttributes = this.GetCustomAttributes<EnabledConditionAttribute>().ToArray();
+            if (enabledConditionAttributes.Length > 0)
+            {
+                var attribute = enabledConditionAttributes[0];
+                var drawCondition = PropertyEnabledConditionDatabase.GetEnabledConditionForAttribute(attribute.GetType());
+                return drawCondition.IsPropertyEnabled(this, attribute);
+            }
+
+            return true;
+        }
     }
 
     public abstract class ValueWrapper : AttributeWrapper
@@ -81,9 +117,7 @@ namespace BovineLabs.NaughtyAttributes.Editor
         private void ApplyFieldMeta()
         {
             // Apply custom meta attributes
-            MetaAttribute[] metaAttributes = this.GetCustomAttributes<MetaAttribute>()
-                .Where(attr => attr.GetType() != typeof(OnValueChangedAttribute))
-                .ToArray();
+            MetaAttribute[] metaAttributes = this.GetCustomAttributes<MetaAttribute>().ToArray();
 
             Array.Sort(metaAttributes, (x, y) => x.Order - y.Order);
 
@@ -96,34 +130,12 @@ namespace BovineLabs.NaughtyAttributes.Editor
 
         private void DrawField()
         {
-            // Check if the field has draw conditions
-            var drawConditionAttributes = this.GetCustomAttributes<DrawConditionAttribute>().ToArray();
-            if (drawConditionAttributes.Length > 0)
-            {
-                var attribute = drawConditionAttributes[0];
-                var drawCondition = PropertyDrawConditionDatabase.GetDrawConditionForAttribute(attribute.GetType());
-                if (!drawCondition.CanDrawProperty(this, attribute))
-                {
-                    return;
-                }
-            }
-
-            // Check if the field has HideInInspectorAttribute
-            HideInInspector[] hideInInspectorAttributes = (HideInInspector[])this.GetCustomAttributes<HideInInspector>();
-            if (hideInInspectorAttributes.Length > 0)
+            if (!this.CanDraw())
             {
                 return;
             }
 
-            bool isPropertyEnabled = true;
-
-            var enabledConditionAttributes = this.GetCustomAttributes<EnabledConditionAttribute>().ToArray();
-            if (enabledConditionAttributes.Length > 0)
-            {
-                var attribute = enabledConditionAttributes[0];
-                var drawCondition = PropertyEnabledConditionDatabase.GetEnabledConditionForAttribute(attribute.GetType());
-                isPropertyEnabled = drawCondition.IsPropertyEnabled(this, attribute);
-            }
+            var isPropertyEnabled = this.IsEnabled();
 
             // Draw the field
             EditorGUI.BeginChangeCheck();
@@ -154,8 +166,7 @@ namespace BovineLabs.NaughtyAttributes.Editor
                 var onValueChangedAttributes = this.GetCustomAttributes<OnValueChangedAttribute>();
                 foreach (var onValueChangedAttribute in onValueChangedAttributes)
                 {
-                    var meta = PropertyMetaDatabase.GetMetaForAttribute(onValueChangedAttribute.GetType());
-                    meta?.Run(this, onValueChangedAttribute);
+                    OnValueChangedProperty.Instance.ApplyPropertyMeta(this, onValueChangedAttribute);
                 }
             }
         }

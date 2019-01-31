@@ -1,17 +1,18 @@
 namespace BovineLabs.NaughtyAttributes.Editor
 {
-    using System.Reflection;
     using BovineLabs.NaughtyAttributes;
     using UnityEngine;
 
-    [PropertyMeta(typeof(OnValueChangedAttribute))]
-    public class OnValueChangedPropertyMeta : PropertyMeta<OnValueChangedAttribute>
+    public class OnValueChangedProperty
     {
-        protected override void ApplyPropertyMeta(ValueWrapper wrapper, OnValueChangedAttribute attribute)
+        private static OnValueChangedProperty instance;
+        public static OnValueChangedProperty Instance => instance ?? (instance = new OnValueChangedProperty());
+
+        public void ApplyPropertyMeta(ValueWrapper wrapper, OnValueChangedAttribute attribute)
         {
             var target = wrapper.Target;
 
-            MethodInfo callbackMethod = ReflectionUtility.GetMethod(target, attribute.CallbackName);
+            var callbackMethod = ReflectionUtility.GetMethod(target, attribute.CallbackName);
             if (callbackMethod != null &&
                 callbackMethod.ReturnType == typeof(void) &&
                 callbackMethod.GetParameters().Length == 0)

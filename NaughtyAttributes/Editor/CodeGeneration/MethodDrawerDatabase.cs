@@ -8,7 +8,7 @@ namespace BovineLabs.NaughtyAttributes.Editor
 
     public static class MethodDrawerDatabase
     {
-        private static Dictionary<Type, MethodDrawer> drawersByAttributeType;
+        private static readonly Dictionary<Type, MethodDrawer> drawersByAttributeType;
 
         static MethodDrawerDatabase()
         {
@@ -19,15 +19,7 @@ namespace BovineLabs.NaughtyAttributes.Editor
 
         public static MethodDrawer GetDrawerForAttribute(Type attributeType)
         {
-            MethodDrawer drawer;
-            if (drawersByAttributeType.TryGetValue(attributeType, out drawer))
-            {
-                return drawer;
-            }
-            else
-            {
-                return null;
-            }
+            return drawersByAttributeType.TryGetValue(attributeType, out var drawer) ? drawer : null;
         }
     }
 }

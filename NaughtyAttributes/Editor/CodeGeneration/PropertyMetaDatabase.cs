@@ -13,9 +13,7 @@ namespace BovineLabs.NaughtyAttributes.Editor
             metasByAttributeType = new Dictionary<Type, ValueRunner>
             {
                 [typeof(InfoBoxAttribute)] = new InfoBoxPropertyMeta(),
-                [typeof(OnValueChangedAttribute)] = new OnValueChangedPropertyMeta()
             };
-
         }
 
         public static ValueRunner GetMetaForAttribute(Type attributeType)

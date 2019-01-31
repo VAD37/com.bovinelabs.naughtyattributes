@@ -4,9 +4,10 @@
 
 namespace BovineLabs.NaughtyAttributes.Editor
 {
-    using System;
     using System.Collections.Generic;
+    using System.Linq;
     using System.Reflection;
+    using UnityEngine;
     using Object = UnityEngine.Object;
 
     /// <summary>
@@ -14,18 +15,16 @@ namespace BovineLabs.NaughtyAttributes.Editor
     /// </summary>
     public class MethodWrapper : AttributeWrapper
     {
-        private Object target;
-        private MethodInfo methodInfo;
+        public MethodInfo MethodInfo { get; }
 
         public MethodWrapper(Object target, MethodInfo methodInfo) 
             : base(target)
         {
-            this.target = target;
-            this.methodInfo = methodInfo;
+            this.MethodInfo = methodInfo;
         }
 
         /// <inheritdoc />
-        public sealed override string Name => this.methodInfo.Name;
+        public sealed override string Name => this.MethodInfo.Name;
 
         /// <inheritdoc />
         public override string DisplayName => this.Name;
@@ -33,12 +32,30 @@ namespace BovineLabs.NaughtyAttributes.Editor
         /// <inheritdoc />
         public override void ValidateAndDrawField()
         {
+            if (!this.CanDraw())
+            {
+                return;
+            }
+
+            var isPropertyEnabled = this.IsEnabled();
+
+            GUI.enabled = isPropertyEnabled;
+
+            var drawerAttributes = this.GetCustomAttributes<MethodAttribute>().ToArray();
+            if (drawerAttributes.Length > 0)
+            {
+                var attribute = drawerAttributes[0];
+                var drawer = MethodDrawerDatabase.GetDrawerForAttribute(attribute.GetType());
+                drawer?.DrawMethod(this, attribute);
+            }
+
+            GUI.enabled = true;
         }
 
         /// <inheritdoc />
         public override IEnumerable<T> GetCustomAttributes<T>()
         {
-            return this.methodInfo.GetCustomAttributes<T>(true);
+            return this.MethodInfo.GetCustomAttributes<T>(true);
         }
     }
 }

@@ -3,7 +3,7 @@ namespace BovineLabs.NaughtyAttributes
     using System;
 
     [AttributeUsage(AttributeTargets.Field, AllowMultiple = true, Inherited = true)]
-    public class OnValueChangedAttribute : MetaAttribute
+    public class OnValueChangedAttribute : NaughtyAttribute
     {
         public string CallbackName { get; private set; }
 

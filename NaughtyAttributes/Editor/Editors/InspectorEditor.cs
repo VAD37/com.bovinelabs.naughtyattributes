@@ -239,7 +239,7 @@ namespace BovineLabs.NaughtyAttributes.Editor
                 .Select(p => new PropertyAttributeWrapper(this.target, p)));
 
             this.members.AddRange(ReflectionUtility
-                .GetAllMethods(this.target, p => p.GetCustomAttribute<ShowNonSerializedFieldAttribute>() != null)
+                .GetAllMethods(this.target, p => p.GetCustomAttribute<MethodAttribute>() != null)
                 .Select(p => new MethodWrapper(this.target, p)));
 
             if (this.members.Count == 0)

@@ -5,7 +5,7 @@ namespace BovineLabs.NaughtyAttributes
 
     [MeansImplicitUse]
     [AttributeUsage(AttributeTargets.Method)]
-    public class ButtonAttribute : DrawerAttribute
+    public class ButtonAttribute : MethodAttribute
     {
         public string Text { get; private set; }
 
