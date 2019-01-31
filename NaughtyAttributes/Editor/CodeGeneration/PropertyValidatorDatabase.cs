@@ -8,28 +8,22 @@ namespace BovineLabs.NaughtyAttributes.Editor
 
     public static class PropertyValidatorDatabase
     {
-        private static Dictionary<Type, AttributeRunner> validatorsByAttributeType;
+        private static readonly Dictionary<Type, ValueRunner> validatorsByAttributeType;
 
         static PropertyValidatorDatabase()
         {
-            validatorsByAttributeType = new Dictionary<Type, AttributeRunner>();
-            validatorsByAttributeType[typeof(MaxValueAttribute)] = new MaxValuePropertyValidator();
-            validatorsByAttributeType[typeof(MinValueAttribute)] = new MinValuePropertyValidator();
-            validatorsByAttributeType[typeof(RequiredAttribute)] = new RequiredPropertyValidator();
-            validatorsByAttributeType[typeof(ValidateInputAttribute)] = new ValidateInputPropertyValidator();
+            validatorsByAttributeType = new Dictionary<Type, ValueRunner>
+            {
+                [typeof(MaxValueAttribute)] = new MaxValuePropertyValidator(),
+                [typeof(MinValueAttribute)] = new MinValuePropertyValidator(),
+                [typeof(RequiredAttribute)] = new RequiredPropertyValidator(),
+                [typeof(ValidateInputAttribute)] = new ValidateInputPropertyValidator()
+            };
         }
 
-        public static AttributeRunner GetValidatorForAttribute(Type attributeType)
+        public static ValueRunner GetValidatorForAttribute(Type attributeType)
         {
-            AttributeRunner validator;
-            if (validatorsByAttributeType.TryGetValue(attributeType, out validator))
-            {
-                return validator;
-            }
-            else
-            {
-                return null;
-            }
+            return validatorsByAttributeType.TryGetValue(attributeType, out var validator) ? validator : null;
         }
     }
 }

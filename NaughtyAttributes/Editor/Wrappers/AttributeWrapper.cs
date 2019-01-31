@@ -28,27 +28,44 @@ namespace BovineLabs.NaughtyAttributes.Editor
 
         public Object Target { get; }
 
-        public abstract Type Type { get; }
-
         public abstract string Name { get; }
 
         public abstract string DisplayName { get; }
 
-        public void ValidateAndDrawField()
+        public abstract void ValidateAndDrawField();
+
+        public abstract IEnumerable<T> GetCustomAttributes<T>()
+            where T : Attribute;
+
+    }
+
+    public abstract class ValueWrapper : AttributeWrapper
+    {
+        private readonly MemberInfo memberInfo;
+
+        protected ValueWrapper(Object target, MemberInfo memberInfo)
+            : base(target)
+        {
+            this.memberInfo = memberInfo;
+        }
+
+        /// <inheritdoc />
+        public sealed override string Name => this.memberInfo.Name;
+        
+        /// <inheritdoc />
+        public override string DisplayName => this.Name;
+
+        public abstract Type Type { get; }
+
+        public abstract object GetValue();
+        public abstract void SetValue(object value);
+
+        public override void ValidateAndDrawField()
         {
             this.ValidateField();
             this.ApplyFieldMeta();
             this.DrawField();
         }
-
-        public abstract object GetValue();
-
-        public abstract void SetValue(object value);
-
-        public abstract IEnumerable<T> GetCustomAttributes<T>()
-            where T : Attribute;
-
-        public abstract void ApplyModifications();
 
         private void ValidateField()
         {
@@ -120,11 +137,11 @@ namespace BovineLabs.NaughtyAttributes.Editor
                 var drawer = PropertyDrawerDatabase.GetDrawerForAttribute(attribute.GetType());
                 if (drawer != null)
                 {
-                    drawer.DrawProperty(this, attribute);
+                    drawer.Run(this, attribute);
                     customDrawer = true;
                 }
             }
-            
+
             if (!customDrawer)
             {
                 this.DrawPropertyField();
@@ -143,24 +160,9 @@ namespace BovineLabs.NaughtyAttributes.Editor
             }
         }
 
+        public abstract void ApplyModifications();
         public abstract void DrawPropertyField();
 
-    }
-
-    public abstract class MemberInfoWrapper : AttributeWrapper
-    {
-        private readonly MemberInfo memberInfo;
-
-        protected MemberInfoWrapper(Object target, MemberInfo memberInfo)
-            : base(target)
-        {
-            this.memberInfo = memberInfo;
-        }
-
-        /// <inheritdoc />
-        public sealed override string Name => this.memberInfo.Name;
-        public override string DisplayName => this.Name;
-        
         /// <inheritdoc />
         public sealed override IEnumerable<T> GetCustomAttributes<T>()
         {

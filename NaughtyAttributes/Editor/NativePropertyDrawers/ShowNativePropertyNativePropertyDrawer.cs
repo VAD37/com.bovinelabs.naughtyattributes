@@ -7,7 +7,7 @@ namespace BovineLabs.NaughtyAttributes.Editor
     public class ShowNativePropertyNativePropertyDrawer : NativePropertyDrawer<ShowNativePropertyAttribute>
     {
         /// <inheritdoc />
-        protected override void DrawNativeProperty(AttributeWrapper wrapper, ShowNativePropertyAttribute attribute)
+        protected override void DrawNativeProperty(ValueWrapper wrapper, ShowNativePropertyAttribute attribute)
         {
             object value = wrapper.GetValue();
 

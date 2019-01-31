@@ -11,7 +11,7 @@ namespace BovineLabs.NaughtyAttributes.Editor
     {
         private Dictionary<string, ReorderableList> reorderableListsByPropertyName = new Dictionary<string, ReorderableList>();
 
-        protected override void DrawProperty(AttributeWrapper wrapper, ReorderableListAttribute attribute)
+        protected override void DrawProperty(ValueWrapper wrapper, ReorderableListAttribute attribute)
         {
             EditorDrawUtility.DrawHeader(wrapper);
 

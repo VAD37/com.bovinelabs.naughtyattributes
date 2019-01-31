@@ -9,7 +9,7 @@ namespace BovineLabs.NaughtyAttributes.Editor
     using UnityEditor;
     using Object = UnityEngine.Object;
 
-    public abstract class FieldAttributeWrapper : MemberInfoWrapper
+    public abstract class FieldAttributeWrapper : ValueWrapper
     {
         protected FieldInfo FieldInfo { get; }
 

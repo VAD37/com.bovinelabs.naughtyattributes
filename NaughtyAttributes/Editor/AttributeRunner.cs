@@ -8,4 +8,9 @@ namespace BovineLabs.NaughtyAttributes.Editor
     {
         public abstract void Run(AttributeWrapper wrapper, NaughtyAttribute attribute);
     }
+
+    public abstract class ValueRunner
+    {
+        public abstract void Run(ValueWrapper wrapper, NaughtyAttribute attribute);
+    }
 }

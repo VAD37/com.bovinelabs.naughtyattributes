@@ -8,7 +8,7 @@ namespace BovineLabs.NaughtyAttributes.Editor
     using System.Reflection;
     using Object = UnityEngine.Object;
 
-    public class PropertyAttributeWrapper : MemberInfoWrapper
+    public class PropertyAttributeWrapper : ValueWrapper
     {
         private readonly PropertyInfo propertyInfo;
 

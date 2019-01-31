@@ -12,7 +12,7 @@ namespace BovineLabs.NaughtyAttributes.Editor
     public class DropdownPropertyDrawer : PropertyDrawer<DropdownAttribute>
     {
         /// <inheritdoc />
-        protected override void DrawProperty(AttributeWrapper wrapper, DropdownAttribute attribute)
+        protected override void DrawProperty(ValueWrapper wrapper, DropdownAttribute attribute)
         {
             EditorDrawUtility.DrawHeader(wrapper);
 
@@ -108,7 +108,7 @@ namespace BovineLabs.NaughtyAttributes.Editor
             return listFieldInfo.FieldType.GetElementType();
         }
 
-        private void DrawDropdown(UnityEngine.Object target, AttributeWrapper wrapper, int selectedValueIndex, object[] values, string[] displayOptions)
+        private void DrawDropdown(UnityEngine.Object target, ValueWrapper wrapper, int selectedValueIndex, object[] values, string[] displayOptions)
         {
             EditorGUI.BeginChangeCheck();
 

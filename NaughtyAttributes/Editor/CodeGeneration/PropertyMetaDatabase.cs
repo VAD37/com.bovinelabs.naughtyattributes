@@ -6,11 +6,11 @@ namespace BovineLabs.NaughtyAttributes.Editor
 
     public static class PropertyMetaDatabase
     {
-        private static readonly Dictionary<Type, AttributeRunner> metasByAttributeType;
+        private static readonly Dictionary<Type, ValueRunner> metasByAttributeType;
 
         static PropertyMetaDatabase()
         {
-            metasByAttributeType = new Dictionary<Type, AttributeRunner>
+            metasByAttributeType = new Dictionary<Type, ValueRunner>
             {
                 [typeof(InfoBoxAttribute)] = new InfoBoxPropertyMeta(),
                 [typeof(OnValueChangedAttribute)] = new OnValueChangedPropertyMeta()
@@ -18,7 +18,7 @@ namespace BovineLabs.NaughtyAttributes.Editor
 
         }
 
-        public static AttributeRunner GetMetaForAttribute(Type attributeType)
+        public static ValueRunner GetMetaForAttribute(Type attributeType)
         {
             return metasByAttributeType.TryGetValue(attributeType, out var meta) ? meta : null;
         }

@@ -51,7 +51,7 @@ namespace BovineLabs.NaughtyAttributes.Editor
             }
         }
         
-        public static IEnumerable<FieldInfo> GetAllFields(object target, Func<FieldInfo, bool> predicate)
+        private static IEnumerable<FieldInfo> GetAllFields(object target, Func<FieldInfo, bool> predicate)
         {
             var types = new List<Type> { target.GetType() };
 
@@ -73,7 +73,7 @@ namespace BovineLabs.NaughtyAttributes.Editor
             }
         }
 
-        public static IEnumerable<PropertyInfo> GetAllProperties(object target, Func<PropertyInfo, bool> predicate)
+        private static IEnumerable<PropertyInfo> GetAllProperties(object target, Func<PropertyInfo, bool> predicate)
         {
             List<Type> types = new List<Type>()
             {

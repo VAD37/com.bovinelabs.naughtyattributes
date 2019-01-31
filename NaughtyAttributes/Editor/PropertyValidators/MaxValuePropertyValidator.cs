@@ -6,7 +6,7 @@ namespace BovineLabs.NaughtyAttributes.Editor
     [PropertyValidator(typeof(MaxValueAttribute))]
     public class MaxValuePropertyValidator : PropertyValidator<MaxValueAttribute>
     {
-        protected override void ValidateProperty(AttributeWrapper wrapper, MaxValueAttribute attribute)
+        protected override void ValidateProperty(ValueWrapper wrapper, MaxValueAttribute attribute)
         {
             var value = wrapper.GetValue();
 

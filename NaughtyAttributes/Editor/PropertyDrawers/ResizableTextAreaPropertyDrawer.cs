@@ -7,7 +7,7 @@ namespace BovineLabs.NaughtyAttributes.Editor
     [PropertyDrawer(typeof(ResizableTextAreaAttribute))]
     public class ResizableTextAreaPropertyDrawer : PropertyDrawer<ResizableTextAreaAttribute>
     {
-        protected override void DrawProperty(AttributeWrapper wrapper, ResizableTextAreaAttribute attribute)
+        protected override void DrawProperty(ValueWrapper wrapper, ResizableTextAreaAttribute attribute)
         {
             EditorDrawUtility.DrawHeader(wrapper);
 

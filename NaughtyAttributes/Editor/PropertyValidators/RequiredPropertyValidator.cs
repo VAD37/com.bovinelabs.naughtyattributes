@@ -6,7 +6,7 @@ namespace BovineLabs.NaughtyAttributes.Editor
     [PropertyValidator(typeof(RequiredAttribute))]
     public class RequiredPropertyValidator : PropertyValidator<RequiredAttribute>
     {
-        protected override void ValidateProperty(AttributeWrapper wrapper, RequiredAttribute attribute)
+        protected override void ValidateProperty(ValueWrapper wrapper, RequiredAttribute attribute)
         {
             var value = wrapper.GetValue();
 

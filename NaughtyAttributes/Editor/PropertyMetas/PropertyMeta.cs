@@ -6,17 +6,17 @@ namespace BovineLabs.NaughtyAttributes.Editor
 {
     using UnityEngine.Assertions;
 
-    public abstract class PropertyMeta<T> : AttributeRunner
+    public abstract class PropertyMeta<T> : ValueRunner
         where T : MetaAttribute
     {
         /// <inheritdoc />
-        public sealed override void Run(AttributeWrapper wrapper, NaughtyAttribute attribute)
+        public sealed override void Run(ValueWrapper wrapper, NaughtyAttribute attribute)
         {
             Assert.IsTrue(attribute is T);
 
             this.ApplyPropertyMeta(wrapper, (T)attribute);
         }
 
-        protected abstract void ApplyPropertyMeta(AttributeWrapper wrapper, T attribute);
+        protected abstract void ApplyPropertyMeta(ValueWrapper wrapper, T attribute);
     }
 }

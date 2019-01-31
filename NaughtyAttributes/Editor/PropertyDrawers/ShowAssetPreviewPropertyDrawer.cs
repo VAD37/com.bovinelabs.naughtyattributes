@@ -7,7 +7,7 @@ namespace BovineLabs.NaughtyAttributes.Editor
     [PropertyDrawer(typeof(ShowAssetPreviewAttribute))]
     public class ShowAssetPreviewPropertyDrawer : PropertyDrawer<ShowAssetPreviewAttribute>
     {
-        protected override void DrawProperty(AttributeWrapper wrapper, ShowAssetPreviewAttribute attribute)
+        protected override void DrawProperty(ValueWrapper wrapper, ShowAssetPreviewAttribute attribute)
         {
             wrapper.DrawPropertyField();
 

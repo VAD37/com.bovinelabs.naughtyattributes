@@ -11,7 +11,7 @@ namespace BovineLabs.NaughtyAttributes.Editor
     [PropertyValidator(typeof(ValidateInputAttribute))]
     public class ValidateInputPropertyValidator : PropertyValidator<ValidateInputAttribute>
     {
-        protected override void ValidateProperty(AttributeWrapper wrapper, ValidateInputAttribute attribute)
+        protected override void ValidateProperty(ValueWrapper wrapper, ValidateInputAttribute attribute)
         {
             var validationCallback = ReflectionUtility.GetMethod(wrapper.Target, attribute.CallbackName);
 

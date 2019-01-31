@@ -7,7 +7,7 @@ namespace BovineLabs.NaughtyAttributes.Editor
     [PropertyDrawer(typeof(MinMaxSliderAttribute))]
     public class MinMaxSliderPropertyDrawer : PropertyDrawer<MinMaxSliderAttribute>
     {
-        protected override void DrawProperty(AttributeWrapper wrapper, MinMaxSliderAttribute attribute)
+        protected override void DrawProperty(ValueWrapper wrapper, MinMaxSliderAttribute attribute)
         {
             EditorDrawUtility.DrawHeader(wrapper);
 
@@ -19,11 +19,7 @@ namespace BovineLabs.NaughtyAttributes.Editor
                 float sliderWidth = controlRect.width - labelWidth - 2f * floatFieldWidth;
                 float sliderPadding = 5f;
 
-                Rect labelRect = new Rect(
-                    controlRect.x,
-                    controlRect.y,
-                    labelWidth,
-                    controlRect.height);
+                Rect labelRect = new Rect(controlRect.x, controlRect.y, labelWidth, controlRect.height);
 
                 Rect sliderRect = new Rect(
                     controlRect.x + labelWidth + floatFieldWidth + sliderPadding,

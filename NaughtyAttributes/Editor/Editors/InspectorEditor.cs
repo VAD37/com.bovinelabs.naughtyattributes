@@ -213,10 +213,10 @@ namespace BovineLabs.NaughtyAttributes.Editor
         private void OnEnable()
         {
             this.members.Clear();
-
-            this.script = this.serializedObject.FindProperty("m_Script");
             this.group.Clear();
             this.groupedByName.Clear();
+
+            this.script = this.serializedObject.FindProperty("m_Script");
 
             var fields = ReflectionUtility.GetAllFields(this.target);
 
@@ -237,6 +237,10 @@ namespace BovineLabs.NaughtyAttributes.Editor
             this.members.AddRange(ReflectionUtility.GetAllProperties(this.target)
                 .Where(p => p.GetCustomAttribute<ShowNonSerializedFieldAttribute>() != null)
                 .Select(p => new PropertyAttributeWrapper(this.target, p)));
+
+            this.members.AddRange(ReflectionUtility
+                .GetAllMethods(this.target, p => p.GetCustomAttribute<ShowNonSerializedFieldAttribute>() != null)
+                .Select(p => new MethodWrapper(this.target, p)));
 
             if (this.members.Count == 0)
             {

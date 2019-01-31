@@ -2,10 +2,8 @@
 {
     using UnityEngine.Assertions;
 
-    public abstract class PropertyDrawer
+    public abstract class PropertyDrawer : ValueRunner
     {
-        public abstract void DrawProperty(AttributeWrapper wrapper, NaughtyAttribute attribute);
-
         public virtual void ClearCache()
         {
         }
@@ -15,13 +13,15 @@
         where T : NaughtyAttribute
     {
         /// <inheritdoc />
-        public sealed override void DrawProperty(AttributeWrapper wrapper, NaughtyAttribute attribute)
+        public override void Run(ValueWrapper wrapper, NaughtyAttribute attribute)
         {
             Assert.IsTrue(attribute is T);
 
             this.DrawProperty(wrapper, (T)attribute);
         }
 
-        protected abstract void DrawProperty(AttributeWrapper wrapper, T attribute);
+        protected abstract void DrawProperty(ValueWrapper wrapper, T attribute);
+
+
     }
 }

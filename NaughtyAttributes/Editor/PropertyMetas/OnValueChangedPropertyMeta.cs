@@ -7,7 +7,7 @@ namespace BovineLabs.NaughtyAttributes.Editor
     [PropertyMeta(typeof(OnValueChangedAttribute))]
     public class OnValueChangedPropertyMeta : PropertyMeta<OnValueChangedAttribute>
     {
-        protected override void ApplyPropertyMeta(AttributeWrapper wrapper, OnValueChangedAttribute attribute)
+        protected override void ApplyPropertyMeta(ValueWrapper wrapper, OnValueChangedAttribute attribute)
         {
             var target = wrapper.Target;
 

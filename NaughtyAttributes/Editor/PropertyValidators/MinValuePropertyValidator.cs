@@ -6,7 +6,7 @@ namespace BovineLabs.NaughtyAttributes.Editor
     [PropertyValidator(typeof(MinValueAttribute))]
     public class MinValuePropertyValidator : PropertyValidator<MinValueAttribute>
     {
-        protected override void ValidateProperty(AttributeWrapper wrapper, MinValueAttribute attribute)
+        protected override void ValidateProperty(ValueWrapper wrapper, MinValueAttribute attribute)
         {
             if (wrapper.Type == typeof(int))
             {

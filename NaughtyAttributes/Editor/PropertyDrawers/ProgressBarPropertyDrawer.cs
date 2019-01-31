@@ -7,7 +7,7 @@ namespace BovineLabs.NaughtyAttributes.Editor
     [PropertyDrawer(typeof(ProgressBarAttribute))]
     public class ProgressBarPropertyDrawer : PropertyDrawer<ProgressBarAttribute>
     {
-        protected override void DrawProperty(AttributeWrapper wrapper, ProgressBarAttribute attribute)
+        protected override void DrawProperty(ValueWrapper wrapper, ProgressBarAttribute attribute)
         {
             EditorDrawUtility.DrawHeader(wrapper);
 

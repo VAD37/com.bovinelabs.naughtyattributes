@@ -8,26 +8,24 @@ namespace BovineLabs.NaughtyAttributes.Editor
 
     public static class NativePropertyDrawerDatabase
     {
-        private static Dictionary<Type, AttributeRunner> drawersByAttributeType;
+        private static Dictionary<Type, ValueRunner> drawersByAttributeType;
 
         static NativePropertyDrawerDatabase()
         {
-            drawersByAttributeType = new Dictionary<Type, AttributeRunner>();
+            drawersByAttributeType = new Dictionary<Type, ValueRunner>();
             drawersByAttributeType[typeof(ShowNativePropertyAttribute)] = new ShowNativePropertyNativePropertyDrawer();
 
         }
 
-        public static AttributeRunner GetDrawerForAttribute(Type attributeType)
+        public static ValueRunner GetDrawerForAttribute(Type attributeType)
         {
-            AttributeRunner drawer;
+            ValueRunner drawer;
             if (drawersByAttributeType.TryGetValue(attributeType, out drawer))
             {
                 return drawer;
             }
-            else
-            {
-                return null;
-            }
+
+            return null;
         }
     }
 }

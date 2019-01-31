@@ -7,7 +7,7 @@ namespace BovineLabs.NaughtyAttributes.Editor
     public class SliderPropertyDrawer : PropertyDrawer<SliderAttribute>
     {
         /// <inheritdoc />
-        protected override void DrawProperty(AttributeWrapper wrapper, SliderAttribute attribute)
+        protected override void DrawProperty(ValueWrapper wrapper, SliderAttribute attribute)
         {
             EditorDrawUtility.DrawHeader(wrapper);
 

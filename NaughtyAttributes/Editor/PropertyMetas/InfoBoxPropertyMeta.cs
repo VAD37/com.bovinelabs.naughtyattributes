@@ -8,7 +8,7 @@ namespace BovineLabs.NaughtyAttributes.Editor
     public class InfoBoxPropertyMeta : PropertyMeta<InfoBoxAttribute>
     {
         /// <inheritdoc />
-        protected override void ApplyPropertyMeta(AttributeWrapper wrapper, InfoBoxAttribute attribute)
+        protected override void ApplyPropertyMeta(ValueWrapper wrapper, InfoBoxAttribute attribute)
         {
             var target = wrapper.Target;
 
