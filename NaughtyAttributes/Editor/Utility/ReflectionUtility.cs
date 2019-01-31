@@ -7,7 +7,19 @@ namespace BovineLabs.NaughtyAttributes.Editor
 
     public static class ReflectionUtility
     {
-        public static IEnumerable<FieldInfo> GetAllFields(object target)
+        public static IEnumerable<FieldInfo> GetAllFieldsPublic(object target)
+        {
+            return GetAllFields(target, BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public |
+                                BindingFlags.DeclaredOnly);
+        }
+
+        public static IEnumerable<FieldInfo> GetAllFieldsPrivate(object target)
+        {
+            return GetAllFields(target, BindingFlags.Instance | BindingFlags.Static | BindingFlags.NonPublic |
+                                        BindingFlags.DeclaredOnly);
+        }
+
+        public static IEnumerable<FieldInfo> GetAllFields(object target, BindingFlags flags = BindingFlags.Instance | BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.DeclaredOnly)
         {
             var types = new List<Type> { target.GetType() };
 
@@ -19,8 +31,7 @@ namespace BovineLabs.NaughtyAttributes.Editor
             for (var i = types.Count - 1; i >= 0; i--)
             {
                 var fieldInfos = types[i]
-                    .GetFields(BindingFlags.Instance | BindingFlags.Static | BindingFlags.NonPublic |
-                               BindingFlags.Public | BindingFlags.DeclaredOnly);
+                    .GetFields(flags);
 
                 foreach (var fieldInfo in fieldInfos)
                 {

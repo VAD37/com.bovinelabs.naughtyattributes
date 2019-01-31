@@ -8,7 +8,6 @@ namespace BovineLabs.NaughtyAttributes.Editor
     using System.Linq;
     using System.Reflection;
     using UnityEngine;
-    using Object = UnityEngine.Object;
 
     /// <summary>
     /// The MethodWrapper.
@@ -17,17 +16,13 @@ namespace BovineLabs.NaughtyAttributes.Editor
     {
         public MethodInfo MethodInfo { get; }
 
-        public MethodWrapper(Object target, MethodInfo methodInfo) 
+        public MethodWrapper(object target, MethodInfo methodInfo) 
             : base(target)
         {
             this.MethodInfo = methodInfo;
         }
 
-        /// <inheritdoc />
-        public sealed override string Name => this.MethodInfo.Name;
-
-        /// <inheritdoc />
-        public override string DisplayName => this.Name;
+        public string Name => this.MethodInfo.Name;
 
         /// <inheritdoc />
         public override void ValidateAndDrawField()

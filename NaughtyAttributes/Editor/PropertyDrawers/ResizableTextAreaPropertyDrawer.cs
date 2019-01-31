@@ -27,7 +27,7 @@ namespace BovineLabs.NaughtyAttributes.Editor
             else
             {
                 string warning = attribute.GetType().Name + " can only be used on string fields";
-                EditorDrawUtility.DrawHelpBox(warning, MessageType.Warning, true, wrapper.Target);
+                EditorDrawUtility.DrawHelpBox(warning, MessageType.Warning, true, wrapper);
                 wrapper.DrawPropertyField();
             }
         }

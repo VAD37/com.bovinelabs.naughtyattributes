@@ -1,6 +1,7 @@
 namespace BovineLabs.NaughtyAttributes.Editor
 {
     using BovineLabs.NaughtyAttributes;
+    using UnityEditor;
     using UnityEngine;
 
     public class OnValueChangedProperty
@@ -25,7 +26,7 @@ namespace BovineLabs.NaughtyAttributes.Editor
             else
             {
                 string warning = attribute.GetType().Name + " can invoke only action methods - with void return type and no parameters";
-                Debug.LogWarning(warning, target);
+                EditorDrawUtility.DrawHelpBox(warning, MessageType.Warning, true, wrapper);
             }
         }
     }

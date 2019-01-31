@@ -62,7 +62,7 @@ namespace BovineLabs.NaughtyAttributes.Editor
             else
             {
                 string warning = attribute.GetType().Name + " can be used only on Vector2 fields";
-                EditorDrawUtility.DrawHelpBox(warning, MessageType.Warning, true, wrapper.Target);
+                EditorDrawUtility.DrawHelpBox(warning, MessageType.Warning, true, wrapper);
                 wrapper.DrawPropertyField();
             }
         }

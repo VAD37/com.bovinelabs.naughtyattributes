@@ -14,7 +14,7 @@ namespace BovineLabs.NaughtyAttributes.Editor
             if (value == null)
             {
                 string warning = string.Format("{0} doesn't support {1} types", typeof(ShowNativePropertyNativePropertyDrawer).Name, "Reference");
-                EditorDrawUtility.DrawHelpBox(warning, MessageType.Warning, true, wrapper.Target);
+                EditorDrawUtility.DrawHelpBox(warning, MessageType.Warning, true, wrapper);
             }
             else
             {

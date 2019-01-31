@@ -6,13 +6,12 @@ namespace BovineLabs.NaughtyAttributes.Editor
 {
     using System;
     using System.Reflection;
-    using Object = UnityEngine.Object;
 
     public class PropertyAttributeWrapper : ValueWrapper
     {
         private readonly PropertyInfo propertyInfo;
 
-        public PropertyAttributeWrapper(Object target, PropertyInfo propertyInfo)
+        public PropertyAttributeWrapper(object target, PropertyInfo propertyInfo)
             : base(target, propertyInfo)
         {
             this.propertyInfo = propertyInfo;

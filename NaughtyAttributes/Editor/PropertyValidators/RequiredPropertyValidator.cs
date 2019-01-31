@@ -20,13 +20,13 @@ namespace BovineLabs.NaughtyAttributes.Editor
                         errorMessage = attribute.Message;
                     }
 
-                    EditorDrawUtility.DrawHelpBox(errorMessage, MessageType.Error, true, wrapper.Target);
+                    EditorDrawUtility.DrawHelpBox(errorMessage, MessageType.Error, true, wrapper);
                 }
             }
             else
             {
                 string warning = attribute.GetType().Name + " works only on reference types";
-                EditorDrawUtility.DrawHelpBox(warning, MessageType.Warning, true, wrapper.Target);
+                EditorDrawUtility.DrawHelpBox(warning, MessageType.Warning, true, wrapper);
             }
         }
     }

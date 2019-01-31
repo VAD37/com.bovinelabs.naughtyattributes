@@ -29,7 +29,7 @@ namespace BovineLabs.NaughtyAttributes.Editor
             else
             {
                 string warning = wrapper.Name + " doesn't have an asset preview";
-                EditorDrawUtility.DrawHelpBox(warning, MessageType.Warning, true, wrapper.Target);
+                EditorDrawUtility.DrawHelpBox(warning, MessageType.Warning, true, wrapper);
             }
         }
     }

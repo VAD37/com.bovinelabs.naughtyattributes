@@ -51,7 +51,7 @@ namespace BovineLabs.NaughtyAttributes.Editor
                 }
 
                 // Draw the dropdown
-                this.DrawDropdown(target, wrapper, selectedValueIndex, values, displayOptions);
+                this.DrawDropdown(wrapper, selectedValueIndex, values, displayOptions);
             }
             else if (valuesFieldInfo.GetValue(target) is IDropdownList)
             {
@@ -89,7 +89,7 @@ namespace BovineLabs.NaughtyAttributes.Editor
                 }
 
                 // Draw the dropdown
-                this.DrawDropdown(target, wrapper, selectedValueIndex, values.ToArray(), displayOptions.ToArray());
+                this.DrawDropdown(wrapper, selectedValueIndex, values.ToArray(), displayOptions.ToArray());
             }
             else
             {
@@ -108,7 +108,7 @@ namespace BovineLabs.NaughtyAttributes.Editor
             return listFieldInfo.FieldType.GetElementType();
         }
 
-        private void DrawDropdown(UnityEngine.Object target, ValueWrapper wrapper, int selectedValueIndex, object[] values, string[] displayOptions)
+        private void DrawDropdown(ValueWrapper wrapper, int selectedValueIndex, object[] values, string[] displayOptions)
         {
             EditorGUI.BeginChangeCheck();
 
@@ -116,7 +116,12 @@ namespace BovineLabs.NaughtyAttributes.Editor
 
             if (EditorGUI.EndChangeCheck())
             {
-                Undo.RecordObject(target, "Dropdown");
+                // TODO
+                /*if (wrapper is SerializedFieldAttributeWrapper serializedWrapper)
+                {
+                    var target = PropertyUtility.GetTargetObject(serializedWrapper.SerializedProperty);
+                    Undo.RecordObject(target, "Dropdown");
+                }*/
                 wrapper.SetValue(values[newIndex]);
             }
         }

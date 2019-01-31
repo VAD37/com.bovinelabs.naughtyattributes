@@ -7,66 +7,46 @@ namespace BovineLabs.NaughtyAttributes.Editor
     using System;
     using System.Reflection;
     using UnityEditor;
-    using Object = UnityEngine.Object;
 
-    public abstract class FieldAttributeWrapper : ValueWrapper
+    public class FieldAttributeWrapper : ValueWrapper
     {
-        protected FieldInfo FieldInfo { get; }
+        private readonly FieldInfo fieldInfo;
+        private readonly Drawer drawer;
+        private bool foldout;
 
-        public FieldAttributeWrapper(Object target, FieldInfo fieldInfo)
+        public FieldAttributeWrapper(object target, FieldInfo fieldInfo)
             : base(target, fieldInfo)
         {
-            this.FieldInfo = fieldInfo;
+            this.fieldInfo = fieldInfo;
+
+            if (EditorDrawUtility.IsDrawable(this.Type))
+            {
+                var info = this.Type.GetTypeInfo();
+
+                if (info.IsArray)
+                {
+
+                }
+                else
+                {
+                    this.drawer = new Drawer(this.GetValue());
+                }
+            }
         }
 
         /// <inheritdoc />
-        public override Type Type => this.FieldInfo.FieldType;
+        public sealed override Type Type => this.fieldInfo.FieldType;
 
         /// <inheritdoc />
-        public override object GetValue()
+        public sealed override object GetValue()
         {
-            return this.FieldInfo.GetValue(this.Target);
+            return this.fieldInfo.GetValue(this.Target);
         }
 
         /// <inheritdoc />
-        public override void SetValue(object value)
+        public sealed override void SetValue(object value)
         {
-            this.FieldInfo.SetValue(this.Target, value);
-        }
-    }
-
-    public class SerializedFieldAttributeWrapper : FieldAttributeWrapper
-    {
-        public SerializedFieldAttributeWrapper(SerializedProperty serializedProperty, Object target,
-            FieldInfo fieldInfo)
-            : base(target, fieldInfo)
-        {
-            this.SerializedProperty = serializedProperty;
-        }
-
-        public SerializedProperty SerializedProperty { get; }
-
-        /// <inheritdoc />
-        public override string DisplayName => this.SerializedProperty.displayName;
-
-        /// <inheritdoc />
-        public override void ApplyModifications()
-        {
-            this.SerializedProperty.serializedObject.ApplyModifiedProperties();
-        }
-
-        /// <inheritdoc />
-        public override void DrawPropertyField()
-        {
-            EditorDrawUtility.DrawPropertyField(this.SerializedProperty);
-        }
-    }
-
-    public class NonSerializedFieldAttributeWrapper : FieldAttributeWrapper
-    {
-        public NonSerializedFieldAttributeWrapper(Object target, FieldInfo fieldInfo)
-            : base(target, fieldInfo)
-        {
+            this.fieldInfo.SetValue(this.Target, value);
         }
 
         /// <inheritdoc />
@@ -77,8 +57,19 @@ namespace BovineLabs.NaughtyAttributes.Editor
         /// <inheritdoc />
         public override void DrawPropertyField()
         {
-            var result = EditorDrawUtility.DrawPropertyField(this.GetValue(), this.Type, this.DisplayName);
-            this.SetValue(result);
+            if (this.drawer != null)
+            {
+                this.foldout = EditorGUILayout.Foldout(this.foldout, this.DisplayName);
+
+                if (this.foldout)
+                {
+                    this.drawer.OnInspectorGUI();
+                }
+            }
+            else
+            {
+                this.SetValue(EditorDrawUtility.DrawPropertyField(this.GetValue(), this.Type, this.DisplayName));
+            }
         }
     }
 }

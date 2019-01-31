@@ -1,5 +1,6 @@
 namespace BovineLabs.NaughtyAttributes.Editor
 {
+    using System;
     using System.Collections.Generic;
     using BovineLabs.NaughtyAttributes;
     using UnityEditor;
@@ -15,7 +16,9 @@ namespace BovineLabs.NaughtyAttributes.Editor
         {
             EditorDrawUtility.DrawHeader(wrapper);
 
-            if (wrapper is SerializedFieldAttributeWrapper serializedWrapper)
+            throw new NotImplementedException();
+
+            /*if (wrapper is SerializedFieldAttributeWrapper serializedWrapper)
             {
                 var property = serializedWrapper.SerializedProperty;
 
@@ -51,7 +54,7 @@ namespace BovineLabs.NaughtyAttributes.Editor
                 else
                 {
                     string warning = typeof(ReorderableListAttribute).Name + " can be used only on arrays or lists";
-                    EditorDrawUtility.DrawHelpBox(warning, MessageType.Warning,  true, wrapper.Target);
+                    EditorDrawUtility.DrawHelpBox(warning, MessageType.Warning,  true, wrapper);
 
                     wrapper.DrawPropertyField();
                 }
@@ -59,10 +62,10 @@ namespace BovineLabs.NaughtyAttributes.Editor
             else
             {
                 string warning = typeof(ReorderableListAttribute).Name + " can be used only on serialized fields.";
-                EditorDrawUtility.DrawHelpBox(warning, MessageType.Warning,  true, wrapper.Target);
+                EditorDrawUtility.DrawHelpBox(warning, MessageType.Warning,  true, wrapper);
 
                 wrapper.DrawPropertyField();
-            }
+            }*/
 
         }
 

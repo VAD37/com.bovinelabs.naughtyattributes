@@ -10,7 +10,6 @@ namespace BovineLabs.NaughtyAttributes.Editor
     using System.Reflection;
     using UnityEditor;
     using UnityEngine;
-    using Object = UnityEngine.Object;
 
     /// <summary>
     /// The AttributeWrapper.
@@ -21,16 +20,12 @@ namespace BovineLabs.NaughtyAttributes.Editor
         /// Initializes a new instance of the <see cref="AttributeWrapper"/> class.
         /// </summary>
         /// <param name="target">The target object.</param>
-        protected AttributeWrapper(Object target)
+        protected AttributeWrapper(object target)
         {
             this.Target = target;
         }
 
-        public Object Target { get; }
-
-        public abstract string Name { get; }
-
-        public abstract string DisplayName { get; }
+        public object Target { get; }
 
         public abstract void ValidateAndDrawField();
 
@@ -79,17 +74,14 @@ namespace BovineLabs.NaughtyAttributes.Editor
     {
         private readonly MemberInfo memberInfo;
 
-        protected ValueWrapper(Object target, MemberInfo memberInfo)
+        protected ValueWrapper(object target, MemberInfo memberInfo)
             : base(target)
         {
             this.memberInfo = memberInfo;
         }
 
-        /// <inheritdoc />
-        public sealed override string Name => this.memberInfo.Name;
-        
-        /// <inheritdoc />
-        public override string DisplayName => this.Name;
+        public string Name => this.memberInfo.Name;
+        public string DisplayName => this.Name;
 
         public abstract Type Type { get; }
 
