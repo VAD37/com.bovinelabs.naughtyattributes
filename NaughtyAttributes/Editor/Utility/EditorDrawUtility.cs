@@ -124,10 +124,77 @@ namespace BovineLabs.NaughtyAttributes.Editor
                 return EditorGUILayout.ObjectField(label, (Object)value, type, true);
             }
 
-            // string warning = $"DrawLayoutField doesn't support {type} types";
-            // DrawHelpBox(warning, MessageType.Warning, true);
             return value;
+        }
 
+        public static object DrawPropertyField(Rect rect, object value, Type type, string label)
+        {
+            if (type == typeof(bool))
+            {
+                return EditorGUI.Toggle(rect, label, (bool)value);
+            }
+
+            if (type == typeof(int))
+            {
+                return EditorGUI.IntField(rect, label, (int)value);
+            }
+
+            if (type == typeof(long))
+            {
+                return EditorGUI.LongField(rect, label, (long)value);
+            }
+
+            if (type == typeof(float))
+            {
+                return EditorGUI.FloatField(rect, label, (float)value);
+            }
+
+            if (type == typeof(double))
+            {
+                return EditorGUI.DoubleField(rect, label, (double)value);
+            }
+
+            if (type == typeof(string))
+            {
+                return EditorGUI.TextField(rect, label, (string)value);
+            }
+
+            if (type == typeof(Vector2))
+            {
+                return EditorGUI.Vector2Field(rect, label, (Vector2)value);
+            }
+
+            if (type == typeof(Vector3))
+            {
+                return EditorGUI.Vector3Field(rect, label, (Vector3)value);
+            }
+
+            if (type == typeof(Vector4))
+            {
+                return EditorGUI.Vector4Field(rect, label, (Vector4)value);
+            }
+
+            if (type == typeof(Color))
+            {
+                return EditorGUI.ColorField(rect, label, (Color)value);
+            }
+
+            if (type == typeof(Bounds))
+            {
+                return EditorGUI.BoundsField(rect, label, (Bounds)value);
+            }
+
+            if (type == typeof(Rect))
+            {
+                return EditorGUI.RectField(rect, label, (Rect)value);
+            }
+
+            if (typeof(Object).IsAssignableFrom(type))
+            {
+                return EditorGUI.ObjectField(rect, label, (Object)value, type, true);
+            }
+
+            return value;
         }
 
         public static bool IsDrawable(Type type)
