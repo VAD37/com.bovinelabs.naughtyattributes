@@ -13,7 +13,7 @@ namespace BovineLabs.NaughtyAttributes.Editor
     [PropertyDrawer(typeof(ReorderableListAttribute))]
     public class ReorderableListPropertyDrawer : PropertyDrawer<ReorderableListAttribute>
     {
-        private Dictionary<string, Stash> reorderableListsByPropertyName = new Dictionary<string, Stash>();
+        private Dictionary<ValueWrapper, Stash> reorderableListsByPropertyName = new Dictionary<ValueWrapper, Stash>();
 
         private class Stash
         {
@@ -29,7 +29,7 @@ namespace BovineLabs.NaughtyAttributes.Editor
 
             if(wrapper.GetValue() is IList list && HeuristicallyDetermineType(list, out var elementType))
             {
-                if (!this.reorderableListsByPropertyName.ContainsKey(wrapper.Name))
+                if (!this.reorderableListsByPropertyName.ContainsKey(wrapper))
                 {
                     IList internalList;
 
@@ -37,12 +37,10 @@ namespace BovineLabs.NaughtyAttributes.Editor
                     
                     if (list is Array)
                     {
-                        Type d1 = typeof(List<>);
-                        Type[] typeArgs = { elementType };
-                        Type makeme = d1.MakeGenericType(typeArgs);
+                        var d1 = typeof(List<>);
+                        var typeArgs = new [] { elementType };
+                        var makeme = d1.MakeGenericType(typeArgs);
                         var newList = (IList)Activator.CreateInstance(makeme);
-
-                        Debug.Log(newList.GetType());
 
                         foreach (var l in list)
                         {
@@ -55,8 +53,6 @@ namespace BovineLabs.NaughtyAttributes.Editor
                     else
                     {
                         internalList = list;
-
-                        Debug.Log(list.GetType());
                     }
 
                     stash.List = internalList;
@@ -105,10 +101,10 @@ namespace BovineLabs.NaughtyAttributes.Editor
                     };
 
                     stash.Reorerable = reorderableList;
-                    this.reorderableListsByPropertyName[wrapper.Name] = stash;
+                    this.reorderableListsByPropertyName[wrapper] = stash;
                 }
 
-                var s = this.reorderableListsByPropertyName[wrapper.Name];
+                var s = this.reorderableListsByPropertyName[wrapper];
 
                 s.Reorerable.DoLayoutList();
 
