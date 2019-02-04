@@ -24,7 +24,7 @@ namespace BovineLabs.NaughtyAttributes.Editor.MethodDrawers
             else
             {
                 string warning = typeof(ButtonAttribute).Name + " works only on methods with no parameters";
-                EditorDrawUtility.DrawHelpBox(warning, MessageType.Warning, true, wrapper);
+                EditorDrawUtility.DrawHelpBox(warning, MessageType.Warning);
             }
         }
     }

@@ -133,7 +133,7 @@ namespace BovineLabs.NaughtyAttributes.Editor.PropertyDrawers
             else
             {
                 string warning = typeof(ReorderableListAttribute).Name + " can be used only on arrays or lists";
-                EditorDrawUtility.DrawHelpBox(warning, MessageType.Warning, true, wrapper);
+                EditorDrawUtility.DrawHelpBox(warning, MessageType.Warning);
 
                 wrapper.DrawPropertyField();
             }

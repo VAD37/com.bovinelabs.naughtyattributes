@@ -27,28 +27,9 @@ namespace BovineLabs.NaughtyAttributes.Editor.Utility
             return false;
         }
 
-        public static void DrawHelpBox(string message, MessageType type, bool logToConsole = false, AttributeWrapper wrapper = null)
+        public static void DrawHelpBox(string message, MessageType type)
         {
             EditorGUILayout.HelpBox(message, type);
-
-            Object context = null;
-
-            if (logToConsole)
-            {
-                switch (type)
-                {
-                    case MessageType.None:
-                    case MessageType.Info:
-                        Debug.Log(message, context);
-                        break;
-                    case MessageType.Warning:
-                        Debug.LogWarning(message, context);
-                        break;
-                    case MessageType.Error:
-                        Debug.LogError(message, context);
-                        break;
-                }
-            }
         }
 
         public static void DrawPropertyField(SerializedProperty property)

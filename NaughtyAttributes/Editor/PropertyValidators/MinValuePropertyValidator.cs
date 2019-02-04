@@ -32,7 +32,7 @@ namespace BovineLabs.NaughtyAttributes.Editor.PropertyValidators
             else
             {
                 string warning = attribute.GetType().Name + " can be used only on int or float fields";
-                EditorDrawUtility.DrawHelpBox(warning, MessageType.Warning, true, wrapper);
+                EditorDrawUtility.DrawHelpBox(warning, MessageType.Warning);
             }
         }
     }

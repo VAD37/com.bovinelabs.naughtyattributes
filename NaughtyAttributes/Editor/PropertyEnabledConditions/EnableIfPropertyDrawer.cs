@@ -42,7 +42,7 @@ namespace BovineLabs.NaughtyAttributes.Editor.PropertyEnabledConditions
             else
             {
                 string warning = attribute.GetType().Name + " needs a valid boolean condition field or method name to work";
-                EditorDrawUtility.DrawHelpBox(warning, MessageType.Warning, true, wrapper);
+                EditorDrawUtility.DrawHelpBox(warning, MessageType.Warning);
                 return true;
             }
         }

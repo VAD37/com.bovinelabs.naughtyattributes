@@ -30,18 +30,18 @@ namespace BovineLabs.NaughtyAttributes.Editor.PropertyValidators
                     {
                         if (string.IsNullOrEmpty(attribute.Message))
                         {
-                            EditorDrawUtility.DrawHelpBox(wrapper.Name + " is not valid", MessageType.Error, true,wrapper);
+                            EditorDrawUtility.DrawHelpBox(wrapper.Name + " is not valid", MessageType.Error);
                         }
                         else
                         {
-                            EditorDrawUtility.DrawHelpBox(attribute.Message, MessageType.Error, true,wrapper);
+                            EditorDrawUtility.DrawHelpBox(attribute.Message, MessageType.Error);
                         }
                     }
                 }
                 else
                 {
                     var warning = "The field type is not the same as the callback's parameter type";
-                    EditorDrawUtility.DrawHelpBox(warning, MessageType.Warning, true, wrapper);
+                    EditorDrawUtility.DrawHelpBox(warning, MessageType.Warning);
                 }
             }
             else
@@ -49,7 +49,7 @@ namespace BovineLabs.NaughtyAttributes.Editor.PropertyValidators
                 var warning = attribute.GetType().Name +
                               " needs a callback with boolean return type and a single parameter of the same type as the field";
 
-                EditorDrawUtility.DrawHelpBox(warning, MessageType.Warning, true, wrapper);
+                EditorDrawUtility.DrawHelpBox(warning, MessageType.Warning);
             }
         }
     }

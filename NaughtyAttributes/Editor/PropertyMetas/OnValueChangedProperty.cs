@@ -27,7 +27,7 @@ namespace BovineLabs.NaughtyAttributes.Editor.PropertyMetas
             else
             {
                 string warning = attribute.GetType().Name + " can invoke only action methods - with void return type and no parameters";
-                EditorDrawUtility.DrawHelpBox(warning, MessageType.Warning, true, wrapper);
+                EditorDrawUtility.DrawHelpBox(warning, MessageType.Warning);
             }
         }
     }
