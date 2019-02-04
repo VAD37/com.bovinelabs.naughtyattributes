@@ -85,7 +85,12 @@ namespace BovineLabs.NaughtyAttributes.Editor.Wrappers
             {
                 if (this.Type.IsArray)
                 {
-                    ListPropertyDrawer.Instance.DrawArray(this);
+                    this.foldout = EditorGUILayout.Foldout(this.foldout, this.DisplayName);
+
+                    if (this.foldout)
+                    {
+                        ListPropertyDrawer.Instance.DrawArray(this);
+                    }
                 }
                 else
                 {

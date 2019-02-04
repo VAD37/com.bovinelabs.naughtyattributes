@@ -22,6 +22,8 @@ namespace BovineLabs.NaughtyAttributes.Editor.PropertyDrawers
     /// </summary>
     public class ListPropertyDrawer
     {
+        private const int MaxArrayLength = 100;
+
         private static ListPropertyDrawer instance;
 
         private readonly Dictionary<ValueWrapper, Stash> reorderableListsByPropertyName = new Dictionary<ValueWrapper, Stash>();
@@ -54,11 +56,19 @@ namespace BovineLabs.NaughtyAttributes.Editor.PropertyDrawers
 
             if (wrapper.GetValue() is IList list && HeuristicallyDetermineType(list, out var elementType))
             {
+                if (list.Count > MaxArrayLength)
+                {
+                    EditorDrawUtility.DrawHelpBox($"Array.Length > {MaxArrayLength}", MessageType.None);
+                    return;
+                }
+
+                Stash stash;
+
                 if (!this.reorderableListsByPropertyName.ContainsKey(wrapper))
                 {
                     IList internalList;
 
-                    var stash = new Stash();
+                    stash = new Stash();
 
                     if (list is Array)
                     {
@@ -88,7 +98,6 @@ namespace BovineLabs.NaughtyAttributes.Editor.PropertyDrawers
                             var label = $"{wrapper.DisplayName}: {internalList.Count}";
                             EditorGUI.LabelField(rect, label, EditorStyles.label);
                         },
-
                         drawElementCallback = (rect, index, isActive, isFocused) =>
                         {
                             object element = internalList[index];
@@ -105,7 +114,6 @@ namespace BovineLabs.NaughtyAttributes.Editor.PropertyDrawers
                                 stash.NeedsUpdate = true;
                             }
                         },
-
                         onAddCallback = l =>
                         {
                             l.list.Add(elementType.GetTypeInfo().IsClass
@@ -129,14 +137,16 @@ namespace BovineLabs.NaughtyAttributes.Editor.PropertyDrawers
                     stash.Reorderable = reorderableList;
                     this.reorderableListsByPropertyName[wrapper] = stash;
                 }
-
-                var s = this.reorderableListsByPropertyName[wrapper];
-
-                s.Reorderable.DoLayoutList();
-
-                if (s.NeedsUpdate && s.IsArray)
+                else
                 {
-                    s.NeedsUpdate = false;
+                    stash = this.reorderableListsByPropertyName[wrapper];
+                }
+
+                stash.Reorderable.DoLayoutList();
+
+                if (stash.NeedsUpdate && stash.IsArray)
+                {
+                    stash.NeedsUpdate = false;
 
                     var ass = Assembly.GetAssembly(typeof(Mesh)); // any class in UnityEngine
                     var type = ass.GetType("UnityEngine.NoAllocHelpers");
@@ -148,9 +158,9 @@ namespace BovineLabs.NaughtyAttributes.Editor.PropertyDrawers
                         throw new Exception("ExtractArrayFromListT signature changed.");
                     }
 
-                    var array = (Array)methodInfo.Invoke(null, new object[] { s.List });
+                    var array = (Array)methodInfo.Invoke(null, new object[] { stash.List });
 
-                    array = Resize(array, s.List.Count, elementType);
+                    array = Resize(array, stash.List.Count, elementType);
                     wrapper.SetValue(array);
                 }
             }
