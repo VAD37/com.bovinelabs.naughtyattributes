@@ -21,7 +21,11 @@ namespace BovineLabs.NaughtyAttributes.Editor
 
         public Drawer(Object target, SerializedObject serializedObject)
         {
-            foreach (var field in ReflectionUtility.GetAllFields(target))
+            // todo better infinite loop support
+            var type = target.GetType();
+            var fields = ReflectionUtility.GetAllFields(target).Where(f => f.GetType() != type);
+
+            foreach (var field in fields)
             {
                 var serializedProperty = serializedObject.FindProperty(field.Name);
 
@@ -40,21 +44,24 @@ namespace BovineLabs.NaughtyAttributes.Editor
 
         public Drawer(object target)
         {
-            var publicFields = ReflectionUtility.GetAllFieldsPublic(target).ToArray();
+            var type = target.GetType();
+            var publicFields = ReflectionUtility.GetAllFieldsPublic(target).Where(f => f.GetType() != type);
 
             foreach (var field in publicFields)
             {
                 this.members.Add(new FieldAttributeWrapper(target, field));
             }
 
-            foreach (var field in ReflectionUtility.GetAllFieldsPrivate(target))
+            var privateFields = ReflectionUtility.GetAllFieldsPrivate(target).Where(f => f.GetType() != type);
+
+            foreach (var field in privateFields)
             {
                 if (field.GetCustomAttribute<SerializeField>() != null || field.GetCustomAttribute<ShowNonSerializedFieldAttribute>() != null)
                 {
                     this.members.Add(new FieldAttributeWrapper(target, field));
                 }
             }
-            
+
             this.MethodsPropertiesAndGrouping(target);
         }
 

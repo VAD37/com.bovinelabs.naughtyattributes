@@ -107,6 +107,11 @@ namespace BovineLabs.NaughtyAttributes.Editor
 
         public override void ValidateAndDrawField()
         {
+            if (!this.CanDraw())
+            {
+                return;
+            }
+
             this.ValidateField();
             this.ApplyFieldMeta();
             this.DrawField();
@@ -139,11 +144,6 @@ namespace BovineLabs.NaughtyAttributes.Editor
 
         private void DrawField()
         {
-            if (!this.CanDraw())
-            {
-                return;
-            }
-
             var isPropertyEnabled = this.IsEnabled();
 
             // Draw the field
@@ -155,10 +155,10 @@ namespace BovineLabs.NaughtyAttributes.Editor
             if (drawerAttributes.Length > 0)
             {
                 var attribute = drawerAttributes[0];
-                var drawer = PropertyDrawerDatabase.GetDrawerForAttribute(attribute.GetType());
-                if (drawer != null)
+                var d = PropertyDrawerDatabase.GetDrawerForAttribute(attribute.GetType());
+                if (d != null)
                 {
-                    drawer.Run(this, attribute);
+                    d.Run(this, attribute);
                     customDrawer = true;
                 }
             }
@@ -181,7 +181,7 @@ namespace BovineLabs.NaughtyAttributes.Editor
         }
 
         public abstract void ApplyModifications();
-        
+
         public void DrawPropertyField()
         {
             if (this.drawer != null)

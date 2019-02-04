@@ -189,6 +189,11 @@ namespace BovineLabs.NaughtyAttributes.Editor
                 return EditorGUI.RectField(rect, label, (Rect)value);
             }
 
+            if (type.IsEnum)
+            {
+                return EditorGUI.EnumPopup(rect, label, (Enum)value);
+            }
+
             if (typeof(Object).IsAssignableFrom(type))
             {
                 return EditorGUI.ObjectField(rect, label, (Object)value, type, true);
@@ -202,7 +207,8 @@ namespace BovineLabs.NaughtyAttributes.Editor
             return type != typeof(bool) && type != typeof(int) && type != typeof(long) && type != typeof(float) &&
                    type != typeof(double) && type != typeof(string) && type != typeof(Vector2) &&
                    type != typeof(Vector3) && type != typeof(Vector4) && type != typeof(Color) &&
-                   type != typeof(Bounds) && type != typeof(Rect) && !typeof(Object).IsAssignableFrom(type);
+                   type != typeof(Bounds) && type != typeof(Rect) && !type.IsEnum &&
+                !typeof(Object).IsAssignableFrom(type);
         }
 
         public static object TryDrawLayoutField(object value, string label, out bool success)

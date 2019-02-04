@@ -2,17 +2,18 @@ namespace BovineLabs.NaughtyAttributes.Editor
 {
     using BovineLabs.NaughtyAttributes;
     using UnityEditor;
+    using UnityEngine;
 
     [PropertyValidator(typeof(RequiredAttribute))]
     public class RequiredPropertyValidator : PropertyValidator<RequiredAttribute>
     {
         protected override void ValidateProperty(ValueWrapper wrapper, RequiredAttribute attribute)
         {
-            var value = wrapper.GetValue();
-
-            if (value is UnityEngine.Object obj)
+            if (typeof(UnityEngine.Object).IsAssignableFrom(wrapper.Type))
             {
-                if (obj == null)
+                var value = wrapper.GetValue();
+
+                if (value == null)
                 {
                     string errorMessage = wrapper.Name + " is required";
                     if (!string.IsNullOrEmpty(attribute.Message))

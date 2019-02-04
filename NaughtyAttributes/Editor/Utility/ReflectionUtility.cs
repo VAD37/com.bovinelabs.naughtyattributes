@@ -9,14 +9,12 @@ namespace BovineLabs.NaughtyAttributes.Editor
     {
         public static IEnumerable<FieldInfo> GetAllFieldsPublic(object target)
         {
-            return GetAllFields(target, BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public |
-                                BindingFlags.DeclaredOnly);
+            return GetAllFields(target, BindingFlags.Instance | BindingFlags.Public | BindingFlags.DeclaredOnly);
         }
 
         public static IEnumerable<FieldInfo> GetAllFieldsPrivate(object target)
         {
-            return GetAllFields(target, BindingFlags.Instance | BindingFlags.Static | BindingFlags.NonPublic |
-                                        BindingFlags.DeclaredOnly);
+            return GetAllFields(target, BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.DeclaredOnly);
         }
 
         public static IEnumerable<FieldInfo> GetAllFields(object target, BindingFlags flags = BindingFlags.Instance | BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.DeclaredOnly)

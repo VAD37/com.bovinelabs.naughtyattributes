@@ -71,7 +71,7 @@ namespace BovineLabs.NaughtyAttributes.Editor
                             rect.y += 2f;
                             var newValue = EditorDrawUtility.DrawPropertyField(
                                 new Rect(rect.x, rect.y, rect.width, EditorGUIUtility.singleLineHeight), element,
-                                typeof(int), index.ToString());
+                                elementType, index.ToString());
 
                             if (newValue != element)
                             {

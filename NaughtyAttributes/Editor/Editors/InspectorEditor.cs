@@ -21,7 +21,7 @@ namespace BovineLabs.NaughtyAttributes.Editor
                 GUI.enabled = true;
             }
 
-            this.drawer.OnInspectorGUI();
+            this.drawer?.OnInspectorGUI();
 
             this.serializedObject.ApplyModifiedProperties();
         }
@@ -29,7 +29,6 @@ namespace BovineLabs.NaughtyAttributes.Editor
         private void OnEnable()
         {
             this.script = this.serializedObject.FindProperty("m_Script");
-
             this.drawer = new Drawer(this.target, this.serializedObject);
         }
 
