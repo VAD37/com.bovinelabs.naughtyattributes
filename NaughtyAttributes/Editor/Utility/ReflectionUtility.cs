@@ -1,4 +1,4 @@
-namespace BovineLabs.NaughtyAttributes.Editor
+namespace BovineLabs.NaughtyAttributes.Editor.Utility
 {
     using System;
     using System.Collections.Generic;

@@ -2,9 +2,12 @@
 //     Copyright (c) BovineLabs. All rights reserved.
 // </copyright>
 
-namespace BovineLabs.NaughtyAttributes.Editor
+namespace BovineLabs.NaughtyAttributes.Editor.PropertyValidators
 {
     using System;
+    using BovineLabs.NaughtyAttributes.Editor.Attributes;
+    using BovineLabs.NaughtyAttributes.Editor.Utility;
+    using BovineLabs.NaughtyAttributes.Editor.Wrappers;
     using UnityEditor;
 
     [PropertyValidator(typeof(ValidateInputAttribute))]

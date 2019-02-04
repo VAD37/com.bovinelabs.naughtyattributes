@@ -1,4 +1,4 @@
-﻿namespace BovineLabs.NaughtyAttributes.Editor
+﻿namespace BovineLabs.NaughtyAttributes.Editor.Utility
 {
     using System.IO;
     using UnityEngine;

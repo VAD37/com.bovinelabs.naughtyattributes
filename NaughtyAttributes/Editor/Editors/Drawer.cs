@@ -2,11 +2,15 @@
 //     Copyright (c) Timothy Raines. All rights reserved.
 // </copyright>
 
-namespace BovineLabs.NaughtyAttributes.Editor
+namespace BovineLabs.NaughtyAttributes.Editor.Editors
 {
     using System.Collections.Generic;
     using System.Linq;
     using System.Reflection;
+    using BovineLabs.NaughtyAttributes.Editor.Database;
+    using BovineLabs.NaughtyAttributes.Editor.PropertyGroupers;
+    using BovineLabs.NaughtyAttributes.Editor.Utility;
+    using BovineLabs.NaughtyAttributes.Editor.Wrappers;
     using UnityEditor;
     using UnityEngine;
 

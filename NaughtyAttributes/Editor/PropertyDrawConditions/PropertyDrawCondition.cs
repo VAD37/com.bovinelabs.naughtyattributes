@@ -1,5 +1,6 @@
-﻿namespace BovineLabs.NaughtyAttributes.Editor
+﻿namespace BovineLabs.NaughtyAttributes.Editor.PropertyDrawConditions
 {
+    using BovineLabs.NaughtyAttributes.Editor.Wrappers;
     using UnityEngine.Assertions;
 
     public abstract class PropertyDrawCondition

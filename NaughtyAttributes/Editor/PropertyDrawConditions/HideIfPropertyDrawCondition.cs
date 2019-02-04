@@ -1,7 +1,10 @@
-namespace BovineLabs.NaughtyAttributes.Editor
+namespace BovineLabs.NaughtyAttributes.Editor.PropertyDrawConditions
 {
     using System.Reflection;
     using BovineLabs.NaughtyAttributes;
+    using BovineLabs.NaughtyAttributes.Editor.Attributes;
+    using BovineLabs.NaughtyAttributes.Editor.Utility;
+    using BovineLabs.NaughtyAttributes.Editor.Wrappers;
     using UnityEditor;
 
     [PropertyDrawCondition(typeof(HideIfAttribute))]

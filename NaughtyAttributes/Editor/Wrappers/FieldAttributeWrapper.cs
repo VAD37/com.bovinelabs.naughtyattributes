@@ -2,11 +2,10 @@
 //     Copyright (c) BovineLabs. All rights reserved.
 // </copyright>
 
-namespace BovineLabs.NaughtyAttributes.Editor
+namespace BovineLabs.NaughtyAttributes.Editor.Wrappers
 {
     using System;
     using System.Reflection;
-    using UnityEditor;
 
     public class FieldAttributeWrapper : ValueWrapper
     {

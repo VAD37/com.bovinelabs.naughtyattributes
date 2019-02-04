@@ -2,8 +2,9 @@
 //     Copyright (c) BovineLabs. All rights reserved.
 // </copyright>
 
-namespace BovineLabs.NaughtyAttributes.Editor
+namespace BovineLabs.NaughtyAttributes.Editor.PropertyMetas
 {
+    using BovineLabs.NaughtyAttributes.Editor.Wrappers;
     using UnityEngine.Assertions;
 
     public abstract class PropertyMeta<T> : ValueRunner

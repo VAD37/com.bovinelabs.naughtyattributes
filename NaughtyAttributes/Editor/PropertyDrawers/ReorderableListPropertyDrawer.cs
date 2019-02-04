@@ -1,4 +1,4 @@
-namespace BovineLabs.NaughtyAttributes.Editor
+namespace BovineLabs.NaughtyAttributes.Editor.PropertyDrawers
 {
     using System;
     using System.Collections;
@@ -6,6 +6,9 @@ namespace BovineLabs.NaughtyAttributes.Editor
     using System.Linq;
     using System.Reflection;
     using BovineLabs.NaughtyAttributes;
+    using BovineLabs.NaughtyAttributes.Editor.Attributes;
+    using BovineLabs.NaughtyAttributes.Editor.Utility;
+    using BovineLabs.NaughtyAttributes.Editor.Wrappers;
     using UnityEditor;
     using UnityEditorInternal;
     using UnityEngine;

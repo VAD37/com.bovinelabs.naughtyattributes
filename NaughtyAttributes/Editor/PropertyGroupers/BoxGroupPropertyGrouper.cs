@@ -1,6 +1,7 @@
-﻿namespace BovineLabs.NaughtyAttributes.Editor
+﻿namespace BovineLabs.NaughtyAttributes.Editor.PropertyGroupers
 {
     using BovineLabs.NaughtyAttributes;
+    using BovineLabs.NaughtyAttributes.Editor.Attributes;
     using UnityEditor;
     using UnityEngine;
 

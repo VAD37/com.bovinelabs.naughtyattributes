@@ -1,6 +1,8 @@
-namespace BovineLabs.NaughtyAttributes.Editor
+namespace BovineLabs.NaughtyAttributes.Editor.PropertyEnabledConditions
 {
     using BovineLabs.NaughtyAttributes;
+    using BovineLabs.NaughtyAttributes.Editor.Attributes;
+    using BovineLabs.NaughtyAttributes.Editor.Wrappers;
 
     [PropertyDrawer(typeof(ReadOnlyAttribute))]
     public class ReadOnlyPropertyDrawer : PropertyEnabledCondition<ReadOnlyAttribute>

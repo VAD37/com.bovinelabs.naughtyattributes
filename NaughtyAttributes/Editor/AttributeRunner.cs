@@ -4,6 +4,8 @@
 
 namespace BovineLabs.NaughtyAttributes.Editor
 {
+    using BovineLabs.NaughtyAttributes.Editor.Wrappers;
+
     public abstract class AttributeRunner
     {
         public abstract void Run(AttributeWrapper wrapper, NaughtyAttribute attribute);

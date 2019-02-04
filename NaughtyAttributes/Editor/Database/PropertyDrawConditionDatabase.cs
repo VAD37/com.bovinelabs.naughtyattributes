@@ -1,10 +1,11 @@
 // This class is auto generated
 
-namespace BovineLabs.NaughtyAttributes.Editor
+namespace BovineLabs.NaughtyAttributes.Editor.Database
 {
     using System;
     using System.Collections.Generic;
     using BovineLabs.NaughtyAttributes;
+    using BovineLabs.NaughtyAttributes.Editor.PropertyDrawConditions;
 
     public static class PropertyDrawConditionDatabase
     {

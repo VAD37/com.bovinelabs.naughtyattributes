@@ -1,7 +1,8 @@
-﻿using UnityEngine.Assertions;
-
-namespace BovineLabs.NaughtyAttributes.Editor
+﻿namespace BovineLabs.NaughtyAttributes.Editor.NativePropertyDrawers
 {
+    using BovineLabs.NaughtyAttributes.Editor.Wrappers;
+    using UnityEngine.Assertions;
+
     public abstract class NativePropertyDrawer<T> : ValueRunner
         where T : NaughtyAttribute
     {

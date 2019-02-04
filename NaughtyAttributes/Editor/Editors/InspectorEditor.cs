@@ -1,5 +1,6 @@
-namespace BovineLabs.NaughtyAttributes.Editor
+namespace BovineLabs.NaughtyAttributes.Editor.Editors
 {
+    using BovineLabs.NaughtyAttributes.Editor.Database;
     using UnityEditor;
     using UnityEngine;
 

@@ -1,9 +1,8 @@
-namespace BovineLabs.NaughtyAttributes.Editor
+namespace BovineLabs.NaughtyAttributes.Editor.Utility
 {
     using System;
     using System.Linq;
-    using System.Reflection;
-    using System.Threading;
+    using BovineLabs.NaughtyAttributes.Editor.Wrappers;
     using UnityEditor;
     using UnityEngine;
     using Object = UnityEngine.Object;

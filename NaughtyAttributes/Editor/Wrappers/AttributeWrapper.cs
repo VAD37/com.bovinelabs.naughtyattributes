@@ -2,12 +2,16 @@
 //     Copyright (c) BovineLabs. All rights reserved.
 // </copyright>
 
-namespace BovineLabs.NaughtyAttributes.Editor
+namespace BovineLabs.NaughtyAttributes.Editor.Wrappers
 {
     using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Reflection;
+    using BovineLabs.NaughtyAttributes.Editor.Database;
+    using BovineLabs.NaughtyAttributes.Editor.Editors;
+    using BovineLabs.NaughtyAttributes.Editor.PropertyMetas;
+    using BovineLabs.NaughtyAttributes.Editor.Utility;
     using UnityEditor;
     using UnityEngine;
 
@@ -98,11 +102,13 @@ namespace BovineLabs.NaughtyAttributes.Editor
         }
 
         public string Name => this.MemberInfo.Name;
+
         public string DisplayName => this.Name;
 
         public abstract Type Type { get; }
 
         public abstract object GetValue();
+
         public abstract void SetValue(object value);
 
         public override void ValidateAndDrawField()
@@ -195,7 +201,9 @@ namespace BovineLabs.NaughtyAttributes.Editor
 
                 if (this.foldout)
                 {
+                    EditorGUI.indentLevel += 1;
                     this.drawer.OnInspectorGUI();
+                    EditorGUI.indentLevel -= 1;
                 }
             }
             else

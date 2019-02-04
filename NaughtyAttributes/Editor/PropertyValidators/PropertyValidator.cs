@@ -1,5 +1,6 @@
-﻿namespace BovineLabs.NaughtyAttributes.Editor
+﻿namespace BovineLabs.NaughtyAttributes.Editor.PropertyValidators
 {
+    using BovineLabs.NaughtyAttributes.Editor.Wrappers;
     using UnityEngine.Assertions;
 
     public abstract class PropertyValidator<T> : ValueRunner

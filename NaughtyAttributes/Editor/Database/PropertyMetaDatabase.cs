@@ -1,8 +1,9 @@
-namespace BovineLabs.NaughtyAttributes.Editor
+namespace BovineLabs.NaughtyAttributes.Editor.Database
 {
     using System;
     using System.Collections.Generic;
     using BovineLabs.NaughtyAttributes;
+    using BovineLabs.NaughtyAttributes.Editor.PropertyMetas;
 
     public static class PropertyMetaDatabase
     {
