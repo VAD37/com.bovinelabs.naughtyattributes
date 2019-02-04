@@ -3,7 +3,7 @@
     using System;
 
     [AttributeUsage(AttributeTargets.Field, AllowMultiple = false, Inherited = true)]
-    public class ReorderableListAttribute : DrawerAttribute
+    public class ListAttribute : DrawerAttribute
     {
     }
 }

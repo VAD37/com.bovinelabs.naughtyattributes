@@ -18,7 +18,6 @@ namespace BovineLabs.NaughtyAttributes.Editor.Database
                 [typeof(DropdownAttribute)] = new DropdownPropertyDrawer(),
                 [typeof(MinMaxSliderAttribute)] = new MinMaxSliderPropertyDrawer(),
                 [typeof(ProgressBarAttribute)] = new ProgressBarPropertyDrawer(),
-                [typeof(ReorderableListAttribute)] = new ReorderableListPropertyDrawer(),
                 [typeof(ResizableTextAreaAttribute)] = new ResizableTextAreaPropertyDrawer(),
                 [typeof(ShowAssetPreviewAttribute)] = new ShowAssetPreviewPropertyDrawer(),
                 [typeof(SliderAttribute)] = new SliderPropertyDrawer()
@@ -28,14 +27,6 @@ namespace BovineLabs.NaughtyAttributes.Editor.Database
         public static PropertyDrawer GetDrawerForAttribute(Type attributeType)
         {
             return drawersByAttributeType.TryGetValue(attributeType, out var drawer) ? drawer : null;
-        }
-
-        public static void ClearCache()
-        {
-            foreach (var kvp in drawersByAttributeType)
-            {
-                kvp.Value.ClearCache();
-            }
         }
     }
 }

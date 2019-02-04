@@ -99,6 +99,11 @@ namespace BovineLabs.NaughtyAttributes.Editor.Utility
                 return EditorGUILayout.RectField(label, (Rect)value);
             }
 
+            if (type.IsEnum)
+            {
+                return EditorGUILayout.EnumPopup(label, (Enum)value);
+            }
+
             if (typeof(Object).IsAssignableFrom(type))
             {
                 return EditorGUILayout.ObjectField(label, (Object)value, type, true);

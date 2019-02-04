@@ -1,6 +1,7 @@
 namespace BovineLabs.NaughtyAttributes.Editor.Editors
 {
     using BovineLabs.NaughtyAttributes.Editor.Database;
+    using BovineLabs.NaughtyAttributes.Editor.PropertyDrawers;
     using UnityEditor;
     using UnityEngine;
 
@@ -35,7 +36,7 @@ namespace BovineLabs.NaughtyAttributes.Editor.Editors
 
         private void OnDisable()
         {
-            PropertyDrawerDatabase.ClearCache();
+            ListPropertyDrawer.Instance.ClearCache();
         }
     }
 }

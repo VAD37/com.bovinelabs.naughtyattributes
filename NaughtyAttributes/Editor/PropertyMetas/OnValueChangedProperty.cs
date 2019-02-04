@@ -8,6 +8,12 @@ namespace BovineLabs.NaughtyAttributes.Editor.PropertyMetas
     public class OnValueChangedProperty
     {
         private static OnValueChangedProperty instance;
+        
+        private OnValueChangedProperty()
+        {
+
+        }
+
         public static OnValueChangedProperty Instance => instance ?? (instance = new OnValueChangedProperty());
 
         public void ApplyPropertyMeta(ValueWrapper wrapper, OnValueChangedAttribute attribute)

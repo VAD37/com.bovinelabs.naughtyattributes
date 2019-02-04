@@ -5,9 +5,7 @@
 
     public abstract class PropertyDrawer : ValueRunner
     {
-        public virtual void ClearCache()
-        {
-        }
+
     }
 
     public abstract class PropertyDrawer<T> : PropertyDrawer
