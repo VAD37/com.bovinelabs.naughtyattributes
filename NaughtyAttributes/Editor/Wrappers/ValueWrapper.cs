@@ -85,7 +85,7 @@ namespace BovineLabs.NaughtyAttributes.Editor.Wrappers
             {
                 if (this.Type.IsArray)
                 {
-                    ListPropertyDrawer.Instance.DrawProperty(this, null);
+                    ListPropertyDrawer.Instance.DrawArray(this);
                 }
                 else
                 {

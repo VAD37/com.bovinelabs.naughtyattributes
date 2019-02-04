@@ -1,8 +1,13 @@
+// <copyright file="ListPropertyDrawer.cs" company="BovineLabs">
+//     Copyright (c) BovineLabs. All rights reserved.
+// </copyright>
+
 namespace BovineLabs.NaughtyAttributes.Editor.PropertyDrawers
 {
     using System;
     using System.Collections;
     using System.Collections.Generic;
+    using System.Diagnostics.CodeAnalysis;
     using System.Linq;
     using System.Reflection;
     using BovineLabs.NaughtyAttributes;
@@ -12,25 +17,38 @@ namespace BovineLabs.NaughtyAttributes.Editor.PropertyDrawers
     using UnityEditorInternal;
     using UnityEngine;
 
+    /// <summary>
+    /// List property drawer.
+    /// </summary>
     public class ListPropertyDrawer
     {
         private static ListPropertyDrawer instance;
 
-        private Dictionary<ValueWrapper, Stash> reorderableListsByPropertyName = new Dictionary<ValueWrapper, Stash>();
+        private readonly Dictionary<ValueWrapper, Stash> reorderableListsByPropertyName = new Dictionary<ValueWrapper, Stash>();
 
         private ListPropertyDrawer()
         {
-
         }
 
+        /// <summary>
+        /// Gets the singleton instance.
+        /// </summary>
         public static ListPropertyDrawer Instance => instance ?? (instance = new ListPropertyDrawer());
 
+        /// <summary>
+        /// Clear the cache.
+        /// </summary>
         public void ClearCache()
         {
             this.reorderableListsByPropertyName.Clear();
         }
 
-        public void DrawProperty(ValueWrapper wrapper, ListAttribute attribute)
+        /// <summary>
+        /// Draw the array.
+        /// </summary>
+        /// <param name="wrapper">The value wrapper.</param>
+        [SuppressMessage("ReSharper", "ImplicitlyCapturedClosure", Justification = "Intended")]
+        public void DrawArray(ValueWrapper wrapper)
         {
             EditorDrawUtility.DrawHeader(wrapper);
 
@@ -46,8 +64,7 @@ namespace BovineLabs.NaughtyAttributes.Editor.PropertyDrawers
                     {
                         var d1 = typeof(List<>);
                         var typeArgs = new[] { elementType };
-                        var makeme = d1.MakeGenericType(typeArgs);
-                        var newList = (IList)Activator.CreateInstance(makeme);
+                        var newList = (IList)Activator.CreateInstance(d1.MakeGenericType(typeArgs));
 
                         foreach (var l in list)
                         {
@@ -68,8 +85,8 @@ namespace BovineLabs.NaughtyAttributes.Editor.PropertyDrawers
                     {
                         drawHeaderCallback = rect =>
                         {
-                            EditorGUI.LabelField(rect, $"{wrapper.DisplayName}: {internalList.Count}",
-                                EditorStyles.label);
+                            var label = $"{wrapper.DisplayName}: {internalList.Count}";
+                            EditorGUI.LabelField(rect, label, EditorStyles.label);
                         },
 
                         drawElementCallback = (rect, index, isActive, isFocused) =>
@@ -77,8 +94,10 @@ namespace BovineLabs.NaughtyAttributes.Editor.PropertyDrawers
                             object element = internalList[index];
                             rect.y += 2f;
                             var newValue = EditorDrawUtility.DrawPropertyField(
-                                new Rect(rect.x, rect.y, rect.width, EditorGUIUtility.singleLineHeight), element,
-                                elementType, index.ToString());
+                                new Rect(rect.x, rect.y, rect.width, EditorGUIUtility.singleLineHeight),
+                                element,
+                                elementType,
+                                index.ToString());
 
                             if (newValue != element)
                             {
@@ -107,13 +126,13 @@ namespace BovineLabs.NaughtyAttributes.Editor.PropertyDrawers
                         },
                     };
 
-                    stash.Reorerable = reorderableList;
+                    stash.Reorderable = reorderableList;
                     this.reorderableListsByPropertyName[wrapper] = stash;
                 }
 
                 var s = this.reorderableListsByPropertyName[wrapper];
 
-                s.Reorerable.DoLayoutList();
+                s.Reorderable.DoLayoutList();
 
                 if (s.NeedsUpdate && s.IsArray)
                 {
@@ -171,10 +190,13 @@ namespace BovineLabs.NaughtyAttributes.Editor.PropertyDrawers
 
         private class Stash
         {
-            public ReorderableList Reorerable;
-            public IList List;
-            public bool IsArray;
-            public bool NeedsUpdate;
+            public ReorderableList Reorderable { get; set; }
+
+            public IList List { get; set; }
+
+            public bool IsArray { get; set; }
+
+            public bool NeedsUpdate { get; set; }
         }
     }
 }
