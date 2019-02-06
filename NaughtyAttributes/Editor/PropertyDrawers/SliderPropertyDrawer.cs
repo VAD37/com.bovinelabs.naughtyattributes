@@ -10,26 +10,34 @@ namespace BovineLabs.NaughtyAttributes.Editor.PropertyDrawers
     public class SliderPropertyDrawer : PropertyDrawer<SliderAttribute>
     {
         /// <inheritdoc />
-        protected override void DrawProperty(ValueWrapper wrapper, SliderAttribute attribute)
+        protected override void DrawProperty(NonSerializedAttributeWrapper wrapper, SliderAttribute attribute)
         {
-            EditorDrawUtility.DrawHeader(wrapper);
+        }
 
-            if (wrapper.Type == typeof(int))
+        /// <inheritdoc />
+        protected override void DrawProperty(SerializedPropertyAttributeWrapper wrapper, SliderAttribute attribute)
+        {
+            var property = wrapper.Property;
+
+            switch (property.propertyType)
             {
-                wrapper.SetValue(EditorGUILayout.IntSlider((int)wrapper.GetValue(), (int)attribute.MinValue,
-                    (int)attribute.MaxValue));
+                case SerializedPropertyType.Integer:
+                    property.intValue = EditorGUILayout.IntSlider(property.intValue, (int)attribute.MinValue, (int)attribute.MaxValue);
+                    break;
+                case SerializedPropertyType.Float:
+                    property.floatValue = EditorGUILayout.Slider(property.floatValue, attribute.MinValue, attribute.MaxValue);
+                    break;
+                default:
+                    NotIntFloat(wrapper);
+                    break;
             }
-            else if (wrapper.Type == typeof(float))
-            {
-                wrapper.SetValue(EditorGUILayout.Slider((float)wrapper.GetValue(), attribute.MinValue,
-                    attribute.MaxValue));
-            }
-            else
-            {
-                string warning = attribute.GetType().Name + " can be used only on int or float fields";
-                EditorDrawUtility.DrawHelpBox(warning, MessageType.Warning);
-                wrapper.DrawPropertyField();
-            }
+        }
+
+        private static void NotIntFloat(ValueWrapper wrapper)
+        {
+            string warning = typeof(SliderAttribute).Name + " can only be used on int or float fields";
+            EditorDrawUtility.DrawHelpBox(warning, MessageType.Warning);
+            wrapper.DrawDefaultField();
         }
     }
 }

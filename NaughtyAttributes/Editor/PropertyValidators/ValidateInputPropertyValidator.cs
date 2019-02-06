@@ -5,6 +5,7 @@
 namespace BovineLabs.NaughtyAttributes.Editor.PropertyValidators
 {
     using System;
+    using System.Reflection;
     using BovineLabs.NaughtyAttributes.Editor.Attributes;
     using BovineLabs.NaughtyAttributes.Editor.Utility;
     using BovineLabs.NaughtyAttributes.Editor.Wrappers;
@@ -13,44 +14,60 @@ namespace BovineLabs.NaughtyAttributes.Editor.PropertyValidators
     [PropertyValidator(typeof(ValidateInputAttribute))]
     public class ValidateInputPropertyValidator : PropertyValidator<ValidateInputAttribute>
     {
-        protected override void ValidateProperty(ValueWrapper wrapper, ValidateInputAttribute attribute)
+        /// <inheritdoc />
+        protected override void ValidateProperty(NonSerializedAttributeWrapper wrapper, ValidateInputAttribute attribute)
+        {
+            ValidateProperty(wrapper, attribute);
+        }
+
+        /// <inheritdoc />
+        protected override void ValidateProperty(SerializedPropertyAttributeWrapper wrapper,
+            ValidateInputAttribute attribute)
+        {
+            ValidateProperty(wrapper, attribute);
+        }
+
+        private static void ValidateProperty(ValueWrapper wrapper, ValidateInputAttribute attribute)
         {
             var validationCallback = ReflectionUtility.GetMethod(wrapper.Target, attribute.CallbackName);
 
-            if (validationCallback != null &&
-                validationCallback.ReturnType == typeof(bool) &&
-                validationCallback.GetParameters().Length == 1)
+            if (validationCallback == null || validationCallback.ReturnType != typeof(bool) || validationCallback.GetParameters().Length != 1)
             {
-                Type fieldType = wrapper.Type;
-                Type parameterType = validationCallback.GetParameters()[0].ParameterType;
+                WrongType();
+                return;
+            }
 
-                if (fieldType == parameterType)
+            var fieldType = wrapper.Type;
+            Type parameterType = validationCallback.GetParameters()[0].ParameterType;
+            if (fieldType != parameterType)
+            {
+                FieldMismatch();
+                return;
+            }
+
+            if (!(bool)validationCallback.Invoke(wrapper.Target, new[] { wrapper.GetValue() }))
+            {
+                if (string.IsNullOrEmpty(attribute.Message))
                 {
-                    if (!(bool)validationCallback.Invoke(wrapper.Target, new[] { wrapper.GetValue() }))
-                    {
-                        if (string.IsNullOrEmpty(attribute.Message))
-                        {
-                            EditorDrawUtility.DrawHelpBox(wrapper.Name + " is not valid", MessageType.Error);
-                        }
-                        else
-                        {
-                            EditorDrawUtility.DrawHelpBox(attribute.Message, MessageType.Error);
-                        }
-                    }
+                    EditorDrawUtility.DrawHelpBox(wrapper.DisplayName + " is not valid", MessageType.Error);
                 }
                 else
                 {
-                    var warning = "The field type is not the same as the callback's parameter type";
-                    EditorDrawUtility.DrawHelpBox(warning, MessageType.Warning);
+                    EditorDrawUtility.DrawHelpBox(attribute.Message, MessageType.Error);
                 }
             }
-            else
-            {
-                var warning = attribute.GetType().Name +
-                              " needs a callback with boolean return type and a single parameter of the same type as the field";
+        }
 
-                EditorDrawUtility.DrawHelpBox(warning, MessageType.Warning);
-            }
+        private static void WrongType()
+        {
+            var warning = $"{typeof(ValidateInputAttribute).Name} needs a callback with boolean return type and a single parameter of the same type as the field";
+            EditorDrawUtility.DrawHelpBox(warning, MessageType.Warning);
+        }
+
+        private static void FieldMismatch()
+        {
+            const string warning = "The field type is not the same as the callback's parameter type";
+            EditorDrawUtility.DrawHelpBox(warning, MessageType.Warning);
         }
     }
 }

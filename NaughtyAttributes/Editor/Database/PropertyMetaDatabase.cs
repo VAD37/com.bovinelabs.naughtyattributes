@@ -7,17 +7,17 @@ namespace BovineLabs.NaughtyAttributes.Editor.Database
 
     public static class PropertyMetaDatabase
     {
-        private static readonly Dictionary<Type, ValueRunner> metasByAttributeType;
+        private static readonly Dictionary<Type, PropertyMeta> metasByAttributeType;
 
         static PropertyMetaDatabase()
         {
-            metasByAttributeType = new Dictionary<Type, ValueRunner>
+            metasByAttributeType = new Dictionary<Type, PropertyMeta>
             {
                 [typeof(InfoBoxAttribute)] = new InfoBoxPropertyMeta(),
             };
         }
 
-        public static ValueRunner GetMetaForAttribute(Type attributeType)
+        public static PropertyMeta GetMetaForAttribute(Type attributeType)
         {
             return metasByAttributeType.TryGetValue(attributeType, out var meta) ? meta : null;
         }

@@ -9,29 +9,40 @@ namespace BovineLabs.NaughtyAttributes.Editor.PropertyValidators
     [PropertyValidator(typeof(MaxValueAttribute))]
     public class MaxValuePropertyValidator : PropertyValidator<MaxValueAttribute>
     {
-        protected override void ValidateProperty(ValueWrapper wrapper, MaxValueAttribute attribute)
+        /// <inheritdoc />
+        protected override void ValidateProperty(NonSerializedAttributeWrapper wrapper, MaxValueAttribute attribute)
         {
-            var value = wrapper.GetValue();
+        }
 
-            if (value is int intValue)
+        /// <inheritdoc />
+        protected override void ValidateProperty(SerializedPropertyAttributeWrapper wrapper, MaxValueAttribute attribute)
+        {
+            var property = wrapper.Property;
+
+            switch (property.propertyType)
             {
-                if (intValue > attribute.MaxValue)
-                {
-                    wrapper.SetValue((int)attribute.MaxValue);
-                }
+                case SerializedPropertyType.Integer:
+                    if (property.intValue > attribute.MaxValue)
+                    {
+                        property.intValue = (int)attribute.MaxValue;
+                    }
+                    break;
+                case SerializedPropertyType.Float:
+                    if (property.floatValue > attribute.MaxValue)
+                    {
+                        property.floatValue = attribute.MaxValue;
+                    }
+                    break;
+                default:
+                    NotIntFloat();
+                    break;
             }
-            else if (value is float floatValue)
-            {
-                if (floatValue > attribute.MaxValue)
-                {
-                    wrapper.SetValue(attribute.MaxValue);
-                }
-            }
-            else
-            {
-                string warning = attribute.GetType().Name + " can be used only on int or float fields";
-                EditorDrawUtility.DrawHelpBox(warning, MessageType.Warning);
-            }
+        }
+
+        private static void NotIntFloat()
+        {
+            string warning = $"{typeof(MaxValueAttribute).Name} can only be used on int or float fields";
+            EditorDrawUtility.DrawHelpBox(warning, MessageType.Warning);
         }
     }
 }

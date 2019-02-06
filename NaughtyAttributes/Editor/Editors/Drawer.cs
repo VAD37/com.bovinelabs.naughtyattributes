@@ -23,7 +23,7 @@ namespace BovineLabs.NaughtyAttributes.Editor.Editors
         private readonly HashSet<AttributeWrapper> group = new HashSet<AttributeWrapper>();
         private readonly Dictionary<string, List<AttributeWrapper>> groupedByName = new Dictionary<string, List<AttributeWrapper>>();
 
-        public Drawer(Object target, SerializedObject serializedObject)
+        public Drawer(SerializedObject serializedObject, object target)
         {
             // todo better infinite loop support
             var type = target.GetType();
@@ -31,22 +31,54 @@ namespace BovineLabs.NaughtyAttributes.Editor.Editors
 
             foreach (var field in fields)
             {
-                var serializedProperty = serializedObject.FindProperty(field.Name);
+                var property = serializedObject.FindProperty(field.Name);
 
-                if (serializedProperty != null)
+                if (property != null)
+                {
+                    this.members.Add(new SerializedPropertyAttributeWrapper(serializedObject, target, property, field));
+                }
+
+                /*else if (field.GetCustomAttribute<ShowNonSerializedFieldAttribute>() != null)
                 {
                     this.members.Add(new FieldAttributeWrapper(target, field));
-                }
-                else if (field.GetCustomAttribute<ShowNonSerializedFieldAttribute>() != null)
-                {
-                    this.members.Add(new FieldAttributeWrapper(target, field));
-                }
+                }*/
             }
 
             this.MethodsPropertiesAndGrouping(target);
         }
 
-        public Drawer(object target)
+        public Drawer(SerializedObject serializedObject, object target, SerializedProperty serializedProperty)
+        {
+            // todo infinite loop support
+            var type = target.GetType();
+            //var fields = ReflectionUtility.GetAllFields(target).Where(f => f.GetType() != type);
+
+            foreach (var property in serializedProperty.GetChildren())
+            {
+                this.members.Add(new SerializedPropertyAttributeWrapper(serializedObject, target, property, property.GetField()));
+            }
+
+            /*foreach (var field in fields)
+            {
+
+
+                var property = serializedObject.FindProperty(field.Name);
+
+                if (property != null)
+                {
+                    this.members.Add(new SerializedPropertyAttributeWrapper(property));
+                }
+
+                /*else if (field.GetCustomAttribute<ShowNonSerializedFieldAttribute>() != null)
+                {
+                    this.members.Add(new FieldAttributeWrapper(target, field));
+                }*/
+            //}
+
+            this.MethodsPropertiesAndGrouping(target);
+        }
+
+        /*public Drawer(object target)
         {
             var type = target.GetType();
             var publicFields = ReflectionUtility.GetAllFieldsPublic(target).Where(f => f.GetType() != type);
@@ -67,15 +99,15 @@ namespace BovineLabs.NaughtyAttributes.Editor.Editors
             }
 
             this.MethodsPropertiesAndGrouping(target);
-        }
+        }*/
 
         public bool HasElement => this.members.Count > 0;
 
         private void MethodsPropertiesAndGrouping(object target)
         {
-            this.members.AddRange(ReflectionUtility.GetAllProperties(target)
+            /*this.members.AddRange(ReflectionUtility.GetAllProperties(target)
                 .Where(p => p.GetCustomAttribute<ShowNonSerializedFieldAttribute>() != null)
-                .Select(p => new PropertyAttributeWrapper(target, p)));
+                .Select(p => new PropertyAttributeWrapper(target, p)));*/
 
             this.members.AddRange(ReflectionUtility
                 .GetAllMethods(target, p => p.GetCustomAttribute<MethodAttribute>() != null)

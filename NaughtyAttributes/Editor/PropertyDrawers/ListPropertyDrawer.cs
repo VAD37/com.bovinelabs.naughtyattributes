@@ -170,7 +170,7 @@ namespace BovineLabs.NaughtyAttributes.Editor.PropertyDrawers
                 string warning = typeof(ListAttribute).Name + " can be used only on arrays or lists";
                 EditorDrawUtility.DrawHelpBox(warning, MessageType.Warning);
 
-                wrapper.DrawPropertyField();
+                wrapper.DrawDefaultField();
             }
         }
 

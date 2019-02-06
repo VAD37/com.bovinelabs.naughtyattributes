@@ -1,5 +1,6 @@
 ﻿namespace BovineLabs.NaughtyAttributes.Editor.PropertyDrawers
 {
+    using BovineLabs.NaughtyAttributes.Editor.Utility;
     using BovineLabs.NaughtyAttributes.Editor.Wrappers;
     using UnityEngine.Assertions;
 
@@ -12,15 +13,26 @@
         where T : NaughtyAttribute
     {
         /// <inheritdoc />
-        public override void Run(ValueWrapper wrapper, NaughtyAttribute attribute)
+        public override void Run(NonSerializedAttributeWrapper wrapper, NaughtyAttribute attribute)
         {
             Assert.IsTrue(attribute is T);
+
+            EditorDrawUtility.DrawHeader(wrapper);
 
             this.DrawProperty(wrapper, (T)attribute);
         }
 
-        protected abstract void DrawProperty(ValueWrapper wrapper, T attribute);
+        /// <inheritdoc />
+        public override void Run(SerializedPropertyAttributeWrapper wrapper, NaughtyAttribute attribute)
+        {
+            Assert.IsTrue(attribute is T);
 
+            EditorDrawUtility.DrawHeader(wrapper);
 
+            this.DrawProperty(wrapper, (T)attribute);
+        }
+
+        protected abstract void DrawProperty(NonSerializedAttributeWrapper wrapper, T attribute);
+        protected abstract void DrawProperty(SerializedPropertyAttributeWrapper wrapper, T attribute);
     }
 }

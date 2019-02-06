@@ -5,9 +5,15 @@
 namespace BovineLabs.NaughtyAttributes.Editor.Wrappers
 {
     using System;
+    using System.Linq;
     using System.Reflection;
+    using BovineLabs.NaughtyAttributes.Editor.Editors;
+    using BovineLabs.NaughtyAttributes.Editor.PropertyDrawers;
+    using BovineLabs.NaughtyAttributes.Editor.Utility;
+    using UnityEditor;
+    using PropertyDrawer = BovineLabs.NaughtyAttributes.Editor.PropertyDrawers.PropertyDrawer;
 
-    public class FieldAttributeWrapper : ValueWrapper
+    /*public class FieldAttributeWrapper : ValueWrapper
     {
         private FieldInfo FieldInfo => (FieldInfo)this.MemberInfo;
 
@@ -35,5 +41,5 @@ namespace BovineLabs.NaughtyAttributes.Editor.Wrappers
         public override void ApplyModifications()
         {
         }
-    }
+    }*/
 }

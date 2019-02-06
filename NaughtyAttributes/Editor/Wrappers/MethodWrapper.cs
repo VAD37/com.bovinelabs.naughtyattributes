@@ -17,13 +17,16 @@ namespace BovineLabs.NaughtyAttributes.Editor.Wrappers
     {
         public MethodInfo MethodInfo { get; }
 
-        public MethodWrapper(object target, MethodInfo methodInfo) 
-            : base(target)
+        public MethodWrapper(object target, MethodInfo methodInfo)
         {
+            this.Target = target;
             this.MethodInfo = methodInfo;
         }
 
         public string Name => this.MethodInfo.Name;
+
+        /// <inheritdoc />
+        public override object Target { get; }
 
         /// <inheritdoc />
         public override void ValidateAndDrawField()

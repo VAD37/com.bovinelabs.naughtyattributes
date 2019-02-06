@@ -9,47 +9,72 @@ namespace BovineLabs.NaughtyAttributes.Editor.Wrappers
     using System.Linq;
     using System.Reflection;
     using BovineLabs.NaughtyAttributes.Editor.Database;
-    using BovineLabs.NaughtyAttributes.Editor.Editors;
-    using BovineLabs.NaughtyAttributes.Editor.PropertyDrawers;
     using BovineLabs.NaughtyAttributes.Editor.PropertyMetas;
-    using BovineLabs.NaughtyAttributes.Editor.Utility;
     using UnityEditor;
     using UnityEngine;
+    using PropertyDrawer = PropertyDrawers.PropertyDrawer;
 
     public abstract class ValueWrapper : AttributeWrapper
     {
-        protected MemberInfo MemberInfo { get; }
+        public SerializedObject SerializedObject { get; }
+        public MemberInfo MemberInfo { get; }
 
-        private readonly Drawer drawer;
+        //private readonly Drawer drawer;
         private bool foldout;
 
-        protected ValueWrapper(object target, MemberInfo memberInfo)
-            : base(target)
+        protected ValueWrapper(SerializedObject serializedObject, object target, MemberInfo memberInfo)
         {
+            this.SerializedObject = serializedObject;
+            this.Target = target;
             this.MemberInfo = memberInfo;
 
-            if (EditorDrawUtility.IsDrawable(this.Type))
+            /*if (EditorDrawUtility.IsDrawable(this.Type))
             {
                 var info = this.Type.GetTypeInfo();
 
                 if (!info.IsArray)
                 {
-                    this.drawer = new Drawer(this.GetValue());
+                    var array = this.GetValue();
+                    if (array == null)
+                    {
+                        array = Activator.CreateInstance(this.Type);
+                        this.SetValue(array);
+                    }
+
+                    this.drawer = new Drawer(array);
                 }
+            }*/
+        }
+
+        public sealed override object Target { get; }
+
+        public abstract string DisplayName { get; }
+
+        protected abstract bool HasChildren { get; }
+        protected abstract bool IsArray { get; }
+
+        protected abstract void ValidateField(ValueRunner validator, ValidatorAttribute attribute);
+        protected abstract void DrawPropertyField(PropertyDrawer drawer, DrawerAttribute attribute);
+
+        public Type Type
+        {
+            get
+            {
+                if (this.MemberInfo is FieldInfo fieldInfo)
+                {
+                    return fieldInfo.FieldType;
+                }
+
+                if (this.MemberInfo is PropertyInfo propertyInfo)
+                {
+                    return propertyInfo.PropertyType;
+                }
+
+                return null;
             }
         }
 
-        public string Name => this.MemberInfo.Name;
-
-        public string DisplayName => this.Name;
-
-        public abstract Type Type { get; }
-
-        public abstract object GetValue();
-
-        public abstract void SetValue(object value);
-
-        public abstract void ApplyModifications();
+        public abstract void DrawDefaultField();
 
         public override void ValidateAndDrawField()
         {
@@ -63,7 +88,39 @@ namespace BovineLabs.NaughtyAttributes.Editor.Wrappers
             this.DrawField();
         }
 
-        public void DrawPropertyField()
+        public void ApplyModifications()
+        {
+            this.SerializedObject.ApplyModifiedProperties();
+        }
+
+        public object GetValue()
+        {
+            if (this.MemberInfo is FieldInfo fieldInfo)
+            {
+                return fieldInfo.GetValue(this.Target);
+            }
+
+            if (this.MemberInfo is PropertyInfo propertyInfo)
+            {
+                return propertyInfo.GetValue(this.Target);
+            }
+
+            return null;
+        }
+
+        public void SetValue(object value)
+        {
+            if (this.MemberInfo is FieldInfo fieldInfo)
+            {
+                fieldInfo.SetValue(this.Target, value);
+            }
+            else if (this.MemberInfo is PropertyInfo propertyInfo)
+            {
+                propertyInfo.SetValue(this.Target, value);
+            }
+        }
+
+        /*public void DrawPropertyField()
         {
             if (this.drawer != null)
             {
@@ -97,7 +154,7 @@ namespace BovineLabs.NaughtyAttributes.Editor.Wrappers
                     this.SetValue(EditorDrawUtility.DrawPropertyField(this.GetValue(), this.Type, this.DisplayName));
                 }
             }
-        }
+        }*/
 
         /// <inheritdoc />
         public sealed override IEnumerable<T> GetCustomAttributes<T>()
@@ -112,7 +169,10 @@ namespace BovineLabs.NaughtyAttributes.Editor.Wrappers
             foreach (var attribute in validatorAttributes)
             {
                 var validator = PropertyValidatorDatabase.GetValidatorForAttribute(attribute.GetType());
-                validator?.Run(this, attribute);
+                if (validator != null)
+                {
+                    this.ValidateField(validator, attribute);
+                }
             }
         }
 
@@ -138,22 +198,39 @@ namespace BovineLabs.NaughtyAttributes.Editor.Wrappers
             EditorGUI.BeginChangeCheck();
             GUI.enabled = isPropertyEnabled;
 
-            bool customDrawer = false;
+            PropertyDrawer drawer = null;
+            DrawerAttribute attribute = null;
+
             var drawerAttributes = this.GetCustomAttributes<DrawerAttribute>().ToArray();
             if (drawerAttributes.Length > 0)
             {
-                var attribute = drawerAttributes[0];
-                var d = PropertyDrawerDatabase.GetDrawerForAttribute(attribute.GetType());
-                if (d != null)
-                {
-                    d.Run(this, attribute);
-                    customDrawer = true;
-                }
+                attribute = drawerAttributes[0];
+                drawer = PropertyDrawerDatabase.GetDrawerForAttribute(attribute.GetType());
             }
 
-            if (!customDrawer)
+            if (this.HasChildren)
             {
-                this.DrawPropertyField();
+                this.foldout = EditorGUILayout.Foldout(this.foldout, this.DisplayName);
+
+                if (this.foldout)
+                {
+                    EditorGUI.indentLevel += 1;
+                    this.DrawPropertyField(drawer, attribute);
+                    EditorGUI.indentLevel -= 1;
+                }
+            }
+            else if (this.IsArray)
+            {
+                this.foldout = EditorGUILayout.Foldout(this.foldout, this.DisplayName);
+
+                if (this.foldout)
+                {
+                    this.DrawPropertyField(drawer, attribute);
+                }
+            }
+            else
+            {
+                this.DrawPropertyField(drawer, attribute);
             }
 
             GUI.enabled = true;

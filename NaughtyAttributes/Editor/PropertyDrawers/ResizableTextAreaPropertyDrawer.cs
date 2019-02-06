@@ -10,29 +10,51 @@ namespace BovineLabs.NaughtyAttributes.Editor.PropertyDrawers
     [PropertyDrawer(typeof(ResizableTextAreaAttribute))]
     public class ResizableTextAreaPropertyDrawer : PropertyDrawer<ResizableTextAreaAttribute>
     {
-        protected override void DrawProperty(ValueWrapper wrapper, ResizableTextAreaAttribute attribute)
+        /// <inheritdoc />
+        protected override void DrawProperty(NonSerializedAttributeWrapper wrapper, ResizableTextAreaAttribute attribute)
         {
-            EditorDrawUtility.DrawHeader(wrapper);
 
-            if (wrapper.Type == typeof(string))
+        }
+
+        /// <inheritdoc />
+        protected override void DrawProperty(SerializedPropertyAttributeWrapper wrapper, ResizableTextAreaAttribute attribute)
+        {
+
+            var property = wrapper.Property;
+
+            if (property.propertyType != SerializedPropertyType.String)
             {
-                EditorGUILayout.LabelField(wrapper.DisplayName);
-
-                EditorGUI.BeginChangeCheck();
-
-                string textAreaValue = EditorGUILayout.TextArea((string)wrapper.GetValue(), GUILayout.MinHeight(EditorGUIUtility.singleLineHeight * 3f));
-
-                if (EditorGUI.EndChangeCheck())
-                {
-                    wrapper.SetValue(textAreaValue);
-                }
+                NotString(wrapper);
+                return;
             }
-            else
+
+            if (DrawField(wrapper.DisplayName, property.stringValue, out var textAreaValue))
             {
-                string warning = attribute.GetType().Name + " can only be used on string fields";
-                EditorDrawUtility.DrawHelpBox(warning, MessageType.Warning);
-                wrapper.DrawPropertyField();
+                property.stringValue = textAreaValue;
             }
+        }
+
+        private static bool DrawField(string displayName, string text, out string textAreaValue)
+        {
+            EditorGUILayout.LabelField(displayName);
+
+            EditorGUI.BeginChangeCheck();
+
+            textAreaValue = EditorGUILayout.TextArea(text, GUILayout.MinHeight(EditorGUIUtility.singleLineHeight * 3f));
+
+            if (EditorGUI.EndChangeCheck())
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+        private static void NotString(ValueWrapper wrapper)
+        {
+            string warning = typeof(ResizableTextAreaAttribute).Name + " can only be used on string fields";
+            EditorDrawUtility.DrawHelpBox(warning, MessageType.Warning);
+            wrapper.DrawDefaultField();
         }
     }
 }

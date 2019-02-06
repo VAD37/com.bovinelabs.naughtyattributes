@@ -31,7 +31,7 @@ namespace BovineLabs.NaughtyAttributes.Editor.Editors
         private void OnEnable()
         {
             this.script = this.serializedObject.FindProperty("m_Script");
-            this.drawer = new Drawer(this.target, this.serializedObject);
+            this.drawer = new Drawer(this.serializedObject, this.target);
         }
 
         private void OnDisable()

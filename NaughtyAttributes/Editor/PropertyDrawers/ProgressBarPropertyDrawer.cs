@@ -1,5 +1,6 @@
 namespace BovineLabs.NaughtyAttributes.Editor.PropertyDrawers
 {
+    using System.Globalization;
     using BovineLabs.NaughtyAttributes;
     using BovineLabs.NaughtyAttributes.Editor.Attributes;
     using BovineLabs.NaughtyAttributes.Editor.Utility;
@@ -10,41 +11,49 @@ namespace BovineLabs.NaughtyAttributes.Editor.PropertyDrawers
     [PropertyDrawer(typeof(ProgressBarAttribute))]
     public class ProgressBarPropertyDrawer : PropertyDrawer<ProgressBarAttribute>
     {
-        protected override void DrawProperty(ValueWrapper wrapper, ProgressBarAttribute attribute)
+        /// <inheritdoc />
+        protected override void DrawProperty(NonSerializedAttributeWrapper wrapper, ProgressBarAttribute attribute)
         {
-            EditorDrawUtility.DrawHeader(wrapper);
+        }
 
-            if (wrapper.Type != typeof(float) && wrapper.Type == typeof(int))
+        /// <inheritdoc />
+        protected override void DrawProperty(SerializedPropertyAttributeWrapper wrapper, ProgressBarAttribute attribute)
+        {
+            var property = wrapper.Property;
+
+            if (property.propertyType != SerializedPropertyType.Float && property.propertyType != SerializedPropertyType.Integer)
             {
-                EditorGUILayout.HelpBox("Field " + wrapper.Name + " is not a number", MessageType.Warning);
+                NotIntFloat(wrapper);
                 return;
             }
 
-            var value = (float)wrapper.GetValue();// property.propertyType == SerializedPropertyType.Integer ? property.intValue : property.floatValue;
-            var valueFormatted = wrapper.Type == typeof(int) ? value.ToString() : $"{value:0.00}";
+            var value = property.propertyType == SerializedPropertyType.Integer ? property.intValue : property.floatValue;
+            this.DrawProgressBar(value, property.propertyType == SerializedPropertyType.Integer, attribute);
+        }
+
+        private void DrawProgressBar(float value, bool isInteger, ProgressBarAttribute attribute)
+        {
+            var valueFormatted = isInteger ? value.ToString(CultureInfo.InvariantCulture) : $"{value:0.00}";
 
             var position = EditorGUILayout.GetControlRect();
             var maxValue = attribute.MaxValue;
             float lineHight = EditorGUIUtility.singleLineHeight;
-            float padding = EditorGUIUtility.standardVerticalSpacing;
             var barPosition = new Rect(position.position.x, position.position.y, position.size.x, lineHight);
 
             var fillPercentage = value / maxValue;
             var barLabel = (!string.IsNullOrEmpty(attribute.Name) ? "[" + attribute.Name + "] " : "") + valueFormatted + "/" + maxValue;
 
-            var color = this.GetColor(attribute.Color);
+            var color = GetColor(attribute.Color);
             var color2 = Color.white;
-            this.DrawBar(barPosition, Mathf.Clamp01(fillPercentage), barLabel, color, color2);
+            DrawBar(barPosition, Mathf.Clamp01(fillPercentage), barLabel, color, color2);
         }
 
-        private void DrawBar(Rect position, float fillPercent, string label, Color barColor, Color labelColor)
+        private static void DrawBar(Rect position, float fillPercent, string label, Color barColor, Color labelColor)
         {
             if (Event.current.type != EventType.Repaint)
             {
                 return;
             }
-
-            Color savedColor = GUI.color;
 
             var fillRect = new Rect(position.x, position.y, position.width * fillPercent, position.height);
 
@@ -70,7 +79,7 @@ namespace BovineLabs.NaughtyAttributes.Editor.PropertyDrawers
             GUI.skin.label.alignment = align;
         }
 
-        private Color GetColor(ProgressBarColor color)
+        private static Color GetColor(ProgressBarColor color)
         {
             switch (color)
             {
@@ -93,6 +102,13 @@ namespace BovineLabs.NaughtyAttributes.Editor.PropertyDrawers
                 default:
                     return Color.white;
             }
+        }
+
+        private static void NotIntFloat(ValueWrapper wrapper)
+        {
+            string warning = $"{typeof(ProgressBarAttribute).Name} can only be used on int or float fields";
+            EditorDrawUtility.DrawHelpBox(warning, MessageType.Warning);
+            wrapper.DrawDefaultField();
         }
     }
 }

@@ -10,30 +10,48 @@ namespace BovineLabs.NaughtyAttributes.Editor.PropertyDrawers
     [PropertyDrawer(typeof(ShowAssetPreviewAttribute))]
     public class ShowAssetPreviewPropertyDrawer : PropertyDrawer<ShowAssetPreviewAttribute>
     {
-        protected override void DrawProperty(ValueWrapper wrapper, ShowAssetPreviewAttribute attribute)
+        /// <inheritdoc />
+        protected override void DrawProperty(NonSerializedAttributeWrapper wrapper, ShowAssetPreviewAttribute attribute)
         {
-            wrapper.DrawPropertyField();
+        }
 
-            if (typeof(Object).IsAssignableFrom(wrapper.Type))
-            {
-                var value = (Object)wrapper.GetValue();
+        /// <inheritdoc />
+        protected override void DrawProperty(SerializedPropertyAttributeWrapper wrapper, ShowAssetPreviewAttribute attribute)
+        {
+            var property = wrapper.Property;
 
-                if (value != null)
-                {
-                    Texture2D previewTexture = AssetPreview.GetAssetPreview(value);
-                    if (previewTexture != null)
-                    {
-                        int width = Mathf.Clamp(attribute.Width, 0, previewTexture.width);
-                        int height = Mathf.Clamp(attribute.Height, 0, previewTexture.height);
-                        GUILayout.Label(previewTexture, GUILayout.MaxWidth(width), GUILayout.MaxHeight(height));
-                    }
-                }
-            }
-            else
+            if (property.propertyType != SerializedPropertyType.ObjectReference)
             {
-                string warning = wrapper.Name + " doesn't have an asset preview";
-                EditorDrawUtility.DrawHelpBox(warning, MessageType.Warning);
+                NotObject(wrapper);
+                return;
             }
+
+            wrapper.DrawDefaultField();
+
+            DrawPreview(property.objectReferenceValue, attribute);
+        }
+
+        private static void DrawPreview(Object value, ShowAssetPreviewAttribute attribute)
+        {
+            if (value == null)
+            {
+                return;
+            }
+
+            Texture2D previewTexture = AssetPreview.GetAssetPreview(value);
+            if (previewTexture != null)
+            {
+                int width = Mathf.Clamp(attribute.Width, 0, previewTexture.width);
+                int height = Mathf.Clamp(attribute.Height, 0, previewTexture.height);
+                GUILayout.Label(previewTexture, GUILayout.MaxWidth(width), GUILayout.MaxHeight(height));
+            }
+        }
+
+        private static void NotObject(ValueWrapper wrapper)
+        {
+            string warning = typeof(ShowAssetPreviewAttribute).Name + " can only be used on Object fields";
+            EditorDrawUtility.DrawHelpBox(warning, MessageType.Warning);
+            wrapper.DrawDefaultField();
         }
     }
 }

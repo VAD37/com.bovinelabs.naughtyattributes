@@ -9,31 +9,40 @@ namespace BovineLabs.NaughtyAttributes.Editor.PropertyValidators
     [PropertyValidator(typeof(MinValueAttribute))]
     public class MinValuePropertyValidator : PropertyValidator<MinValueAttribute>
     {
-        protected override void ValidateProperty(ValueWrapper wrapper, MinValueAttribute attribute)
+        /// <inheritdoc />
+        protected override void ValidateProperty(NonSerializedAttributeWrapper wrapper, MinValueAttribute attribute)
         {
-            if (wrapper.Type == typeof(int))
-            {
-                var value = (int)wrapper.GetValue();
+        }
 
-                if (value < attribute.MinValue)
-                {
-                    wrapper.SetValue((int)attribute.MinValue);
-                }
-            }
-            else if (wrapper.Type == typeof(float))
-            {
-                var value = (float)wrapper.GetValue();
+        /// <inheritdoc />
+        protected override void ValidateProperty(SerializedPropertyAttributeWrapper wrapper, MinValueAttribute attribute)
+        {
+            var property = wrapper.Property;
 
-                if (value < attribute.MinValue)
-                {
-                    wrapper.SetValue(attribute.MinValue);
-                }
-            }
-            else
+            switch (property.propertyType)
             {
-                string warning = attribute.GetType().Name + " can be used only on int or float fields";
-                EditorDrawUtility.DrawHelpBox(warning, MessageType.Warning);
+                case SerializedPropertyType.Integer:
+                    if (property.intValue < attribute.MinValue)
+                    {
+                        property.intValue = (int)attribute.MinValue;
+                    }
+                    break;
+                case SerializedPropertyType.Float:
+                    if (property.floatValue < attribute.MinValue)
+                    {
+                        property.floatValue = attribute.MinValue;
+                    }
+                    break;
+                default:
+                    NotIntFloat();
+                    break;
             }
+        }
+
+        private static void NotIntFloat()
+        {
+            string warning = typeof(MinValueAttribute).Name + " can only be used on int or float fields";
+            EditorDrawUtility.DrawHelpBox(warning, MessageType.Warning);
         }
     }
 }

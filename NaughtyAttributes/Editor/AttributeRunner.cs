@@ -13,6 +13,7 @@ namespace BovineLabs.NaughtyAttributes.Editor
 
     public abstract class ValueRunner
     {
-        public abstract void Run(ValueWrapper wrapper, NaughtyAttribute attribute);
+        public abstract void Run(NonSerializedAttributeWrapper wrapper, NaughtyAttribute attribute);
+        public abstract void Run(SerializedPropertyAttributeWrapper wrapper, NaughtyAttribute attribute);
     }
 }

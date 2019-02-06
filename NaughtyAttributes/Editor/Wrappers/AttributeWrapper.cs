@@ -15,16 +15,7 @@ namespace BovineLabs.NaughtyAttributes.Editor.Wrappers
     /// </summary>
     public abstract class AttributeWrapper
     {
-        /// <summary>
-        /// Initializes a new instance of the <see cref="AttributeWrapper"/> class.
-        /// </summary>
-        /// <param name="target">The target object.</param>
-        protected AttributeWrapper(object target)
-        {
-            this.Target = target;
-        }
-
-        public object Target { get; }
+        public abstract object Target { get; }
 
         public abstract void ValidateAndDrawField();
 

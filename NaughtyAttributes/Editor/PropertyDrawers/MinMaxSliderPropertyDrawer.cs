@@ -10,64 +10,80 @@ namespace BovineLabs.NaughtyAttributes.Editor.PropertyDrawers
     [PropertyDrawer(typeof(MinMaxSliderAttribute))]
     public class MinMaxSliderPropertyDrawer : PropertyDrawer<MinMaxSliderAttribute>
     {
-        protected override void DrawProperty(ValueWrapper wrapper, MinMaxSliderAttribute attribute)
+        /// <inheritdoc />
+        protected override void DrawProperty(NonSerializedAttributeWrapper wrapper, MinMaxSliderAttribute attribute)
         {
-            EditorDrawUtility.DrawHeader(wrapper);
+        }
 
-            if (wrapper.Type == typeof(Vector2))
+        /// <inheritdoc />
+        protected override void DrawProperty(SerializedPropertyAttributeWrapper wrapper, MinMaxSliderAttribute attribute)
+        {
+            var property = wrapper.Property;
+
+            if (property.propertyType != SerializedPropertyType.Vector2)
             {
-                Rect controlRect = EditorGUILayout.GetControlRect();
-                float labelWidth = EditorGUIUtility.labelWidth;
-                float floatFieldWidth = EditorGUIUtility.fieldWidth;
-                float sliderWidth = controlRect.width - labelWidth - 2f * floatFieldWidth;
-                float sliderPadding = 5f;
-
-                Rect labelRect = new Rect(controlRect.x, controlRect.y, labelWidth, controlRect.height);
-
-                Rect sliderRect = new Rect(
-                    controlRect.x + labelWidth + floatFieldWidth + sliderPadding,
-                    controlRect.y,
-                    sliderWidth - 2f * sliderPadding,
-                    controlRect.height);
-
-                Rect minFloatFieldRect = new Rect(
-                    controlRect.x + labelWidth,
-                    controlRect.y,
-                    floatFieldWidth,
-                    controlRect.height);
-
-                Rect maxFloatFieldRect = new Rect(
-                    controlRect.x + labelWidth + floatFieldWidth + sliderWidth,
-                    controlRect.y,
-                    floatFieldWidth,
-                    controlRect.height);
-
-                // Draw the label
-                EditorGUI.LabelField(labelRect, wrapper.DisplayName);
-
-                // Draw the slider
-                EditorGUI.BeginChangeCheck();
-
-                Vector2 sliderValue = (Vector2)wrapper.GetValue();
-                EditorGUI.MinMaxSlider(sliderRect, ref sliderValue.x, ref sliderValue.y, attribute.MinValue, attribute.MaxValue);
-
-                sliderValue.x = EditorGUI.FloatField(minFloatFieldRect, sliderValue.x);
-                sliderValue.x = Mathf.Clamp(sliderValue.x, attribute.MinValue, Mathf.Min(attribute.MaxValue, sliderValue.y));
-
-                sliderValue.y = EditorGUI.FloatField(maxFloatFieldRect, sliderValue.y);
-                sliderValue.y = Mathf.Clamp(sliderValue.y, Mathf.Max(attribute.MinValue, sliderValue.x), attribute.MaxValue);
-
-                if (EditorGUI.EndChangeCheck())
-                {
-                    wrapper.SetValue(sliderValue);
-                }
+                NotVector2Field(wrapper);
+                return;
             }
-            else
+
+            var sliderValue = property.vector2Value;
+
+            if (this.DrawProperty(wrapper.DisplayName, ref sliderValue, attribute))
             {
-                string warning = attribute.GetType().Name + " can be used only on Vector2 fields";
-                EditorDrawUtility.DrawHelpBox(warning, MessageType.Warning);
-                wrapper.DrawPropertyField();
+                property.vector2Value = sliderValue;
             }
+        }
+
+        private bool DrawProperty(string label, ref Vector2 sliderValue, MinMaxSliderAttribute attribute)
+        {
+            Rect controlRect = EditorGUILayout.GetControlRect();
+            float labelWidth = EditorGUIUtility.labelWidth;
+            float floatFieldWidth = EditorGUIUtility.fieldWidth;
+            float sliderWidth = controlRect.width - labelWidth - 2f * floatFieldWidth;
+            float sliderPadding = 5f;
+
+            Rect labelRect = new Rect(controlRect.x, controlRect.y, labelWidth, controlRect.height);
+
+            Rect sliderRect = new Rect(
+                controlRect.x + labelWidth + floatFieldWidth + sliderPadding,
+                controlRect.y,
+                sliderWidth - 2f * sliderPadding,
+                controlRect.height);
+
+            Rect minFloatFieldRect = new Rect(
+                controlRect.x + labelWidth,
+                controlRect.y,
+                floatFieldWidth,
+                controlRect.height);
+
+            Rect maxFloatFieldRect = new Rect(
+                controlRect.x + labelWidth + floatFieldWidth + sliderWidth,
+                controlRect.y,
+                floatFieldWidth,
+                controlRect.height);
+
+            // Draw the label
+            EditorGUI.LabelField(labelRect, label);
+
+            // Draw the slider
+            EditorGUI.BeginChangeCheck();
+
+            EditorGUI.MinMaxSlider(sliderRect, ref sliderValue.x, ref sliderValue.y, attribute.MinValue, attribute.MaxValue);
+
+            sliderValue.x = EditorGUI.FloatField(minFloatFieldRect, sliderValue.x);
+            sliderValue.x = Mathf.Clamp(sliderValue.x, attribute.MinValue, Mathf.Min(attribute.MaxValue, sliderValue.y));
+
+            sliderValue.y = EditorGUI.FloatField(maxFloatFieldRect, sliderValue.y);
+            sliderValue.y = Mathf.Clamp(sliderValue.y, Mathf.Max(attribute.MinValue, sliderValue.x), attribute.MaxValue);
+
+            return EditorGUI.EndChangeCheck();
+        }
+
+        private static void NotVector2Field(ValueWrapper wrapper)
+        {
+            string warning = typeof(MinMaxSliderAttribute) + " can be used only on Vector2 fields";
+            EditorDrawUtility.DrawHelpBox(warning, MessageType.Warning);
+            wrapper.DrawDefaultField();
         }
     }
 }
