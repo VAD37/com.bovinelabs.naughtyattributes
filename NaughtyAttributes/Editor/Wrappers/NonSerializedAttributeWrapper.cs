@@ -15,7 +15,7 @@ namespace BovineLabs.NaughtyAttributes.Editor.Wrappers
     public class NonSerializedAttributeWrapper : ValueWrapper
     {
         /// <inheritdoc />
-        public NonSerializedAttributeWrapper(SerializedObject serializedObject, object target, MemberInfo memberInfo) : base(serializedObject, target, memberInfo)
+        public NonSerializedAttributeWrapper(SerializedObject rootObject, object target, MemberInfo memberInfo) : base(rootObject, target, memberInfo)
         {
             throw new NotImplementedException();
         }

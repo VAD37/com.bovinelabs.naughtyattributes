@@ -16,15 +16,15 @@ namespace BovineLabs.NaughtyAttributes.Editor.Wrappers
 
     public abstract class ValueWrapper : AttributeWrapper
     {
-        public SerializedObject SerializedObject { get; }
+        public SerializedObject RootObject { get; }
         public MemberInfo MemberInfo { get; }
 
         //private readonly Drawer drawer;
         private bool foldout;
 
-        protected ValueWrapper(SerializedObject serializedObject, object target, MemberInfo memberInfo)
+        protected ValueWrapper(SerializedObject rootObject, object target, MemberInfo memberInfo)
         {
-            this.SerializedObject = serializedObject;
+            this.RootObject = rootObject;
             this.Target = target;
             this.MemberInfo = memberInfo;
 
@@ -90,7 +90,7 @@ namespace BovineLabs.NaughtyAttributes.Editor.Wrappers
 
         public void ApplyModifications()
         {
-            this.SerializedObject.ApplyModifiedProperties();
+            this.RootObject.ApplyModifiedProperties();
         }
 
         public object GetValue()

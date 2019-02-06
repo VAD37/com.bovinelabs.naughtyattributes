@@ -50,30 +50,17 @@ namespace BovineLabs.NaughtyAttributes.Editor.Editors
         public Drawer(SerializedObject serializedObject, object target, SerializedProperty serializedProperty)
         {
             // todo infinite loop support
-            var type = target.GetType();
-            //var fields = ReflectionUtility.GetAllFields(target).Where(f => f.GetType() != type);
+            var fields = ReflectionUtility.GetAllFields(target);
 
-            foreach (var property in serializedProperty.GetChildren())
+            foreach (var field in fields)
             {
-                this.members.Add(new SerializedPropertyAttributeWrapper(serializedObject, target, property, property.GetField()));
-            }
-
-            /*foreach (var field in fields)
-            {
-
-
-                var property = serializedObject.FindProperty(field.Name);
+                var property = serializedProperty.FindPropertyRelative(field.Name);
 
                 if (property != null)
                 {
-                    this.members.Add(new SerializedPropertyAttributeWrapper(property));
+                    this.members.Add(new SerializedPropertyAttributeWrapper(serializedObject, target, property, field));
                 }
-
-                /*else if (field.GetCustomAttribute<ShowNonSerializedFieldAttribute>() != null)
-                {
-                    this.members.Add(new FieldAttributeWrapper(target, field));
-                }*/
-            //}
+            }
 
             this.MethodsPropertiesAndGrouping(target);
         }

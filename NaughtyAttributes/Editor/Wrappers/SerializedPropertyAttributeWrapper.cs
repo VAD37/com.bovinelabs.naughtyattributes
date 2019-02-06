@@ -1,41 +1,37 @@
 ﻿namespace BovineLabs.NaughtyAttributes.Editor.Wrappers
 {
-    using System;
-    using System.Linq;
     using System.Reflection;
     using BovineLabs.NaughtyAttributes.Editor.Editors;
-    using BovineLabs.NaughtyAttributes.Editor.PropertyDrawers;
-    using BovineLabs.NaughtyAttributes.Editor.PropertyMetas;
-    using BovineLabs.NaughtyAttributes.Editor.Utility;
     using UnityEditor;
     using PropertyDrawer = PropertyDrawers.PropertyDrawer;
 
     public class SerializedPropertyAttributeWrapper : ValueWrapper
     {
-        private readonly Drawer[] children;
+        private readonly Drawer childDrawer;
 
-        public SerializedPropertyAttributeWrapper(SerializedObject serializedObject, object target,
-            SerializedProperty property, FieldInfo fieldInfo)
-            : base(serializedObject, target, fieldInfo)
+        public SerializedPropertyAttributeWrapper(SerializedObject rootObject, object target,
+            SerializedProperty property, FieldInfo fieldInfo)        
+            : base(rootObject, target, fieldInfo)
         {
             this.Property = property;
 
-            if (!property.hasChildren)
-            {
-                return;
-            }
+            this.IsArray = this.Property.isArray;
+            this.HasChildren = !this.IsArray && this.Property.hasChildren &&
+                               this.Property.propertyType == SerializedPropertyType.Generic;
 
-            var t = this.GetValue();
-            //this.children = property.GetChildren().Select(c => new Drawer(serializedObject, t, c)).ToArray();
+            if (this.HasChildren)
+            {
+                this.childDrawer = new Drawer(rootObject, this.GetValue(), property);
+            }
         }
 
-        public SerializedProperty Property { get; } 
-        
-        /// <inheritdoc />
-        protected override bool HasChildren => this.Property.hasChildren;
+        public SerializedProperty Property { get; }
 
         /// <inheritdoc />
-        protected override bool IsArray => this.Property.isArray;
+        protected sealed override bool HasChildren { get; }
+
+        /// <inheritdoc />
+        protected sealed override bool IsArray { get; }
 
         /// <inheritdoc />
         protected override void ValidateField(ValueRunner validator, ValidatorAttribute attribute)
@@ -49,17 +45,13 @@
         /// <inheritdoc />
         protected override void DrawPropertyField(PropertyDrawer drawer, DrawerAttribute attribute)
         {
-            if (this.Property.hasChildren)
+            if (this.HasChildren)
             {
-                return;
-                foreach (var child in this.children)
-                {
-                    child.OnInspectorGUI();
-                }
+                this.childDrawer.OnInspectorGUI();
             }
-            else if (this.Property.isArray)
+            else if (this.IsArray)
             {
-                ListPropertyDrawer.Instance.DrawArray(this);
+                //ListPropertyDrawer.Instance.DrawArray(this);
             }
             else
             {
