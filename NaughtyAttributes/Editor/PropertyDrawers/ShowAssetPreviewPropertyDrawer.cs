@@ -54,6 +54,10 @@ namespace BovineLabs.NaughtyAttributes.Editor.PropertyDrawers
                 int height = Mathf.Clamp(attribute.Height, 0, previewTexture.height);
                 GUILayout.Label(previewTexture, GUILayout.MaxWidth(width), GUILayout.MaxHeight(height));
             }
+            else
+            {
+                GUILayout.Label(string.Empty, GUILayout.MaxWidth(attribute.Width), GUILayout.MaxHeight(attribute.Height));
+            }
         }
 
         private static void NotObject(ValueWrapper wrapper)
