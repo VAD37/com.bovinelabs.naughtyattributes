@@ -18,12 +18,14 @@
             this.Property = property;
 
             this.IsArray = this.Property.isArray;
-            this.HasChildren = !this.IsArray && this.Property.hasChildren &&
-                               this.Property.propertyType == SerializedPropertyType.Generic;
-
-            if (this.HasChildren)
+            if (!this.IsArray && this.Property.hasChildren &&
+                this.Property.propertyType == SerializedPropertyType.Generic)
             {
                 this.childDrawer = new Drawer(this.GetValue(), property);
+                if (this.childDrawer.HasElement)
+                {
+                    this.HasChildren = true;
+                }
             }
         }
 

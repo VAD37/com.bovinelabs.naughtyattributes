@@ -19,22 +19,17 @@ namespace BovineLabs.NaughtyAttributes.Editor.Wrappers
     public class NonSerializedAttributeWrapper : ValueWrapper
     {
         private readonly Drawer childDrawer;
-
-        private bool isValid = true;
-        private bool isArray;
-        private bool isClass;
+        private readonly bool isArray;
 
         /// <inheritdoc />
         public NonSerializedAttributeWrapper(object target, MemberInfo memberInfo) 
             : base(target, memberInfo)
         {
             var type = this.Type;
-            Debug.Log(type);
             var info = type.GetTypeInfo();
             this.isArray = info.IsArray;
-            this.isClass = info.IsClass;
 
-            /*if (this.isArray)
+            if (this.isArray)
             {
                 return;
             }
@@ -44,30 +39,33 @@ namespace BovineLabs.NaughtyAttributes.Editor.Wrappers
                 return;
             }
 
-            var v = this.GetValue();
+            var value = this.GetValue();
 
-            if (v == null && this.isClass)
+            if (value == null)
             {
                 try
                 {
-                    v = Activator.CreateInstance(this.Type);
+                    value = Activator.CreateInstance(this.Type);
                 }
-
-                catch(Exception)
+                catch (Exception)
                 {
-                    this.isValid = false;
                     return;
                 }
+            }
 
-                this.SetValue(v);
-            }*/
+            this.childDrawer = new Drawer(value);
+
+            if (this.childDrawer.HasElement)
+            {
+                this.HasChildren = true;
+            }
         }
 
         /// <inheritdoc />
         public override string DisplayName => this.MemberInfo.Name;
 
         /// <inheritdoc />
-        protected override bool HasChildren { get; } = false;
+        protected override bool HasChildren { get; }
         /// <inheritdoc />
         protected override bool IsArray => false; // we don't allow non serialized array drawing at the moment
 
@@ -80,11 +78,6 @@ namespace BovineLabs.NaughtyAttributes.Editor.Wrappers
         /// <inheritdoc />
         protected override void DrawPropertyField(PropertyDrawer drawer, DrawerAttribute attribute)
         {
-            if (!this.isValid)
-            {
-                return;
-            }
-
             if (this.isArray)
             {
                 return;

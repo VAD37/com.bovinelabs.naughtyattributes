@@ -4,7 +4,6 @@
 
 namespace BovineLabs.NaughtyAttributes.Editor.Editors
 {
-    using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Reflection;
@@ -13,7 +12,6 @@ namespace BovineLabs.NaughtyAttributes.Editor.Editors
     using BovineLabs.NaughtyAttributes.Editor.Utility;
     using BovineLabs.NaughtyAttributes.Editor.Wrappers;
     using UnityEditor;
-    using UnityEngine;
 
     /// <summary>
     /// The Drawer.
@@ -76,42 +74,22 @@ namespace BovineLabs.NaughtyAttributes.Editor.Editors
 
             foreach (var field in fields)
             {
-                this.members.Add(new NonSerializedAttributeWrapper(target, field));
+                if (field.IsPublic || field.GetCustomAttribute<ShowNonSerializedFieldAttribute>() != null)
+                {
+                    this.members.Add(new NonSerializedAttributeWrapper(target, field));
+                }
             }
 
             this.MethodsPropertiesAndGrouping(target);
         }
 
-        /*public Drawer(object target)
-        {
-            var type = target.GetType();
-            var publicFields = ReflectionUtility.GetAllFieldsPublic(target).Where(f => f.GetType() != type);
-
-            foreach (var field in publicFields)
-            {
-                this.members.Add(new FieldAttributeWrapper(target, field));
-            }
-
-            var privateFields = ReflectionUtility.GetAllFieldsPrivate(target).Where(f => f.GetType() != type);
-
-            foreach (var field in privateFields)
-            {
-                if (field.GetCustomAttribute<SerializeField>() != null || field.GetCustomAttribute<ShowNonSerializedFieldAttribute>() != null)
-                {
-                    this.members.Add(new FieldAttributeWrapper(target, field));
-                }
-            }
-
-            this.MethodsPropertiesAndGrouping(target);
-        }*/
-
         public bool HasElement => this.members.Count > 0;
 
         private void MethodsPropertiesAndGrouping(object target)
         {
-            /*this.members.AddRange(ReflectionUtility.GetAllProperties(target)
+            this.members.AddRange(ReflectionUtility.GetAllProperties(target)
                 .Where(p => p.GetCustomAttribute<ShowNonSerializedFieldAttribute>() != null)
-                .Select(p => new PropertyAttributeWrapper(target, p)));*/
+                .Select(p => new NonSerializedAttributeWrapper(target, p)));
 
             this.members.AddRange(ReflectionUtility
                 .GetAllMethods(target, p => p.GetCustomAttribute<MethodAttribute>() != null)

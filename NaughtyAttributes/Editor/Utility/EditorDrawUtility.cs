@@ -189,11 +189,11 @@ namespace BovineLabs.NaughtyAttributes.Editor.Utility
 
         public static bool IsDrawable(Type type)
         {
-            return type != typeof(bool) && type != typeof(int) && type != typeof(long) && type != typeof(float) &&
-                   type != typeof(double) && type != typeof(string) && type != typeof(Vector2) &&
-                   type != typeof(Vector3) && type != typeof(Vector4) && type != typeof(Color) &&
-                   type != typeof(Bounds) && type != typeof(Rect) && !type.IsEnum &&
-                !typeof(Object).IsAssignableFrom(type);
+            return type == typeof(bool) || type == typeof(int) || type == typeof(long) || type == typeof(float) ||
+                   type == typeof(double) || type == typeof(string) || type == typeof(Vector2) ||
+                   type == typeof(Vector3) || type == typeof(Vector4) || type == typeof(Color) ||
+                   type == typeof(Bounds) || type == typeof(Rect) || type.IsEnum ||
+                   typeof(Object).IsAssignableFrom(type);
         }
 
         public static object TryDrawLayoutField(object value, string label, out bool success)
