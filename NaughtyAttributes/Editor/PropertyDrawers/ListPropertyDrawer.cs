@@ -132,6 +132,7 @@ namespace BovineLabs.NaughtyAttributes.Editor.PropertyDrawers
 
                             stash.NeedsUpdate = true;
                         },
+                        onChangedCallback = l => { stash.NeedsUpdate = true; },
                     };
 
                     stash.Reorderable = reorderableList;

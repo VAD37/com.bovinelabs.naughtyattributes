@@ -10,7 +10,7 @@ namespace BovineLabs.NaughtyAttributes.Editor.Wrappers
     public class FieldAttributeWrapper : ValueWrapper
     {
         private FieldInfo FieldInfo => (FieldInfo)this.MemberInfo;
-        
+
         public FieldAttributeWrapper(object target, FieldInfo fieldInfo)
             : base(target, fieldInfo)
         {
