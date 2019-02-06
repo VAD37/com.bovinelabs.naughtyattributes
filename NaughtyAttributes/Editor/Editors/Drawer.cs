@@ -4,6 +4,7 @@
 
 namespace BovineLabs.NaughtyAttributes.Editor.Editors
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Reflection;
@@ -35,19 +36,18 @@ namespace BovineLabs.NaughtyAttributes.Editor.Editors
 
                 if (property != null)
                 {
-                    this.members.Add(new SerializedPropertyAttributeWrapper(serializedObject, target, property, field));
+                    this.members.Add(new SerializedPropertyAttributeWrapper(target, property, field));
                 }
-
-                /*else if (field.GetCustomAttribute<ShowNonSerializedFieldAttribute>() != null)
+                else if (field.GetCustomAttribute<ShowNonSerializedFieldAttribute>() != null)
                 {
-                    this.members.Add(new FieldAttributeWrapper(target, field));
-                }*/
+                    this.members.Add(new NonSerializedAttributeWrapper(target, field));
+                }
             }
 
             this.MethodsPropertiesAndGrouping(target);
         }
 
-        public Drawer(SerializedObject serializedObject, object target, SerializedProperty serializedProperty)
+        public Drawer(object target, SerializedProperty serializedProperty)
         {
             // todo infinite loop support
             var fields = ReflectionUtility.GetAllFields(target);
@@ -58,8 +58,25 @@ namespace BovineLabs.NaughtyAttributes.Editor.Editors
 
                 if (property != null)
                 {
-                    this.members.Add(new SerializedPropertyAttributeWrapper(serializedObject, target, property, field));
+                    this.members.Add(new SerializedPropertyAttributeWrapper(target, property, field));
                 }
+                else if (field.GetCustomAttribute<ShowNonSerializedFieldAttribute>() != null)
+                {
+                    this.members.Add(new NonSerializedAttributeWrapper(target, field));
+                }
+            }
+
+            this.MethodsPropertiesAndGrouping(target);
+        }
+
+        public Drawer(object target)
+        {
+            // todo infinite loop support
+            var fields = ReflectionUtility.GetAllFields(target);
+
+            foreach (var field in fields)
+            {
+                this.members.Add(new NonSerializedAttributeWrapper(target, field));
             }
 
             this.MethodsPropertiesAndGrouping(target);

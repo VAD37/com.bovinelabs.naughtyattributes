@@ -16,7 +16,7 @@ namespace BovineLabs.NaughtyAttributes.Editor.PropertyMetas
 
         public static OnValueChangedProperty Instance => instance ?? (instance = new OnValueChangedProperty());
 
-        public void ApplyPropertyMeta(ValueWrapper wrapper, OnValueChangedAttribute attribute)
+        public void ApplyPropertyMeta(SerializedPropertyAttributeWrapper wrapper, OnValueChangedAttribute attribute)
         {
             var target = wrapper.Target;
 
@@ -26,7 +26,7 @@ namespace BovineLabs.NaughtyAttributes.Editor.PropertyMetas
                 callbackMethod.GetParameters().Length == 0)
             {
                 // We must apply modifications so that the callback can be invoked with up-to-date data
-                wrapper.ApplyModifications();
+                wrapper.Property.serializedObject.ApplyModifiedProperties();
 
                 callbackMethod.Invoke(target, null);
             }

@@ -21,7 +21,8 @@ namespace BovineLabs.NaughtyAttributes.Editor.PropertyDrawers
 
             if (EditorGUI.EndChangeCheck())
             {
-                Undo.RecordObject(wrapper.RootObject.targetObject, "Dropdown");
+                //this.RootObject.ApplyModifiedProperties();
+                //Undo.RecordObject(wrapper..RootObject.targetObject, "Dropdown");
                 wrapper.SetValue(values[newIndex]);
             }
         }

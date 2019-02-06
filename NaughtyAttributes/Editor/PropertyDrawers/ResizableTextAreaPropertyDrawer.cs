@@ -13,13 +13,21 @@ namespace BovineLabs.NaughtyAttributes.Editor.PropertyDrawers
         /// <inheritdoc />
         protected override void DrawProperty(NonSerializedAttributeWrapper wrapper, ResizableTextAreaAttribute attribute)
         {
+            if (wrapper.Type != typeof(string))
+            {
+                NotString(wrapper);
+                return;
+            }
 
+            if (DrawField(wrapper.DisplayName, (string)wrapper.GetValue(), out var textAreaValue))
+            {
+                wrapper.SetValue(textAreaValue);
+            }
         }
 
         /// <inheritdoc />
         protected override void DrawProperty(SerializedPropertyAttributeWrapper wrapper, ResizableTextAreaAttribute attribute)
         {
-
             var property = wrapper.Property;
 
             if (property.propertyType != SerializedPropertyType.String)

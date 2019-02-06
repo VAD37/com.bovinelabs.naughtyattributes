@@ -22,11 +22,9 @@ namespace BovineLabs.NaughtyAttributes.Editor.PropertyDrawers
     /// </summary>
     public class ListPropertyDrawer
     {
-        private const int MaxArrayLength = 100;
-
+        private Dictionary<string, ReorderableList> reorderableListsByPropertyName =
+            new Dictionary<string, ReorderableList>();
         private static ListPropertyDrawer instance;
-
-        private readonly Dictionary<ValueWrapper, Stash> reorderableListsByPropertyName = new Dictionary<ValueWrapper, Stash>();
 
         private ListPropertyDrawer()
         {
@@ -45,169 +43,44 @@ namespace BovineLabs.NaughtyAttributes.Editor.PropertyDrawers
             this.reorderableListsByPropertyName.Clear();
         }
 
-        /// <summary>
-        /// Draw the array.
-        /// </summary>
-        /// <param name="wrapper">The value wrapper.</param>
-        [SuppressMessage("ReSharper", "ImplicitlyCapturedClosure", Justification = "Intended")]
-        public void DrawArray(ValueWrapper wrapper)
+        public void DrawArray(SerializedProperty property)
         {
-            EditorDrawUtility.DrawHeader(wrapper);
+            EditorDrawUtility.DrawHeader(property.displayName);
 
-            if (wrapper.GetValue() is IList list && HeuristicallyDetermineType(list, out var elementType))
+            if (property.isArray)
             {
-                if (list.Count > MaxArrayLength)
+                if (!this.reorderableListsByPropertyName.ContainsKey(property.name))
                 {
-                    EditorDrawUtility.DrawHelpBox($"Array.Length > {MaxArrayLength}", MessageType.None);
-                    return;
-                }
-
-                Stash stash;
-
-                if (!this.reorderableListsByPropertyName.ContainsKey(wrapper))
-                {
-                    IList internalList;
-
-                    stash = new Stash();
-
-                    if (list is Array)
-                    {
-                        var d1 = typeof(List<>);
-                        var typeArgs = new[] { elementType };
-                        var newList = (IList)Activator.CreateInstance(d1.MakeGenericType(typeArgs));
-
-                        foreach (var l in list)
+                    var list =
+                        new ReorderableList(property.serializedObject, property, true, true, true, true)
                         {
-                            newList.Add(l);
-                        }
-
-                        stash.IsArray = true;
-                        internalList = newList;
-                    }
-                    else
-                    {
-                        internalList = list;
-                    }
-
-                    stash.List = internalList;
-
-                    var reorderableList = new ReorderableList(internalList, elementType, true, true, true, true)
-                    {
-                        drawHeaderCallback = rect =>
-                        {
-                            var label = $"{wrapper.DisplayName}: {internalList.Count}";
-                            EditorGUI.LabelField(rect, label, EditorStyles.label);
-                        },
-                        drawElementCallback = (rect, index, isActive, isFocused) =>
-                        {
-                            object element = internalList[index];
-                            rect.y += 2f;
-                            var newValue = EditorDrawUtility.DrawPropertyField(
-                                new Rect(rect.x, rect.y, rect.width, EditorGUIUtility.singleLineHeight),
-                                element,
-                                elementType,
-                                index.ToString());
-
-                            if (newValue != element)
+                            drawHeaderCallback = rect =>
                             {
-                                internalList[index] = newValue;
-                                stash.NeedsUpdate = true;
-                            }
-                        },
-                        onAddCallback = l =>
-                        {
-                            l.list.Add(elementType.GetTypeInfo().IsClass
-                                ? null
-                                : Activator.CreateInstance(elementType));
+                                EditorGUI.LabelField(rect, $"{property.displayName}: {property.arraySize}",
+                                    EditorStyles.label);
+                            },
 
-                            stash.NeedsUpdate = true;
-                        },
-                        onRemoveCallback = l =>
-                        {
-                            l.list.RemoveAt(l.index);
-                            if (l.index >= l.count)
+                            drawElementCallback = (rect, index, isActive, isFocused) =>
                             {
-                                l.index = l.count - 1;
+                                var element = property.GetArrayElementAtIndex(index);
+                                rect.y += 2f;
+
+                                EditorGUI.PropertyField(
+                                    new Rect(rect.x, rect.y, rect.width, EditorGUIUtility.singleLineHeight), element);
                             }
+                        };
 
-                            stash.NeedsUpdate = true;
-                        },
-                        onChangedCallback = l => { stash.NeedsUpdate = true; },
-                    };
-
-                    stash.Reorderable = reorderableList;
-                    this.reorderableListsByPropertyName[wrapper] = stash;
-                }
-                else
-                {
-                    stash = this.reorderableListsByPropertyName[wrapper];
+                    this.reorderableListsByPropertyName[property.name] = list;
                 }
 
-                stash.Reorderable.DoLayoutList();
-
-                if (stash.NeedsUpdate && stash.IsArray)
-                {
-                    stash.NeedsUpdate = false;
-
-                    var ass = Assembly.GetAssembly(typeof(Mesh)); // any class in UnityEngine
-                    var type = ass.GetType("UnityEngine.NoAllocHelpers");
-
-                    var methodInfo = type.GetMethod("ExtractArrayFromList", BindingFlags.Static | BindingFlags.Public);
-
-                    if (methodInfo == null)
-                    {
-                        throw new Exception("ExtractArrayFromListT signature changed.");
-                    }
-
-                    var array = (Array)methodInfo.Invoke(null, new object[] { stash.List });
-
-                    array = Resize(array, stash.List.Count, elementType);
-                    wrapper.SetValue(array);
-                }
+                this.reorderableListsByPropertyName[property.name].DoLayoutList();
             }
             else
             {
-                string warning = typeof(ListAttribute).Name + " can be used only on arrays or lists";
+                string warning = typeof(ListPropertyDrawer).Name + " can be used only on arrays or lists";
                 EditorDrawUtility.DrawHelpBox(warning, MessageType.Warning);
-
-                wrapper.DrawDefaultField();
+                EditorDrawUtility.DrawPropertyField(property);
             }
-        }
-
-        private static Array Resize(Array array, int size, Type elementType)
-        {
-            Array newArray = Array.CreateInstance(elementType, size);
-            Array.Copy(array, newArray, Math.Min(array.Length, newArray.Length));
-            return newArray;
-        }
-
-        private static bool HeuristicallyDetermineType(IList myList, out Type elementType)
-        {
-            elementType = null;
-
-            var enumerableType =
-                myList.GetType()
-                    .GetInterfaces()
-                    .Where(i => i.IsGenericType && i.GenericTypeArguments.Length == 1)
-                    .FirstOrDefault(i => i.GetGenericTypeDefinition() == typeof(IEnumerable<>));
-
-            if (enumerableType != null)
-            {
-                elementType = enumerableType.GenericTypeArguments[0];
-            }
-
-            return elementType != null;
-        }
-
-        private class Stash
-        {
-            public ReorderableList Reorderable { get; set; }
-
-            public IList List { get; set; }
-
-            public bool IsArray { get; set; }
-
-            public bool NeedsUpdate { get; set; }
         }
     }
 }

@@ -13,6 +13,15 @@ namespace BovineLabs.NaughtyAttributes.Editor.PropertyDrawers
         /// <inheritdoc />
         protected override void DrawProperty(NonSerializedAttributeWrapper wrapper, ShowAssetPreviewAttribute attribute)
         {
+            if (!typeof(Object).IsAssignableFrom(wrapper.Type))
+            {
+                NotObject(wrapper);
+                return;
+            }
+
+            wrapper.DrawDefaultField();
+
+            DrawPreview((Object)wrapper.GetValue(), attribute);
         }
 
         /// <inheritdoc />

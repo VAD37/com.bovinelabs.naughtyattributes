@@ -16,15 +16,13 @@ namespace BovineLabs.NaughtyAttributes.Editor.Wrappers
 
     public abstract class ValueWrapper : AttributeWrapper
     {
-        public SerializedObject RootObject { get; }
         public MemberInfo MemberInfo { get; }
 
         //private readonly Drawer drawer;
         private bool foldout;
 
-        protected ValueWrapper(SerializedObject rootObject, object target, MemberInfo memberInfo)
+        protected ValueWrapper(object target, MemberInfo memberInfo)
         {
-            this.RootObject = rootObject;
             this.Target = target;
             this.MemberInfo = memberInfo;
 
@@ -86,11 +84,6 @@ namespace BovineLabs.NaughtyAttributes.Editor.Wrappers
             this.ValidateField();
             this.ApplyFieldMeta();
             this.DrawField();
-        }
-
-        public void ApplyModifications()
-        {
-            this.RootObject.ApplyModifiedProperties();
         }
 
         public object GetValue()
@@ -237,12 +230,10 @@ namespace BovineLabs.NaughtyAttributes.Editor.Wrappers
 
             if (EditorGUI.EndChangeCheck())
             {
-                var onValueChangedAttributes = this.GetCustomAttributes<OnValueChangedAttribute>();
-                foreach (var onValueChangedAttribute in onValueChangedAttributes)
-                {
-                    OnValueChangedProperty.Instance.ApplyPropertyMeta(this, onValueChangedAttribute);
-                }
+                this.OnEndChangeCheck();
             }
         }
+
+        protected virtual void OnEndChangeCheck() { }
     }
 }

@@ -2,6 +2,8 @@
 {
     using System.Reflection;
     using BovineLabs.NaughtyAttributes.Editor.Editors;
+    using BovineLabs.NaughtyAttributes.Editor.PropertyDrawers;
+    using BovineLabs.NaughtyAttributes.Editor.PropertyMetas;
     using UnityEditor;
     using PropertyDrawer = PropertyDrawers.PropertyDrawer;
 
@@ -9,9 +11,9 @@
     {
         private readonly Drawer childDrawer;
 
-        public SerializedPropertyAttributeWrapper(SerializedObject rootObject, object target,
+        public SerializedPropertyAttributeWrapper(object target,
             SerializedProperty property, FieldInfo fieldInfo)        
-            : base(rootObject, target, fieldInfo)
+            : base( target, fieldInfo)
         {
             this.Property = property;
 
@@ -21,7 +23,7 @@
 
             if (this.HasChildren)
             {
-                this.childDrawer = new Drawer(rootObject, this.GetValue(), property);
+                this.childDrawer = new Drawer(this.GetValue(), property);
             }
         }
 
@@ -51,7 +53,7 @@
             }
             else if (this.IsArray)
             {
-                //ListPropertyDrawer.Instance.DrawArray(this);
+                ListPropertyDrawer.Instance.DrawArray(this.Property);
             }
             else
             {
@@ -70,6 +72,16 @@
         public override void DrawDefaultField()
         {
             EditorGUILayout.PropertyField(this.Property, false);
+        }
+
+        /// <inheritdoc />
+        protected override void OnEndChangeCheck()
+        {
+            var onValueChangedAttributes = this.GetCustomAttributes<OnValueChangedAttribute>();
+            foreach (var onValueChangedAttribute in onValueChangedAttributes)
+            {
+                OnValueChangedProperty.Instance.ApplyPropertyMeta(this, onValueChangedAttribute);
+            }
         }
     }
 }

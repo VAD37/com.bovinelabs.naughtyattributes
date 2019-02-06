@@ -13,6 +13,18 @@ namespace BovineLabs.NaughtyAttributes.Editor.PropertyDrawers
         /// <inheritdoc />
         protected override void DrawProperty(NonSerializedAttributeWrapper wrapper, MinMaxSliderAttribute attribute)
         {
+            if (wrapper.Type != typeof(Vector2))
+            {
+                NotVector2Field(wrapper);
+                return;
+            }
+
+            var sliderValue = (Vector2)wrapper.GetValue();
+
+            if (this.DrawProperty(wrapper.DisplayName, ref sliderValue, attribute))
+            {
+                wrapper.SetValue(sliderValue);
+            }
         }
 
         /// <inheritdoc />

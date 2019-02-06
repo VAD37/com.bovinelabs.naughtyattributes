@@ -14,6 +14,16 @@ namespace BovineLabs.NaughtyAttributes.Editor.PropertyDrawers
         /// <inheritdoc />
         protected override void DrawProperty(NonSerializedAttributeWrapper wrapper, ProgressBarAttribute attribute)
         {
+            var type = wrapper.Type;
+
+            if (type != typeof(float) && type != typeof(int))
+            {
+                NotIntFloat(wrapper);
+                return;
+            }
+
+            var value = (float)wrapper.GetValue();
+            this.DrawProgressBar(value, type == typeof(int), attribute);
         }
 
         /// <inheritdoc />

@@ -12,6 +12,18 @@ namespace BovineLabs.NaughtyAttributes.Editor.PropertyDrawers
         /// <inheritdoc />
         protected override void DrawProperty(NonSerializedAttributeWrapper wrapper, SliderAttribute attribute)
         {
+            var type = wrapper.Type;
+
+            if (type == typeof(int))
+            {
+                wrapper.SetValue(EditorGUILayout.IntSlider((int)wrapper.GetValue(), (int)attribute.MinValue, (int)attribute.MaxValue));
+            }
+            else if (type == typeof(float))
+            {
+                wrapper.SetValue(EditorGUILayout.Slider((float)wrapper.GetValue(), attribute.MinValue, attribute.MaxValue));
+            }
+            else
+                NotIntFloat(wrapper);
         }
 
         /// <inheritdoc />
