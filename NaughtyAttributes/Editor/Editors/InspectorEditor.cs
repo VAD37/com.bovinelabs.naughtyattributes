@@ -6,7 +6,7 @@ namespace BovineLabs.NaughtyAttributes.Editor.Editors
     using UnityEngine;
 
     [CanEditMultipleObjects]
-    [CustomEditor(typeof(Object), true)]
+    [CustomEditor(typeof(Object), true, isFallback = true)]
     public class InspectorEditor : Editor
     {
         private SerializedProperty script;
@@ -16,22 +16,32 @@ namespace BovineLabs.NaughtyAttributes.Editor.Editors
         {
             this.serializedObject.Update();
 
-            if (this.script != null)
+            if (this.drawer != null)
             {
-                GUI.enabled = false;
-                EditorGUILayout.PropertyField(this.script);
-                GUI.enabled = true;
-            }
+                if (this.script != null)
+                {
+                    GUI.enabled = false;
+                    EditorGUILayout.PropertyField(this.script);
+                    GUI.enabled = true;
+                }
 
-            this.drawer?.OnInspectorGUI();
+                this.drawer.OnInspectorGUI();
+            }
+            else
+            {
+                this.DrawDefaultInspector();
+            }
 
             this.serializedObject.ApplyModifiedProperties();
         }
 
         private void OnEnable()
         {
-            this.script = this.serializedObject.FindProperty("m_Script");
-            this.drawer = new Drawer(this.serializedObject, this.target);
+            if (this.target is MonoBehaviour || this.target is ScriptableObject)
+            {
+                this.script = this.serializedObject.FindProperty("m_Script");
+                this.drawer = new Drawer(this.serializedObject, this.target);
+            }
         }
 
         private void OnDisable()
