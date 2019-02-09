@@ -1,5 +1,6 @@
 namespace BovineLabs.NaughtyAttributes.Editor.Editors
 {
+    using System.Text.RegularExpressions;
     using BovineLabs.NaughtyAttributes.Editor.Database;
     using BovineLabs.NaughtyAttributes.Editor.PropertyDrawers;
     using UnityEditor;
@@ -37,6 +38,13 @@ namespace BovineLabs.NaughtyAttributes.Editor.Editors
 
         private void OnEnable()
         {
+            var ns = this.target.GetType().Namespace;
+
+            if (ns != null && (Regex.IsMatch(ns, @"^Unity\..*") || Regex.IsMatch(ns, @"^UnityEngine\..*")))
+            {
+                return;
+            }
+
             if (this.target is MonoBehaviour || this.target is ScriptableObject)
             {
                 this.script = this.serializedObject.FindProperty("m_Script");
